@@ -7,14 +7,16 @@
  */
 public class ProgressBar {
     private StringBuilder progress;
+    private String barMessage;
     private int total; // total is an int representing the total work
     private int done;
 
     /**
      * initialize progress bar properties.
      */
-    public ProgressBar(int total) {
+    public ProgressBar(String barMessage, int total) {
         init();
+        this.barMessage = barMessage;
         this.total = total;
     }
 
@@ -24,7 +26,7 @@ public class ProgressBar {
      */
     public void next() {
         char[] workchars = {'|', '/', '-', '\\'};
-        String format = "\r%3d%% %s %c";
+        String format = "\r%s  %3d%% %s %c";
 
         int percent = (++this.done * 100) / this.total;
         int extrachars = (percent / 2) - this.progress.length();
@@ -33,7 +35,7 @@ public class ProgressBar {
             progress.append('#');
         }
 
-        System.out.printf(format, percent, progress,
+        System.out.printf(format, this.barMessage, percent, progress,
                 workchars[this.done % workchars.length]);
 
         if (this.done == this.total) {
@@ -42,6 +44,8 @@ public class ProgressBar {
             init();
         }
     }
+
+    // TODO add an end func?
 
     private void init() {
         this.progress = new StringBuilder(60);

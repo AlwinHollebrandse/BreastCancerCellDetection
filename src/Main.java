@@ -1,3 +1,4 @@
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
@@ -6,44 +7,96 @@ import javax.imageio.ImageIO;
 
 public class Main {
 
+    //Takes in 2 command line args: the file containing all of the images, and the file containing the instructions
     public static void main(String args[])throws IOException {
 
-        BufferedImage workingImage = null;
-        try {
-            final File input_file = new File("black-and-white-tips.jpg"); //image file path
+        String imageFilesLocation = args[0];
+        String instructions = args[1];
+        // TODO add error handling
 
-            final BufferedImage originalImage = ImageIO.read(input_file);
-            System.out.println("original x: " + originalImage.getWidth() + ", y: " + originalImage.getHeight()); // 350x211
-            workingImage = convertToGrayScale(originalImage);
-            workingImage = avgFilter(workingImage, 5, 5, null, 1);//new double[]{.5, .5, .5, .5, 1, .5, .5, .5, .5}, 1); // TODO ask why scalar, and how to normalize weights array + pixel
+        System.out.println("imageFilesLocation: " + imageFilesLocation);
+        System.out.println("instructions: " + instructions);
 
-            System.out.println("Reading complete.");
+
+        File path = new File(imageFilesLocation); // TODO like a try catch or such
+        File [] files = path.listFiles();
+
+        for (int i = 0; i < files.length; i++){
+
+            if (i >= 1)
+                break;
+
+            if (files[i].isFile()) { //this line weeds out other directories/folders
+                System.out.println(files[i]);
+                BufferedImage workingImage = null;
+                try {
+                    final BufferedImage originalImage = ImageIO.read(files[i]);
+                    workingImage = convertToGrayScale(originalImage);
+                    workingImage = avgFilter(workingImage, 5, 5, null, 1);//new double[]{.5, .5, .5, .5, 1, .5, .5, .5, .5}, 1); // TODO ask why scalar, and how to normalize weights array + pixel
+
+                    System.out.println("Reading complete.");
+                } catch (IOException e) {
+                    System.out.println("Error: " + e);
+                } catch (NullPointerException e) {
+                    System.out.println("Error: " + e);
+                }
+
+                // WRITE IMAGE
+                try {
+                    // Output file path
+                    File output_file = new File("avg - cell1Gray.jpg");
+
+                    // Writing to file taking type and path as
+                    ImageIO.write(workingImage, "jpg", output_file);
+
+                    System.out.println("Writing complete.");
+                } catch (IOException e) {
+                    System.out.println("Error: " + e);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error: " + e);
+                } catch (NullPointerException e) {
+                    System.out.println("Error: " + e);
+                }
+            }
+            // TODO add error handling if not a file
         }
-        catch(IOException e) {
-            System.out.println("Error: "+e);
-        }
-        catch(NullPointerException e) {
-            System.out.println("Error: "+e);
-        }
 
-         // WRITE IMAGE
-         try
-         {
-             // Output file path
-             File output_file = new File("avg-black-and-white-tips.jpg");
-
-             // Writing to file taking type and path as
-             ImageIO.write(workingImage, "jpg", output_file);
-
-             System.out.println("Writing complete.");
-         }
-         catch(IOException e)
-         {
-             System.out.println("Error: "+e);
-         }
-         catch(IllegalArgumentException e) {
-             System.out.println("Error: "+e);
-         }
+//        BufferedImage workingImage = null;
+//        try {
+//            final File input_file = new File("volcano.jpg"); //image file path
+//
+//            final BufferedImage originalImage = ImageIO.read(input_file);
+//            System.out.println("original x: " + originalImage.getWidth() + ", y: " + originalImage.getHeight()); // 350x211
+//            workingImage = convertToGrayScale(originalImage);
+//            workingImage = avgFilter(workingImage, 5, 5, null, 1);//new double[]{.5, .5, .5, .5, 1, .5, .5, .5, .5}, 1); // TODO ask why scalar, and how to normalize weights array + pixel
+//
+//            System.out.println("Reading complete.");
+//        }
+//        catch(IOException e) {
+//            System.out.println("Error: "+e);
+//        }
+//        catch(NullPointerException e) {
+//            System.out.println("Error: "+e);
+//        }
+//
+//         // WRITE IMAGE
+//         try
+//         {
+//             // Output file path
+//             File output_file = new File("avg-volcano.jpg");
+//
+//             // Writing to file taking type and path as
+//             ImageIO.write(workingImage, "jpg", output_file);
+//
+//             System.out.println("Writing complete.");
+//         }
+//         catch(IOException e)
+//         {
+//             System.out.println("Error: "+e);
+//         }
+//         catch(IllegalArgumentException e) {
+//             System.out.println("Error: "+e);
+//         }
     }
 
     // NOTE and TODO currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
@@ -87,7 +140,7 @@ public class Main {
         // loop through new cropped version size
         for (int x = 0; x < endingXCoordinate; x++) {
             for (int y = 0; y < endingYCoordinate; y++) {
-                ArrayList<Integer> neighborRGBValueArray = getNeighborGray(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
+                ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
                 int avgRGBValue = calcAvgGray(neighborRGBValueArray, weights);
                 // TODO multiple each pixel by the scalar.
                 avgImage.setRGB(x, y, avgRGBValue);
@@ -112,28 +165,8 @@ public class Main {
         return avgImage;
     }
 
-    // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4)
-    public static ArrayList<Integer> getNeighborRGBs (BufferedImage originalImage, int originalX, int originalY, int filterHeight, int filterWidth) {
-        ArrayList<Integer> neighborRGBValueArray = new ArrayList<>();
-
-        // get the starting and ending valid coordinate values
-        int startingX = originalX - filterWidth/2;
-        int startingY = originalY - filterHeight/2;
-        int endingX = originalX + filterWidth/2;
-        int endingY = originalY + filterHeight/2;
-
-        // get the pixels within the designated borders
-        for (int x = startingX; x <= endingX; x++) {
-            for (int y = startingY; y <= endingY; y++) {
-                neighborRGBValueArray.add(originalImage.getRGB(x, y));
-            }
-        }
-
-        return neighborRGBValueArray;
-    }
-
     // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4) // TODO delte this method. its the same as the RGB one
-    public static ArrayList<Integer> getNeighborGray (BufferedImage originalImage, int originalX, int originalY, int filterHeight, int filterWidth) {
+    public static ArrayList<Integer> getNeighborValues (BufferedImage originalImage, int originalX, int originalY, int filterHeight, int filterWidth) {
         ArrayList<Integer> neighborRGBValueArray = new ArrayList<>();
 
         // get the starting and ending valid coordinate values
@@ -145,7 +178,6 @@ public class Main {
         // get the pixels within the designated borders
         for (int x = startingX; x <= endingX; x++) {
             for (int y = startingY; y <= endingY; y++) {
-//                System.out.println("avg x: " + x +", y: " + y);
                 neighborRGBValueArray.add(originalImage.getRGB(x, y));
             }
         }
@@ -234,53 +266,20 @@ public class Main {
     }
 
 
-
-
-
-
-
-
-
-
-
-    public static BufferedImage convertToGrayScale(BufferedImage originalImage) {
-        // NOTE if the assignment allowed for built in functionality of this sort, the simplest code would be: (this would replace the rest of this method)
-//        ImageFilter filter = new GrayFilter(true, 50);
-//        ImageProducer producer = new FilteredImageSource(colorImage.getSource(), filter);
-        if (originalImage.getType() == BufferedImage.TYPE_BYTE_GRAY) {
-            return originalImage;
-        }
-
-        if (originalImage.getType() == BufferedImage.TYPE_INT_RGB) {
-            BufferedImage grayScaleImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
-
-            for (int x = 0; x < originalImage.getWidth(); x++) {
-                for (int y = 0; y < originalImage.getHeight(); y++) {
-
                     // from https://stackoverflow.com/questions/9131678/convert-a-rgb-image-to-grayscale-image-reducing-the-memory-in-java
-                    int rgb = originalImage.getRGB(x, y);
-                    int r = (rgb >> 16) & 0xFF;
-                    int g = (rgb >> 8) & 0xFF;
-                    int b = (rgb & 0xFF);
 
-                    // Normalize and gamma correct:
-                    double rr = Math.pow(r / 255.0, 2.2);
-                    double gg = Math.pow(g / 255.0, 2.2);
-                    double bb = Math.pow(b / 255.0, 2.2);
 
-                    // Calculate luminance:
-                    double lum = 0.2126 * rr + 0.7152 * gg + 0.0722 * bb;
-
-                    // Gamma compand and rescale to byte range:
-                    int grayLevel = (int) (255.0 * Math.pow(lum, 1.0 / 2.2));
-                    int gray = (grayLevel << 16) + (grayLevel << 8) + grayLevel;
-                    grayScaleImage.setRGB(x, y, gray);
-                }
-            }
-            return grayScaleImage;
+    /** * convert a BufferedImage to RGB colourspace */
+    // from https://blog.idrsolutions.com/2009/10/converting-java-bufferedimage-between-colorspaces/
+    public static BufferedImage convertToGrayScale(BufferedImage originalImage) { // TODO is this allowed? pretty sure its not
+        BufferedImage grayScaleImage = null;
+        try {
+            grayScaleImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            ColorConvertOp xformOp = new ColorConvertOp(null);
+            xformOp.filter(originalImage, grayScaleImage);
+        } catch (Exception e) {
+            System.out.println("Exception " + e + " converting image");
         }
-
-        System.out.println("The system cannot handel images of this type");
-        return null;
+        return grayScaleImage;
     }
 }

@@ -1,8 +1,11 @@
 import java.awt.image.ColorConvertOp;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 import javax.imageio.ImageIO;
 
 public class Main {
@@ -29,10 +32,14 @@ public class Main {
             if (files[i].isFile()) { //this line weeds out other directories/folders
                 System.out.println(files[i]);
                 BufferedImage workingImage = null;
+                BufferedImage originalImage = null;
                 try {
-                    final BufferedImage originalImage = ImageIO.read(files[i]);
+                    originalImage = ImageIO.read(files[i]);
+//                    final BufferedImage originalImage = ImageIO.read(new File("black-and-white-tips.jpg"));
+
                     workingImage = convertToGrayScale(originalImage);
-                    workingImage = avgFilter(workingImage, 5, 5, null, 1);//new double[]{.5, .5, .5, .5, 1, .5, .5, .5, .5}, 1); // TODO ask why scalar, and how to normalize weights array + pixel
+                    System.out.println("originalImage 0,0: " + originalImage.getRGB(0,0) + ", type: " + originalImage.getType() + ", workingImage: " + workingImage.getRGB(0,0) + ", type: " +workingImage.getType());
+                    workingImage = filter(workingImage, "average", 3, 3, null, 1);//new double[]{.5, .5, .5, .5, 1, .5, .5, .5, .5}, 1);
 
                     System.out.println("Reading complete.");
                 } catch (IOException e) {
@@ -44,10 +51,16 @@ public class Main {
                 // WRITE IMAGE
                 try {
                     // Output file path
-                    File output_file = new File("avg - cell1Gray.jpg");
+                    File output_file = new File("original.jpg");//"avg - cell1Gray.jpg");
+                    // Writing to file taking type and path as
+                    ImageIO.write(originalImage, "jpg", output_file);
 
+                    // Output file path
+                    output_file = new File("result.jpg");//"avg - cell1Gray.jpg");
                     // Writing to file taking type and path as
                     ImageIO.write(workingImage, "jpg", output_file);
+
+
 
                     System.out.println("Writing complete.");
                 } catch (IOException e) {
@@ -60,54 +73,18 @@ public class Main {
             }
             // TODO add error handling if not a file
         }
-
-//        BufferedImage workingImage = null;
-//        try {
-//            final File input_file = new File("volcano.jpg"); //image file path
-//
-//            final BufferedImage originalImage = ImageIO.read(input_file);
-//            System.out.println("original x: " + originalImage.getWidth() + ", y: " + originalImage.getHeight()); // 350x211
-//            workingImage = convertToGrayScale(originalImage);
-//            workingImage = avgFilter(workingImage, 5, 5, null, 1);//new double[]{.5, .5, .5, .5, 1, .5, .5, .5, .5}, 1); // TODO ask why scalar, and how to normalize weights array + pixel
-//
-//            System.out.println("Reading complete.");
-//        }
-//        catch(IOException e) {
-//            System.out.println("Error: "+e);
-//        }
-//        catch(NullPointerException e) {
-//            System.out.println("Error: "+e);
-//        }
-//
-//         // WRITE IMAGE
-//         try
-//         {
-//             // Output file path
-//             File output_file = new File("avg-volcano.jpg");
-//
-//             // Writing to file taking type and path as
-//             ImageIO.write(workingImage, "jpg", output_file);
-//
-//             System.out.println("Writing complete.");
-//         }
-//         catch(IOException e)
-//         {
-//             System.out.println("Error: "+e);
-//         }
-//         catch(IllegalArgumentException e) {
-//             System.out.println("Error: "+e);
-//         }
     }
 
     // NOTE and TODO currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE a value of 1 for both of these means a 3x3 grid
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
-    public static BufferedImage avgFilter (BufferedImage originalImage, int filterHeight, int filterWidth, double[] weights, double scalar) throws NullPointerException {//, int size, String shape, double[] weights, String function) {
+    // TODO enums for filtertype
+    public static BufferedImage filter (BufferedImage originalImage, String filterType, int filterHeight, int filterWidth, int[] weights, double scalar) throws NullPointerException {//, int size, String shape, double[] weights, String function) {
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
             int filterSize = filterHeight * filterWidth;
-            weights = new double[filterSize];
+            weights = new int[filterSize];
             for (int i = 0; i < filterSize; i++) {
                 weights[i] = 1;
             }
@@ -128,28 +105,42 @@ public class Main {
         }
 
         // CROP BORDER VERSION
-        BufferedImage avgImage = new BufferedImage(originalImage.getWidth() - filterWidth, originalImage.getHeight() - filterHeight, originalImage.getType());
+        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - filterWidth, originalImage.getHeight() - filterHeight, originalImage.getType());
 
-        // endingX and Y need to be avgImage.getWidth() and y version - 1.
-        int endingXCoordinate = avgImage.getWidth() - 1;
-        int endingYCoordinate = avgImage.getHeight() - 1;
+        // endingX and Y need to be filterImage.getWidth() and y version - 1.
+        int endingXCoordinate = filterImage.getWidth() - 1;
+        int endingYCoordinate = filterImage.getHeight() - 1;
 
         int imageTotal = endingXCoordinate * endingYCoordinate;
-        ProgressBar bar = new ProgressBar("avgFilter", imageTotal);
+        String barMessage = "error bar message";
+        if ("average".equalsIgnoreCase(filterType)) {
+            barMessage = "Average Filter";
+        } else if("median".equalsIgnoreCase(filterType)) {
+            barMessage = "Median Filter";
+        }
+        ProgressBar bar = new ProgressBar(barMessage, imageTotal);
 
         // loop through new cropped version size
         for (int x = 0; x < endingXCoordinate; x++) {
             for (int y = 0; y < endingYCoordinate; y++) {
                 ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
-                int avgRGBValue = calcAvgGray(neighborRGBValueArray, weights);
-                // TODO multiple each pixel by the scalar.
-                avgImage.setRGB(x, y, avgRGBValue);
+
+                int newPixelValue = -1;
+                if ("average".equalsIgnoreCase(filterType)) {
+                    newPixelValue = calcAvgGray(neighborRGBValueArray, weights, scalar);
+                }
+
+                else if("median".equalsIgnoreCase(filterType)) {
+                    newPixelValue = calcMedianGray(neighborRGBValueArray, weights);
+                }
+                
+                filterImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, theres an error
                 bar.next();
             }
         }
 
         // WITH BORDER VERSION
-//        BufferedImage avgImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
+//        BufferedImage filterImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
 //        int imageTotal = originalImage.getWidth() * originalImage.getHeight();
 //        ProgressBar bar = new ProgressBar("avgFilter", imageTotal);
 
@@ -157,12 +148,11 @@ public class Main {
 //            for (int y = 0; y < originalImage.getHeight(); y++) {
 //                     ArrayList<Integer> neighborRGBValueArray = getNeighborRGBs(originalImage, x, y, filterHeight, filterWidth);
 //                int avgRGBValue = calcAvgRGB(neighborRGBValueArray, weights);
-//                avgImage.setRGB(x, y, avgRGBValue);
+//                filterImage.setRGB(x, y, avgRGBValue);
 //                bar.next();
 //            }
 //        }
-
-        return avgImage;
+        return filterImage;
     }
 
     // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4) // TODO delte this method. its the same as the RGB one
@@ -206,32 +196,69 @@ public class Main {
     }
 
 
-    public static int calcAvgGray (ArrayList<Integer> list, double[] weights) throws NullPointerException {
+    public static int calcAvgGray (ArrayList<Integer> list, int[] weights, double scalar) throws NullPointerException {
         if (list.size() != weights.length) {
             throw new NullPointerException("weights array was not the size of the filter");
         }
 
-        int result = 0;
+        int resultColor = 0;
 
         for (int i = 0; i < list.size(); i++) { // img.getRGB(x, y)& 0xFF;
-            result += (list.get(i) & 0xFF) * weights[i]; // element * weight of pixel
+            resultColor += (list.get(i) & 0xFF) * weights[i]; // element * weight of pixel
         }
-        System.out.println();
-//        System.out.println(list.toString());
-//        System.out.println("avg gray pixel value: " + result);
-        result /= list.size();
-//        System.out.println("avg gray pixel value: " + result);
-        System.out.println("center gray pixel value: " + (list.get(list.size()/2)  & 0xFF));
+        resultColor /= list.size();
+        // TODO multiple pixel by the scalar.
+        resultColor *= scalar;
 
         int centerPixelValue= list.get(list.size()/2); // gets everything about the center pixel, including intensity and such
-        result = (centerPixelValue & 0xFFFFFF00) | result; // keeps all of the intensity and suck values and only changes the gray scale value
+
+        return setGrayPixelColor(centerPixelValue, resultColor);
+    }
+
+    public static int calcMedianGray (ArrayList<Integer> list, int[] weights) throws NullPointerException {
+        if (list.size() != weights.length) {
+            throw new NullPointerException("weights array was not the size of the filter");
+        }
+
+        //create and fill out a weighted medina list, where each pixel gets replicated by the associated weight value number of times. This is then sorted and the median is found.
+        ArrayList<Integer> weightedMedianList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < weights[i]; j++) {
+//                int listValue = list.get(i);
+                int listValue = list.get(i) & 0xFF;
+                weightedMedianList.add(listValue);
+            }
+        }
+
+        Collections.sort(weightedMedianList);
+
+        int medianValue = weightedMedianList.get(weightedMedianList.size()/2);
+        int centerPixelValue= list.get(list.size()/2); // gets everything about the center pixel, including intensity and such
+        return setGrayPixelColor(centerPixelValue, medianValue);
+    }
+
+    public static int setGrayPixelColor (int pixelRGB, int pixelColor) {
+        int result;
+
+        // TODO most of these are here for debugging
+        int pixelRGBNonColor = pixelRGB & 0xFFFFFF00;
+        int finalResult = (pixelRGB & 0xFFFFFF00) | pixelColor;//sets the grey color value to 0
+        int temp = finalResult & 0xFFFFFF00;// should = centerPixelNonColor
+
+        int realResultColor = pixelColor;
+        int centerPixelColor = pixelRGB & 0xFF;
+        int resultPixelColor = finalResult & 0xFF;
+
+//        result = (pixelRGB & 0xFFFFFF00) | (centerPixelColor + 100);
+        result = (pixelRGB & 0xFFFFFF00) | pixelColor; // keeps all of the intensity and such values and only changes the gray scale value
+
+
         // bug has something to do with the other bits of the gray, the leading ones... I think its because i
 //        System.out.println("avg gray pixel value: " + (result));
-        System.out.println("avg gray pixel value: " + (result  & 0xFF));
+        if (Math.abs(pixelRGB - result) > 100)
+            System.out.println("resultPixelColor: " + resultPixelColor + ", real pixelColor: " + pixelColor + ", pixelRGB: " + pixelRGB + ", result: " + result);
 
-
-
-        return result;
+        return  result;
     }
 
 
@@ -266,9 +293,6 @@ public class Main {
     }
 
 
-                    // from https://stackoverflow.com/questions/9131678/convert-a-rgb-image-to-grayscale-image-reducing-the-memory-in-java
-
-
     /** * convert a BufferedImage to RGB colourspace */
     // from https://blog.idrsolutions.com/2009/10/converting-java-bufferedimage-between-colorspaces/
     public static BufferedImage convertToGrayScale(BufferedImage originalImage) { // TODO is this allowed? pretty sure its not
@@ -282,4 +306,71 @@ public class Main {
         }
         return grayScaleImage;
     }
+
+    // OR this from: https://stackoverflow.com/questions/9131678/convert-a-rgb-image-to-grayscale-image-reducing-the-memory-in-java
+//    ImageFilter filter = new GrayFilter(true, 50);
+//    ImageProducer producer = new FilteredImageSource(colorImage.getSource(), filter);
+//    Image mage = Toolkit.getDefaultToolkit().createImage(producer);
+
+    //techincally, this would make it gray, but the problem is that it stays in rgb scale
+    //tutorialspoint.com/java_dip/grayscale_conversion.htm
+//    for(int i=0; i<height; i++) {
+//
+//        for(int j=0; j<width; j++) {
+//
+//            Color c = new Color(image.getRGB(j, i));
+//            int red = (int)(c.getRed() * 0.299);
+//            int green = (int)(c.getGreen() * 0.587);
+//            int blue = (int)(c.getBlue() *0.114);
+//            Color newColor = new Color(red+green+blue,
+//
+//                    red+green+blue,red+green+blue);
+//
+//            image.setRGB(j,i,newColor.getRGB());
+//        }
+//    }
+
+    // NOTE randomThreshold must be between 0-1
+    public static BufferedImage createSaltAndPepperNoise (BufferedImage image, double randomThreshold) throws IllegalArgumentException {
+        if (randomThreshold > 1 || randomThreshold < 0) {
+            throw new IllegalArgumentException("randomThreshold must be between 0-1");
+        }
+
+        BufferedImage saltAndPepperImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);  // TODO currently only supports grey images (type: TYPE_BYTE_GRAY)
+        Random rand = new Random();
+
+        for (int x = 0; x < saltAndPepperImage.getWidth(); x++) {
+            for (int y = 0; y < saltAndPepperImage.getHeight(); y++) {
+                double rand_dub1 = rand.nextDouble();
+                int imagePixelRGB = image.getRGB(x, y);
+
+                if (rand_dub1 <= randomThreshold) {// if the random threshold is met
+                    rand_dub1 = rand.nextDouble(); // 50/50 to see if the pixel will be white or black
+                    if (rand_dub1 > .5) {
+                        saltAndPepperImage.setRGB(x, y, setGrayPixelColor(imagePixelRGB, 255));
+                    }
+                    else {
+                        saltAndPepperImage.setRGB(x, y, setGrayPixelColor(imagePixelRGB, 0));
+                    }
+                } else {
+                    saltAndPepperImage.setRGB(x, y, imagePixelRGB);
+                }
+
+            }
+        }
+        return saltAndPepperImage;
+    }
+
+
+
+    // TODO make the gaussian noise one
+    // TODO Histogram calculation for each individual image.
+//    Averaged histograms of pixel values for each class of images.
+//    • Histogram equalization for each image.
+//    • Selected image quantization technique for user-specified levels.
+//    • Display the following performance measures
+//      o Processing time for the entire batch per each procedure
+//      o Averaged processing time per image per each procedure
+//      o MSQE for image quantization levels
+
 }

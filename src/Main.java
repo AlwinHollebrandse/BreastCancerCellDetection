@@ -1,12 +1,12 @@
 import java.awt.image.ColorConvertOp;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
+import java.util.*;
 import javax.imageio.ImageIO;
+
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.ChartUtilities;
 
 public class Main {
 
@@ -31,41 +31,36 @@ public class Main {
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
                 System.out.println(files[i]);
-                BufferedImage workingImage = null;
-                BufferedImage originalImage = null;
                 try {
-                    originalImage = ImageIO.read(files[i]);
+                    final BufferedImage originalImage = ImageIO.read(files[i]);
 //                    final BufferedImage originalImage = ImageIO.read(new File("black-and-white-tips.jpg"));
-
-                    workingImage = convertToGrayScale(originalImage);
-                    System.out.println("originalImage 0,0: " + originalImage.getRGB(0,0) + ", type: " + originalImage.getType() + ", workingImage: " + workingImage.getRGB(0,0) + ", type: " +workingImage.getType());
-                    workingImage = filter(workingImage, "average", 3, 3, null, 1);//new double[]{.5, .5, .5, .5, 1, .5, .5, .5, .5}, 1);
-
-                    System.out.println("Reading complete.");
-                } catch (IOException e) {
-                    System.out.println("Error: " + e);
-                } catch (NullPointerException e) {
-                    System.out.println("Error: " + e);
-                }
-
-                // WRITE IMAGE
-                try {
-                    // Output file path
                     File output_file = new File("original.jpg");//"avg - cell1Gray.jpg");
-                    // Writing to file taking type and path as
                     ImageIO.write(originalImage, "jpg", output_file);
 
-                    // Output file path
-                    output_file = new File("result.jpg");//"avg - cell1Gray.jpg");
-                    // Writing to file taking type and path as
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    BufferedImage grayImage = convertToGrayScale(originalImage);
+                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(grayImage, "jpg", output_file);
 
 
+                    System.out.println("originalImage 0,0: " + originalImage.getRGB(0,0) + ", type: " + originalImage.getType() + ", workingImage: " + grayImage.getRGB(0,0) + ", type: " +grayImage.getType());
 
-                    System.out.println("Writing complete.");
+                    Histogram example=new Histogram();//"Bar Chart Window");
+                    double[] histogram = example.createHistogram(grayImage);
+
+                    String graphTitle = "test";//files[i].toString();
+                    JFreeChart result = example.graphHistogram(histogram, graphTitle);
+                    String pathName = graphTitle + ".png";
+                    ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
+//
+//                    BufferedImage workingImage = filter(grayImage, "average", 7, 7, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+//                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(workingImage, "jpg", output_file);
+//
+//                    workingImage = filter(grayImage, "median", 7, 7, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+//                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(workingImage, "jpg", output_file);
+
                 } catch (IOException e) {
-                    System.out.println("Error: " + e);
-                } catch (IllegalArgumentException e) {
                     System.out.println("Error: " + e);
                 } catch (NullPointerException e) {
                     System.out.println("Error: " + e);
@@ -74,6 +69,7 @@ public class Main {
             // TODO add error handling if not a file
         }
     }
+
 
     // NOTE and TODO currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution
@@ -127,13 +123,13 @@ public class Main {
 
                 int newPixelValue = -1;
                 if ("average".equalsIgnoreCase(filterType)) {
-                    newPixelValue = calcAvgGray(neighborRGBValueArray, weights, scalar);
+                    newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);;  calcAvgGray(neighborRGBValueArray, weights, scalar);
                 }
 
                 else if("median".equalsIgnoreCase(filterType)) {
                     newPixelValue = calcMedianGray(neighborRGBValueArray, weights);
                 }
-                
+
                 filterImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, theres an error
                 bar.next();
             }
@@ -264,7 +260,7 @@ public class Main {
 
     // TODO could add color filter here (RGB intensity)
     // does the above but for red, green, and blue at once
-    public static int calcAvgRGB (ArrayList<Integer> list, double[] weights) throws NullPointerException {
+    public static int calcAvgRGB (ArrayList<Integer> list, int[] weights, double scalar) throws NullPointerException {
         if (list.size() != weights.length) {
             throw new NullPointerException("weights array was not the size of the filter");
         }
@@ -283,6 +279,10 @@ public class Main {
         greenAvg /= list.size();
         blueAvg /= list.size();
 
+        redAvg *= scalar;
+        greenAvg *= scalar;
+        blueAvg *= scalar;
+
         //combine each of the RGB elements into a single int
         int result = 0x00000000;
         result = (result | redAvg) << 8; // after this line, result is 0x0000(red)00
@@ -296,11 +296,14 @@ public class Main {
     /** * convert a BufferedImage to RGB colourspace */
     // from https://blog.idrsolutions.com/2009/10/converting-java-bufferedimage-between-colorspaces/
     public static BufferedImage convertToGrayScale(BufferedImage originalImage) { // TODO is this allowed? pretty sure its not
+        ProgressBar bar = new ProgressBar("graying", 1);
+
         BufferedImage grayScaleImage = null;
         try {
             grayScaleImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
             ColorConvertOp xformOp = new ColorConvertOp(null);
             xformOp.filter(originalImage, grayScaleImage);
+            bar.next();
         } catch (Exception e) {
             System.out.println("Exception " + e + " converting image");
         }

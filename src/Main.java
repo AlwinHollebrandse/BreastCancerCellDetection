@@ -43,26 +43,36 @@ public class Main {
 //                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
 //                    ImageIO.write(grayImage, "jpg", output_file);
 
+                    long startTime = System.nanoTime();
                     BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
+                    System.out.println("Graying Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
 //                    output_file = new File("grayscale1.jpg");//"avg - cell1Gray.jpg");
 //                    ImageIO.write(grayImage1, "jpg", output_file);
 
+                    startTime = System.nanoTime();
                     BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.02);
+                    System.out.println("S&P Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
                     output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
+                    startTime = System.nanoTime();
                     Histogram histogram=new Histogram();
                     double[] histogramArray = histogram.createHistogram(grayImage);
+                    System.out.println("Histogram Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
                     String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
                     JFreeChart result = histogram.graphHistogram(histogramArray, graphTitle);
                     String pathName = graphTitle + ".png";
                     ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
 
+                    startTime = System.nanoTime();
                     BufferedImage workingImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    System.out.println("avgerage Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
                     output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(workingImage, "jpg", output_file);
 
+                    startTime = System.nanoTime();
                     workingImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    System.out.println("median Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
                     output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(workingImage, "jpg", output_file);
 

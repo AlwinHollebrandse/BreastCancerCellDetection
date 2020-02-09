@@ -13,7 +13,7 @@ public class NoiseAdder {
 
         int imageTotal = image.getWidth() * image.getHeight();
         ProgressBar bar = new ProgressBar("S&P Noise", imageTotal);
-        BufferedImage saltAndPepperImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);  // TODO currently only supports grey images (type: TYPE_BYTE_GRAY)
+        BufferedImage saltAndPepperImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());  // TODO currently only supports grey images (type: TYPE_BYTE_GRAY)
         Random rand = new Random();
 
         for (int x = 0; x < saltAndPepperImage.getWidth(); x++) {

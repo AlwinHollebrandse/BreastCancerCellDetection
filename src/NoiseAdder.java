@@ -12,7 +12,7 @@ public class NoiseAdder {
         }
 
         int imageTotal = image.getWidth() * image.getHeight();
-        ProgressBar bar = new ProgressBar("Adding Salt and Pepper Noise", imageTotal);
+        ProgressBar bar = new ProgressBar("S&P Noise", imageTotal);
         BufferedImage saltAndPepperImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);  // TODO currently only supports grey images (type: TYPE_BYTE_GRAY)
         Random rand = new Random();
 
@@ -24,10 +24,10 @@ public class NoiseAdder {
                 if (rand_dub1 <= randomThreshold) {// if the random threshold is met
                     rand_dub1 = rand.nextDouble(); // 50/50 to see if the pixel will be white or black
                     if (rand_dub1 > .5) {
-                        saltAndPepperImage.setRGB(x, y, utility.setGrayPixelColor(imagePixelRGB, 255));
+                        saltAndPepperImage.setRGB(x, y, utility.setSingleColor(255, "gray"));//utility.setGrayPixelColor(imagePixelRGB, 255));
                     }
                     else {
-                        saltAndPepperImage.setRGB(x, y, utility.setGrayPixelColor(imagePixelRGB, 0));
+                        saltAndPepperImage.setRGB(x, y, utility.setSingleColor(0, "gray"));//utility.setGrayPixelColor(imagePixelRGB, 0));
                     }
                 } else {
                     saltAndPepperImage.setRGB(x, y, imagePixelRGB);

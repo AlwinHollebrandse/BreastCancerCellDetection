@@ -38,31 +38,33 @@ public class Main {
                     File output_file = new File("original.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(originalImage, "jpg", output_file);
 
-                    BufferedImage grayImage = grayScale.convertToGrayScale(originalImage);
-                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(grayImage, "jpg", output_file);
+                    // TODO which is better?
+//                    BufferedImage grayImage = grayScale.convertToGrayScale(originalImage);
+//                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(grayImage, "jpg", output_file);
 
-                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.5); // TODO doesnt work
+                    BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
+//                    output_file = new File("grayscale1.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(grayImage1, "jpg", output_file);
+
+                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.02);
                     output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
-//                    System.out.println("originalImage 0,0: " + originalImage.getRGB(0,0) + ", type: " + originalImage.getType() + ", workingImage: " + grayImage.getRGB(0,0) + ", type: " +grayImage.getType());
+                    Histogram histogram=new Histogram();
+                    double[] histogramArray = histogram.createHistogram(grayImage);
+                    String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
+                    JFreeChart result = histogram.graphHistogram(histogramArray, graphTitle);
+                    String pathName = graphTitle + ".png";
+                    ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
 
-//                    Histogram example=new Histogram();//"Bar Chart Window");
-//                    double[] histogram = example.createHistogram(grayImage);
-//
-//                    String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
-//                    JFreeChart result = example.graphHistogram(histogram, graphTitle);
-//                    String pathName = graphTitle + ".png";
-//                    ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
-//
-//                    BufferedImage workingImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-//                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(workingImage, "jpg", output_file);
-//
-//                    workingImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-//                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(workingImage, "jpg", output_file);
+                    BufferedImage workingImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(workingImage, "jpg", output_file);
+
+                    workingImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(workingImage, "jpg", output_file);
 
                 } catch (IOException e) {
                     System.out.println("Error: " + e);

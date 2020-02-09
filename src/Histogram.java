@@ -6,15 +6,20 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Histogram extends JFrame {
 
-    public static double[] createHistogram (BufferedImage image) {
+    public double[] createHistogram (BufferedImage image) {
         double[] histogram = new double[256];//256 color values of gray
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
-                int keyValue = (image.getRGB(x, y)) & 0xFF;
+//                int keyValue = (image.getRGB(x, y)) & 0xFF;
+
+                Color c = new Color(image.getRGB(x, y));
+                int keyValue = (int)(c.getRed() * 0.299) + (int)(c.getGreen() * 0.587) + (int)(c.getBlue() *0.114);
+
                 histogram[keyValue]++;
             }
         }

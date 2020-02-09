@@ -62,7 +62,7 @@ public class Filter {
                 }
 
                 else if("median".equalsIgnoreCase(filterType)) {
-                    newPixelValue = calcMedianGray(neighborRGBValueArray, weights);
+                    newPixelValue = calcMedian(neighborRGBValueArray, weights);
                 }
 
                 filterImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, theres an error
@@ -93,26 +93,7 @@ public class Filter {
         return neighborRGBValueArray;
     }
 
-    public int calcAvgGray (ArrayList<Integer> list, int[] weights, double scalar) throws NullPointerException {
-        if (list.size() != weights.length) {
-            throw new NullPointerException("weights array was not the size of the filter");
-        }
-
-        int resultColor = 0;
-
-        for (int i = 0; i < list.size(); i++) { // img.getRGB(x, y)& 0xFF;
-            resultColor += (list.get(i) & 0xFF) * weights[i]; // element * weight of pixel
-        }
-        resultColor /= list.size();
-        // TODO multiple pixel by the scalar.
-        resultColor *= scalar;
-
-        int centerPixelValue= list.get(list.size()/2); // gets everything about the center pixel, including intensity and such
-
-        return utility.setGrayPixelColor(centerPixelValue, resultColor);
-    }
-
-    public int calcMedianGray (ArrayList<Integer> list, int[] weights) throws NullPointerException {
+    public int calcMedian (ArrayList<Integer> list, int[] weights) throws NullPointerException {
         if (list.size() != weights.length) {
             throw new NullPointerException("weights array was not the size of the filter");
         }
@@ -130,8 +111,7 @@ public class Filter {
         Collections.sort(weightedMedianList);
 
         int medianValue = weightedMedianList.get(weightedMedianList.size()/2);
-        int centerPixelValue= list.get(list.size()/2); // gets everything about the center pixel, including intensity and such
-        return utility.setGrayPixelColor(centerPixelValue, medianValue);
+        return utility.setSingleColor(medianValue, "gray");
     }
 
     // TODO could add color filter here (RGB intensity)

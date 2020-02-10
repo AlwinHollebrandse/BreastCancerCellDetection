@@ -40,9 +40,7 @@ public class GrayScale {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
 //        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
         BufferedImage newImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-        BufferedImage grayImage2 = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-        parallelMatrix.doInParallel(originalImage, grayImage2, "gray", 0.05, getFuncInterface(), "Converting to GrayScale"); // randomThreshold (0.05) isnt used by grayScale
+        parallelMatrix.doInParallel(originalImage, newImage, "gray", 0, getFuncInterface(), "Converting to GrayScale"); // randomThreshold (0) isnt used by grayScale
         return newImage;
     }
 

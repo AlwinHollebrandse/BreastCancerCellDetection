@@ -38,34 +38,32 @@ public class Main {
                     File output_file = new File("original.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(originalImage, "jpg", output_file);
 
-                    // TODO which is better?
+                    // TODO which is better gray?
 //                    BufferedImage grayImage = grayScale.convertToGrayScale(originalImage);
 //                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
 //                    ImageIO.write(grayImage, "jpg", output_file);
 
-                    long startTime = System.nanoTime();
+//                    long startTime = System.nanoTime();
+//                    BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
+//                    System.out.println("Graying Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
+//                    output_file = new File("grayscale1.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(grayImage, "jpg", output_file);
+
                     BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
-                    System.out.println("Graying Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-                    output_file = new File("grayscale1.jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File("grayImage.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(grayImage, "jpg", output_file);
 
-                    BufferedImage grayImage4 = grayScale.convertToSingleColor(originalImage, "gray");
-                    output_file = new File("grayImage4.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(grayImage4, "jpg", output_file);
 
-//                    startTime = System.nanoTime();
-//                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.02);
+
+//                    long startTime = System.nanoTime();
+//                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise2(grayImage2, 0.02);
 //                    System.out.println("S&P Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
 //                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
 //                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
 //
-//                    parallelMatrix = new ParallelMatrix();
-////                    NoiseAdder noiseAdder = new NoiseAdder();
-//                    NoiseAdder.FuncInterface noiseAdderCode = noiseAdder.getFuncInterface();
-//                    BufferedImage saltAndPepperImage2 = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-//                    parallelMatrix.doInParallel (originalImage, saltAndPepperImage2, "gray", 0.05, noiseAdderCode, "S&P noise");
-//                    output_file = new File("saltAndPepper2.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(grayImage2, "jpg", output_file);
+                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.05);
+                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
 
 

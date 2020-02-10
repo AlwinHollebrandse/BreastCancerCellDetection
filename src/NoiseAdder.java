@@ -33,8 +33,23 @@ public class NoiseAdder {
         return fobj;
     }
 
+
+    public BufferedImage createSaltAndPepperNoise (BufferedImage image, double randomThreshold) {
+        // Parameter checking
+        if (randomThreshold > 1 || randomThreshold < 0) {
+            throw new IllegalArgumentException("randomThreshold must be between 0-1");
+        }
+
+
+        ParallelMatrix parallelMatrix = new ParallelMatrix();
+//        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
+        BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        parallelMatrix.doInParallel(image, newImage, null, 0.05, getFuncInterface(), "Adding Salt and Pepper Noise"); // randomThreshold (0.05) isnt used by grayScale
+        return newImage;
+    }
+
     // NOTE randomThreshold must be between 0-1
-    public  BufferedImage createSaltAndPepperNoise (BufferedImage image, double randomThreshold) throws IllegalArgumentException {
+    public  BufferedImage createSaltAndPepperNoise2 (BufferedImage image, double randomThreshold) throws IllegalArgumentException {
         if (randomThreshold > 1 || randomThreshold < 0) {
             throw new IllegalArgumentException("randomThreshold must be between 0-1");
         }

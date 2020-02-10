@@ -7,21 +7,14 @@ public class GrayScale {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color);
-
-        // A non-abstract (or default) function
-        default void normalFun()
-        {
-            System.out.println("Hello");
-        }
+        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold);
     }
 
-    public FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color) -> {
-//        System.out.println("whack");
+    public FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold) -> {
         Color c = new Color(originalImage.getRGB(x, y));
         if ("gray".equalsIgnoreCase(color)) {
             int gray = (int)(c.getRed() * 0.299) + (int)(c.getGreen() * 0.587) + (int)(c.getBlue() *0.114);
-//                    int gray = c.getRed() + c.getGreen() + c.getBlue();
+//                    int gray = c.getRed() + c.getGreen() + c.getBlue(); // TODO check what gray to use
             Color newColor = new Color(gray, gray, gray);
             newImage.setRGB(x, y, newColor.getRGB());
         } else if ("red".equalsIgnoreCase(color)) {
@@ -36,7 +29,6 @@ public class GrayScale {
         } else {
             throw new NullPointerException("something went wrong getting the colors");
         }
-//        bar.next(); // TODO does the bar go here?
     };
 
     public FuncInterface getFuncInterface () {

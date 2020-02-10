@@ -7,10 +7,10 @@ public class GrayScale {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold);
+        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar);
     }
 
-    public FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold) -> {
+    public FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {
         Color c = new Color(originalImage.getRGB(x, y));
         if ("gray".equalsIgnoreCase(color)) {
             int gray = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);
@@ -39,9 +39,12 @@ public class GrayScale {
     public BufferedImage convertToSingleColor(BufferedImage originalImage, String color) {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
 //        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
-        BufferedImage newImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-        parallelMatrix.doInParallel(originalImage, newImage, "gray", 0, getFuncInterface(), "Converting to GrayScale"); // randomThreshold (0) isnt used by grayScale
-        return newImage;
+        BufferedImage grayImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+        // grayScale lambda does not use: randomThreshold, filterType, filterWidth, filterHeight, weights, or scalar
+        parallelMatrix.doInParallel(originalImage, grayImage, "Converting to GrayScale",
+                getFuncInterface(), color, 0, null, 0, 0, null,  0);
+        return grayImage;
     }
 
 

@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,40 +9,36 @@ public class Filter {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold);
+        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar);
     }
 
-    public Filter.FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold) -> {
-        Color c = new Color(originalImage.getRGB(x, y));
-        if ("gray".equalsIgnoreCase(color)) {
-            int gray = (int)(c.getRed() * 0.299) + (int)(c.getGreen() * 0.587) + (int)(c.getBlue() *0.114);
-//                    int gray = c.getRed() + c.getGreen() + c.getBlue(); // TODO check what gray to use
-            Color newColor = new Color(gray, gray, gray);
-            newImage.setRGB(x, y, newColor.getRGB());
-        } else if ("red".equalsIgnoreCase(color)) {
-            Color newColor = new Color(c.getRed(), 0, 0);
-            newImage.setRGB(x, y, newColor.getRGB());
-        } else if ("green".equalsIgnoreCase(color)) {
-            Color newColor = new Color(0, c.getGreen(), 0);
-            newImage.setRGB(x, y, newColor.getRGB());
-        } else if ("blue".equalsIgnoreCase(color)) {
-            Color newColor = new Color(0, 0, c.getBlue());
-            newImage.setRGB(x, y, newColor.getRGB());
-        } else {
-            throw new NullPointerException("something went wrong getting the colors");
+    public Filter.FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {
+        ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
+
+        int newPixelValue = -1;
+        if ("average".equalsIgnoreCase(filterType)) {
+            newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);// calcAvgGray(neighborRGBValueArray, weights, scalar);
         }
+
+        else if("median".equalsIgnoreCase(filterType)) {
+            newPixelValue = calcMedian(neighborRGBValueArray, weights);
+        }
+
+        newImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, theres an error
     };
 
     public Filter.FuncInterface getFuncInterface () {
         return fobj;
     }
 
+
     // NOTE and TODO currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE a value of 1 for both of these means a 3x3 grid
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
     // TODO enums for filtertype
-    public BufferedImage filter (BufferedImage originalImage, String filterType, int filterHeight, int filterWidth, int[] weights, double scalar) throws NullPointerException {//, int size, String shape, double[] weights, String function) {
+    public BufferedImage filter (BufferedImage image, String filterType, int filterWidth, int filterHeight,int[] weights, double scalar) throws NullPointerException {
+        // Parameter checking
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
             int filterSize = filterHeight * filterWidth;
@@ -67,8 +62,7 @@ public class Filter {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
 
-        // CROP BORDER VERSION
-        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - filterWidth, originalImage.getHeight() - filterHeight, originalImage.getType());
+        BufferedImage filterImage = new BufferedImage(image.getWidth() - filterWidth, image.getHeight() - filterHeight, image.getType());
 
         // endingX and Y need to be filterImage.getWidth() and y version - 1.
         int endingXCoordinate = filterImage.getWidth() - 1;
@@ -81,27 +75,15 @@ public class Filter {
         } else if("median".equalsIgnoreCase(filterType)) {
             barMessage = "Median Filter";
         }
-        ProgressBar bar = new ProgressBar(barMessage, imageTotal);
+//        ProgressBar bar = new ProgressBar(barMessage, imageTotal);
 
-        // loop through new cropped version size
-        for (int x = 0; x < endingXCoordinate; x++) {
-            for (int y = 0; y < endingYCoordinate; y++) {
-                ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
+        ParallelMatrix parallelMatrix = new ParallelMatrix();
+//        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
+//        BufferedImage filterImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-                int newPixelValue = -1;
-                if ("average".equalsIgnoreCase(filterType)) {
-                    newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);// calcAvgGray(neighborRGBValueArray, weights, scalar);
-                }
-
-                else if("median".equalsIgnoreCase(filterType)) {
-                    newPixelValue = calcMedian(neighborRGBValueArray, weights);
-                }
-
-                filterImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, theres an error
-                bar.next();
-            }
-        }
-
+        // filter lambda does not use: color or randomThreshold
+        parallelMatrix.doInParallel(image, filterImage, barMessage,
+                getFuncInterface(), null, 0, filterType, filterWidth, filterHeight, weights, scalar);
         return filterImage;
     }
 

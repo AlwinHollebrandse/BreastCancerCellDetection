@@ -3,17 +3,20 @@ import java.util.concurrent.Semaphore;
 
 public class ParallelMatrix {
 
-    public void doInParallel (BufferedImage originalImage, BufferedImage newImage, String color, double randomThreshold, OverHeadInterface.FuncInterface code, String barMessage) { // TODO add progress bar somehow
+    public void doInParallel (BufferedImage originalImage, BufferedImage newImage, String barMessage, // TODO add progress bar somehow
+                              OverHeadInterface.FuncInterface code, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) {
+
         final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
 
-        MultithreadingDemo[] threadArray = new MultithreadingDemo[MAX_THREADS];
+        ImageThread[] threadArray = new ImageThread[MAX_THREADS];
         Semaphore sem = new Semaphore(1);
-        ProgressBar progressBar = new ProgressBar(barMessage, (originalImage.getWidth() * originalImage.getHeight()));
+        ProgressBar progressBar = new ProgressBar(barMessage, (newImage.getWidth() * newImage.getHeight()));
 
-        int[][] xycounter = new int[originalImage.getWidth()][originalImage.getHeight()]; // TODO delete
+        int[][] xycounter = new int[newImage.getWidth()][newImage.getHeight()]; // TODO delete
 
         for (int i = 0; i < MAX_THREADS; i++) {
-            threadArray[i] = new MultithreadingDemo(originalImage, newImage, sem, progressBar, color, randomThreshold, code, i, MAX_THREADS, xycounter);
+            threadArray[i] = new ImageThread(originalImage, newImage, sem, progressBar, MAX_THREADS, i, xycounter,
+                    code, color, randomThreshold, filterType, filterWidth, filterHeight, weights, scalar);
             threadArray[i].start();
         }
 
@@ -30,8 +33,8 @@ public class ParallelMatrix {
 
         // TODO delete
         int skippedPixelCount = 0;
-        for (int x = 0; x < originalImage.getWidth(); x++) {
-            for (int y = 0; y < originalImage.getHeight(); y++) {
+        for (int x = 0; x < newImage.getWidth(); x++) {
+            for (int y = 0; y < newImage.getHeight(); y++) {
                 if (xycounter[x][y] == 0) {
                     skippedPixelCount++;
                     System.out.println("xycounter: " + xycounter[x][y] + ", x: " + x + ", y: " + y);
@@ -44,31 +47,49 @@ public class ParallelMatrix {
 
 //ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-class MultithreadingDemo extends Thread {
+class ImageThread extends Thread {
 
+    //for thread objects
     private BufferedImage originalImage;
     private BufferedImage newImage;
     private Semaphore sem;
     private ProgressBar progressBar;
-    private String color;
-    private double randomThreshold;
-    private OverHeadInterface.FuncInterface code; // TODO change to lambda object?
-    private int startingXCoordinate;
     private int MAX_THREADS;
+    private int threadNumber;
     private int[][] xycounter;
 
-    public MultithreadingDemo(BufferedImage originalImage, BufferedImage newImage, Semaphore sem, ProgressBar progressBar, String color, Double randomThreshold, OverHeadInterface.FuncInterface code, int startingXCoordinate, int MAX_THREADS, int[][] xycounter) {
-        // store parameter for later user
+    // for code lambdas
+    private OverHeadInterface.FuncInterface code; // TODO change to lambda object?
+    private String color;
+    private double randomThreshold;
+    private String filterType;
+    private int filterWidth;
+    private int filterHeight;
+    private int[] weights;
+    private double scalar;
+
+    // store parameter for later user
+    public ImageThread(BufferedImage originalImage, BufferedImage newImage, Semaphore sem, ProgressBar progressBar, int MAX_THREADS, int threadNumber, int[][] xycounter, //for thread objects
+                       OverHeadInterface.FuncInterface code, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) { // for code lambdas
+
+        //for thread objects
         this.originalImage = originalImage;
         this.newImage = newImage;
         this.sem = sem;
         this.progressBar = progressBar;
-        this.randomThreshold = randomThreshold;
-        this.color = color;
-        this.code = code;
-        this.startingXCoordinate = startingXCoordinate;
         this.MAX_THREADS = MAX_THREADS;
+        this.threadNumber = threadNumber;
         this.xycounter = xycounter;
+
+        // for code lambdas
+        this.code = code;
+        this.color = color;
+        this.randomThreshold = randomThreshold;
+        this.filterType = filterType;
+        this.filterWidth = filterWidth;
+        this.filterHeight = filterHeight;
+        this.weights = weights;
+        this.scalar = scalar;
     }
 
     public void run() {
@@ -76,10 +97,10 @@ class MultithreadingDemo extends Thread {
             // Displaying the thread that is running
 //            System.out.println ("Thread " + Thread.currentThread().getId() + " is running"  + ", MAX_THREADS: " + MAX_THREADS + ", startingXCoordinate: " + startingXCoordinate + ", startingYCoordinate: " + startingYCoordinate);;//", xJumpSize: " + xJumpSize + ", yJumpSize: " + yJumpSize);
 
-            for (int x = this.startingXCoordinate; x < originalImage.getWidth(); x += MAX_THREADS) { // TODO change to newImage?
-                for (int y = 0; y < originalImage.getHeight(); y ++) {
+            for (int x = threadNumber; x < newImage.getWidth(); x += MAX_THREADS) { // TODO change to newImage?
+                for (int y = 0; y < newImage.getHeight(); y ++) {
                     xycounter[x][y]++;
-                    code.function(originalImage, newImage, x, y, color, randomThreshold);
+                    code.function(originalImage, newImage, x, y, color, randomThreshold, filterType, filterWidth, filterHeight, weights, scalar);
 //                    sem.acquire(); // TODO adding this makes the speed go from 61 to 6138ms...
 //                    progressBar.next();
 //                    sem.release();
@@ -88,7 +109,7 @@ class MultithreadingDemo extends Thread {
         }
         catch (Exception e) {
             // Throwing an exception
-            System.out.println ("Exception is caught");
+            System.out.println ("Exception is caught " + e);
         }
     }
 }

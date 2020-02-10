@@ -43,24 +43,12 @@ public class Main {
 //                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
 //                    ImageIO.write(grayImage, "jpg", output_file);
 
-//                    long startTime = System.nanoTime();
-//                    BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
-//                    System.out.println("Graying Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-//                    output_file = new File("grayscale1.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(grayImage, "jpg", output_file);
 
                     BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
                     output_file = new File("grayImage.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(grayImage, "jpg", output_file);
 
 
-
-//                    long startTime = System.nanoTime();
-//                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise2(grayImage2, 0.02);
-//                    System.out.println("S&P Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-//                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
-//
                     BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.05);
                     output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(saltAndPepperImage, "jpg", output_file);
@@ -76,17 +64,17 @@ public class Main {
 //                    String pathName = graphTitle + ".png";
 //                    ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
 //
-//                    startTime = System.nanoTime();
-//                    BufferedImage workingImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-//                    System.out.println("avgerage Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-//                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(workingImage, "jpg", output_file);
-//
-//                    startTime = System.nanoTime();
-//                    workingImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-//                    System.out.println("median Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-//                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(workingImage, "jpg", output_file);
+
+
+                    BufferedImage avgFilterImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(avgFilterImage, "jpg", output_file);
+
+
+
+                    BufferedImage medFilterImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(medFilterImage, "jpg", output_file);
 
                 } catch (Exception e) {
                     System.out.println("Error: " + e);

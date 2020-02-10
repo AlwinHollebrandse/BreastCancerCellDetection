@@ -58,21 +58,25 @@ public class Main {
                     output_file = new File("grayscale2.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(grayImage2, "jpg", output_file);
 
+                    BufferedImage grayImage3 = grayScale.convertToSingleColorParallel(originalImage, "gray");
+                    output_file = new File("grayscale3.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(grayImage3, "jpg", output_file);
 
 
-                    startTime = System.nanoTime();
-                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.02);
-                    System.out.println("S&P Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
-                    parallelMatrix = new ParallelMatrix();
-//                    NoiseAdder noiseAdder = new NoiseAdder();
-                    NoiseAdder.FuncInterface noiseAdderCode = noiseAdder.getFuncInterface();
-                    BufferedImage saltAndPepperImage2 = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-                    parallelMatrix.doInParallel (originalImage, saltAndPepperImage2, "gray", 0.05, noiseAdderCode, "S&P noise");
-                    output_file = new File("saltAndPepper2.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(grayImage2, "jpg", output_file);
+//                    startTime = System.nanoTime();
+//                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.02);
+//                    System.out.println("S&P Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
+//                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
+//
+//                    parallelMatrix = new ParallelMatrix();
+////                    NoiseAdder noiseAdder = new NoiseAdder();
+//                    NoiseAdder.FuncInterface noiseAdderCode = noiseAdder.getFuncInterface();
+//                    BufferedImage saltAndPepperImage2 = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+//                    parallelMatrix.doInParallel (originalImage, saltAndPepperImage2, "gray", 0.05, noiseAdderCode, "S&P noise");
+//                    output_file = new File("saltAndPepper2.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(grayImage2, "jpg", output_file);
 
 
 

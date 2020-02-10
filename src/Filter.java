@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -5,6 +6,37 @@ import java.util.Collections;
 public class Filter {
 
     private Utility utility = new Utility();
+
+    @FunctionalInterface
+    interface FuncInterface extends OverHeadInterface.FuncInterface {
+        // An abstract function
+        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold);
+    }
+
+    public Filter.FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold) -> {
+        Color c = new Color(originalImage.getRGB(x, y));
+        if ("gray".equalsIgnoreCase(color)) {
+            int gray = (int)(c.getRed() * 0.299) + (int)(c.getGreen() * 0.587) + (int)(c.getBlue() *0.114);
+//                    int gray = c.getRed() + c.getGreen() + c.getBlue(); // TODO check what gray to use
+            Color newColor = new Color(gray, gray, gray);
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else if ("red".equalsIgnoreCase(color)) {
+            Color newColor = new Color(c.getRed(), 0, 0);
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else if ("green".equalsIgnoreCase(color)) {
+            Color newColor = new Color(0, c.getGreen(), 0);
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else if ("blue".equalsIgnoreCase(color)) {
+            Color newColor = new Color(0, 0, c.getBlue());
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else {
+            throw new NullPointerException("something went wrong getting the colors");
+        }
+    };
+
+    public Filter.FuncInterface getFuncInterface () {
+        return fobj;
+    }
 
     // NOTE and TODO currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution

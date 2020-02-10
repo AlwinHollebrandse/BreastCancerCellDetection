@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="692c0595-0958-4d0b-b504-a3af3633a8df" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/Filter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Filter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GrayScale.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GrayScale.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -27,13 +28,13 @@
         <counts>
           <entry key="gitignore" value="2" />
           <entry key="java" value="21" />
-          <entry key="jpg" value="36" />
+          <entry key="jpg" value="39" />
           <entry key="png" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Image" value="38" />
+          <entry key="Image" value="41" />
           <entry key="JAVA" value="21" />
           <entry key="PLAIN_TEXT" value="2" />
         </counts>
@@ -41,12 +42,12 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gitignore" value="31" />
-          <entry key="java" value="15870" />
+          <entry key="java" value="15988" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="15870" />
+          <entry key="JAVA" value="15988" />
           <entry key="PLAIN_TEXT" value="31" />
         </counts>
       </usages-collector>
@@ -57,8 +58,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="529">
-              <caret line="78" column="48" lean-forward="true" selection-start-line="66" selection-start-column="29" selection-end-line="78" selection-end-column="48" />
+            <state relative-caret-position="505">
+              <caret line="66" column="66" lean-forward="true" selection-start-line="66" selection-start-column="66" selection-end-line="66" selection-end-column="66" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -67,20 +68,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/saltAndPepper2.jpg">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/saltAndPepper.jpg">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ParallelMatrix.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" selection-start-line="3" selection-end-line="93" selection-end-column="1" />
+            <state relative-caret-position="1241">
+              <caret line="85" column="17" lean-forward="true" selection-start-line="85" selection-start-column="17" selection-end-line="85" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -91,20 +82,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/GrayScale.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="372">
-              <caret line="92" column="96" lean-forward="true" selection-start-line="92" selection-start-column="25" selection-end-line="92" selection-end-column="96" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/NoiseAdder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="33" column="5" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="33" selection-end-column="5" />
+            <state relative-caret-position="272">
+              <caret line="39" column="46" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="46" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -115,8 +94,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Filter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="24" column="62" selection-start-line="24" selection-start-column="62" selection-end-line="24" selection-end-column="62" />
+            <state relative-caret-position="444">
+              <caret line="58" lean-forward="true" selection-start-line="55" selection-start-column="8" selection-end-line="58" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -131,16 +110,6 @@
               <caret line="4" column="125" selection-start-line="4" selection-start-column="110" selection-end-line="4" selection-end-column="125" />
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grayscale2.jpg">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grayscale1.jpg">
-          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
     </leaf>
@@ -168,6 +137,7 @@
       <find>calcAvgGray</find>
       <find>setGrayPixelColor</find>
       <find>(i, j,</find>
+      <find>code</find>
     </findStrings>
     <replaceStrings>
       <replace>originalImage</replace>
@@ -231,7 +201,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="setGrayPixelColor&#9;PSI&#9;JAVA://Utility#setGrayPixelColor&#10;resultPixelCol&#9;null&#9;null" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1581357511895" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1581358175576" />
     <property name="last_opened_file_path" value="C:/Program Files/JFreeChart/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
@@ -283,7 +253,7 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16204691" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16204691" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -297,7 +267,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32952183" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32952183" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32952183" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32952183" />
@@ -408,12 +378,6 @@
     <entry file="file://$PROJECT_DIR$/median.jpg">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/grayscale2.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/grayscale1.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/NoiseAdder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
@@ -431,20 +395,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/saltAndPepper.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grayscale2.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grayscale3.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grayscale1.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saltAndPepper2.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Filter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" column="62" selection-start-line="24" selection-start-column="62" selection-end-line="24" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ParallelMatrix.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" selection-start-line="3" selection-end-line="93" selection-end-column="1" />
+        <state relative-caret-position="444">
+          <caret line="58" lean-forward="true" selection-start-line="55" selection-start-column="8" selection-end-line="58" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -453,24 +422,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/GrayScale.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="372">
-          <caret line="92" column="96" lean-forward="true" selection-start-line="92" selection-start-column="25" selection-end-line="92" selection-end-column="96" />
+        <state relative-caret-position="272">
+          <caret line="39" column="46" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/saltAndPepper.jpg">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saltAndPepper2.jpg">
-      <provider selected="true" editor-type-id="images" />
+    <entry file="file://$PROJECT_DIR$/src/ParallelMatrix.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1241">
+          <caret line="85" column="17" lean-forward="true" selection-start-line="85" selection-start-column="17" selection-end-line="85" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
-          <caret line="78" column="48" lean-forward="true" selection-start-line="66" selection-start-column="29" selection-end-line="78" selection-end-column="48" />
+        <state relative-caret-position="505">
+          <caret line="66" column="66" lean-forward="true" selection-start-line="66" selection-start-column="66" selection-end-line="66" selection-end-column="66" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

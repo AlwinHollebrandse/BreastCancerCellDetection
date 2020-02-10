@@ -49,20 +49,9 @@ public class Main {
                     output_file = new File("grayscale1.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(grayImage, "jpg", output_file);
 
-                    ParallelMatrix parallelMatrix = new ParallelMatrix();
-//                    GrayScale grayscale = new GrayScale();
-                    GrayScale.FuncInterface grayScaleCode = grayScale.getFuncInterface();
-                    BufferedImage grayImage2 = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-                    parallelMatrix.doInParallel (originalImage, grayImage2, "gray", 0.05, grayScaleCode, "Converting to GrayScale");
-//                    BufferedImage grayImage2 = grayScale.convertToSingleColor(originalImage, "gray");
-                    output_file = new File("grayscale2.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(grayImage2, "jpg", output_file);
-
-                    BufferedImage grayImage3 = grayScale.convertToSingleColorParallel(originalImage, "gray");
-                    output_file = new File("grayscale3.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(grayImage3, "jpg", output_file);
-
-
+                    BufferedImage grayImage4 = grayScale.convertToSingleColor(originalImage, "gray");
+                    output_file = new File("grayImage4.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(grayImage4, "jpg", output_file);
 
 //                    startTime = System.nanoTime();
 //                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.02);

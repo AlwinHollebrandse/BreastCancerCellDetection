@@ -2,6 +2,7 @@ import java.awt.*;
 
 public class Utility {
     // TODO add color enums
+    // TODO add alpha?
     public int setSingleColor (int pixelColor, String color) {
         if ("gray".equalsIgnoreCase(color)) {
             int gray = (int)(pixelColor * 0.299) + (int)(pixelColor * 0.587) + (int)(pixelColor *0.114); // TODO adds in the "gray multiplier" (according to tutorialspoint.com/java_dip/grayscale_conversion.htm)

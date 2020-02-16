@@ -95,10 +95,8 @@ public class Filter {
 //        ProgressBar bar = new ProgressBar(barMessage, imageTotal);
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
-//        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
 //        BufferedImage filterImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        // filter lambda does not use: color or randomThreshold
         parallelMatrix.doInParallel(originalImage, filterImage, barMessage, getFuncInterface());
         return filterImage;
     }

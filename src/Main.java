@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.IOException;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -9,7 +8,7 @@ import org.jfree.chart.ChartUtilities;
 public class Main {
 
     //Takes in 2 command line args: the file containing all of the images, and the file containing the instructions
-    public static void main(String args[])throws IOException {
+    public static void main(String args[]) {
 
         String imageFilesLocation = args[0];
         String instructions = args[1];
@@ -18,10 +17,7 @@ public class Main {
         System.out.println("imageFilesLocation: " + imageFilesLocation);
         System.out.println("instructions: " + instructions);
 
-//        Filter filter = new Filter();
-//        GrayScale grayScale = new GrayScale();
-//        NoiseAdder noiseAdder = new NoiseAdder();
-
+        int[] averageHistogram = new int[256];
         File path = new File(imageFilesLocation); // TODO like a try catch or such
         File [] files = path.listFiles();
 
@@ -49,44 +45,66 @@ public class Main {
                     ImageIO.write(grayImage, "jpg", output_file);
 
 
-                    NoiseAdder noiseAdder = new NoiseAdder(grayImage, 0.05);
-                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise();
-                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
+//                    NoiseAdder noiseAdder = new NoiseAdder(grayImage, 0.05);
+//                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise();
+//                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
 
 
                     long startTime = System.nanoTime();
-                    Histogram histogram=new Histogram();
-                    double[] histogramArray = histogram.createHistogram(grayImage);
-                    System.out.println("Histogram Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-                    String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
-                    JFreeChart result = histogram.graphHistogram(histogramArray, graphTitle);
-                    String pathName = graphTitle + ".png";
-                    ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
+                    GraphHistogram graphHistogram = new GraphHistogram();
+                    int[] histogram = graphHistogram.createHistogram(grayImage);
+                    System.out.println("Histogram creation Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
 
-                    double[] equalizedHistogram = histogram.histogramEqualization(histogramArray);
-                    BufferedImage equalizedImage = histogram.equalizedImage(grayImage, equalizedHistogram);
+                    HistogramFunctions histogramFunctions = new HistogramFunctions(grayImage, histogram);
+                    BufferedImage equalizedImage = histogramFunctions.equalizedImage();
                     output_file = new File("equalizedImage.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(equalizedImage, "jpg", output_file);
 
+                    String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
+                    // TODO show the equalized histogram too?
+                    JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
+                    String pathName = graphTitle + ".png";
+                    ChartUtilities.saveChartAsPNG(new File(pathName), defaultHistogram, 700 , 500 );
 
-                    Filter filter = new Filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-                    BufferedImage avgFilterImage = filter.filter();
-                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(avgFilterImage, "jpg", output_file);
+                    averageHistogram = histogramFunctions.sumHistograms(averageHistogram);
 
 
-                    filter = new Filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-                    BufferedImage medFilterImage = filter.filter();
-                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(medFilterImage, "jpg", output_file);
+//                    Filter filter = new Filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+//                    BufferedImage avgFilterImage = filter.filter();
+//                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(avgFilterImage, "jpg", output_file);
+//
+//
+//                    filter = new Filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+//                    BufferedImage medFilterImage = filter.filter();
+//                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(medFilterImage, "jpg", output_file);
 
                 } catch (Exception e) {
                     System.out.println("Error: " + e);
                 }
             }
+            getAverageHistogram(averageHistogram, files.length);
             // TODO add error handling if not a file
+
+        }
+    }
+
+    private static void getAverageHistogram(int[] histogram, int divisor) {
+        for (int i = 0; i < histogram.length; i++) {
+            histogram[i] /= divisor;
+        }
+
+        try {
+            GraphHistogram graphHistogram = new GraphHistogram();
+            String graphTitle = "averageHistogram";//files[i].toString(); // TODO looks shitty rn
+            JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
+            String pathName = graphTitle + ".png";
+            ChartUtilities.saveChartAsPNG(new File(pathName), defaultHistogram, 700, 500);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
         }
     }
 

@@ -4,15 +4,20 @@ import java.util.Collections;
 
 public class Filter {
 
-    private Utility utility = new Utility();
+    private BufferedImage originalImage;
+    private String filterType;
+    private int filterWidth;
+    private int filterHeight;
+    private int[] weights;
+    private double scalar;
 
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar);
+        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y);
     }
 
-    public Filter.FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {
+    public Filter.FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y) -> {
         ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
         int newPixelValue = -1;
@@ -32,12 +37,24 @@ public class Filter {
     }
 
 
+
+    public Filter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) {
+        this.originalImage = originalImage;
+        this.filterType = filterType;
+        this.filterWidth = filterWidth;
+        this.filterHeight = filterHeight;
+        this.weights = weights;
+        this.scalar = scalar;
+    }
+
+
     // NOTE and TODO currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE a value of 1 for both of these means a 3x3 grid
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
     // TODO enums for filtertype
-    public BufferedImage filter (BufferedImage image, String filterType, int filterWidth, int filterHeight,int[] weights, double scalar) throws NullPointerException {
+//    public BufferedImage filter (BufferedImage image, String filterType, int filterWidth, int filterHeight,int[] weights, double scalar) throws NullPointerException {
+    public BufferedImage filter () throws NullPointerException {
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
@@ -62,7 +79,7 @@ public class Filter {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
 
-        BufferedImage filterImage = new BufferedImage(image.getWidth() - filterWidth, image.getHeight() - filterHeight, image.getType());
+        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - filterWidth, originalImage.getHeight() - filterHeight, originalImage.getType());
 
         // endingX and Y need to be filterImage.getWidth() and y version - 1.
         int endingXCoordinate = filterImage.getWidth() - 1;
@@ -82,8 +99,7 @@ public class Filter {
 //        BufferedImage filterImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 
         // filter lambda does not use: color or randomThreshold
-        parallelMatrix.doInParallel(image, filterImage, barMessage,
-                getFuncInterface(), null, 0, filterType, filterWidth, filterHeight, weights, scalar);
+        parallelMatrix.doInParallel(originalImage, filterImage, barMessage, getFuncInterface());
         return filterImage;
     }
 
@@ -125,6 +141,7 @@ public class Filter {
         Collections.sort(weightedMedianList);
 
         int medianValue = weightedMedianList.get(weightedMedianList.size()/2);
+        Utility utility = new Utility();
         return utility.setSingleColor(medianValue, "gray");
     }
 

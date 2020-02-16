@@ -18,9 +18,9 @@ public class Main {
         System.out.println("imageFilesLocation: " + imageFilesLocation);
         System.out.println("instructions: " + instructions);
 
-        Filter filter = new Filter();
-        GrayScale grayScale = new GrayScale();
-        NoiseAdder noiseAdder = new NoiseAdder();
+//        Filter filter = new Filter();
+//        GrayScale grayScale = new GrayScale();
+//        NoiseAdder noiseAdder = new NoiseAdder();
 
         File path = new File(imageFilesLocation); // TODO like a try catch or such
         File [] files = path.listFiles();
@@ -43,15 +43,16 @@ public class Main {
 //                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
 //                    ImageIO.write(grayImage, "jpg", output_file);
 
-
-                    BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
+                    GrayScale grayScale = new GrayScale(originalImage, "gray");
+                    BufferedImage grayImage = grayScale.convertToSingleColor();
                     output_file = new File("grayImage.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(grayImage, "jpg", output_file);
-//
-//
-//                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.05);
-//                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
+
+
+                    NoiseAdder noiseAdder = new NoiseAdder(grayImage, 0.05);
+                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise();
+                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
 
 
@@ -70,16 +71,16 @@ public class Main {
                     ImageIO.write(equalizedImage, "jpg", output_file);
 
 
+                    Filter filter = new Filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    BufferedImage avgFilterImage = filter.filter();
+                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(avgFilterImage, "jpg", output_file);
 
-//                    BufferedImage avgFilterImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-//                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(avgFilterImage, "jpg", output_file);
-//
-//
-//
-//                    BufferedImage medFilterImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-//                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
-//                    ImageIO.write(medFilterImage, "jpg", output_file);
+
+                    filter = new Filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                    BufferedImage medFilterImage = filter.filter();
+                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(medFilterImage, "jpg", output_file);
 
                 } catch (Exception e) {
                     System.out.println("Error: " + e);

@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 public class ParallelMatrix {
 
     public void doInParallel (BufferedImage originalImage, BufferedImage newImage, String barMessage, // TODO add progress bar somehow
-                              OverHeadInterface.FuncInterface code, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) {
+                              OverHeadInterface.FuncInterface code) {
 
         final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
 
@@ -16,7 +16,7 @@ public class ParallelMatrix {
 
         for (int i = 0; i < MAX_THREADS; i++) {
             threadArray[i] = new ImageThread(originalImage, newImage, sem, progressBar, MAX_THREADS, i, xycounter,
-                    code, color, randomThreshold, filterType, filterWidth, filterHeight, weights, scalar);
+                    code);
             threadArray[i].start();
         }
 
@@ -60,17 +60,10 @@ class ImageThread extends Thread {
 
     // for code lambdas
     private OverHeadInterface.FuncInterface code; // TODO change to lambda object?
-    private String color;
-    private double randomThreshold;
-    private String filterType;
-    private int filterWidth;
-    private int filterHeight;
-    private int[] weights;
-    private double scalar;
 
     // store parameter for later user
     public ImageThread(BufferedImage originalImage, BufferedImage newImage, Semaphore sem, ProgressBar progressBar, int MAX_THREADS, int threadNumber, int[][] xycounter, //for thread objects
-                       OverHeadInterface.FuncInterface code, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) { // for code lambdas
+                       OverHeadInterface.FuncInterface code) { // for code lambdas
 
         //for thread objects
         this.originalImage = originalImage;
@@ -83,13 +76,6 @@ class ImageThread extends Thread {
 
         // for code lambdas
         this.code = code;
-        this.color = color;
-        this.randomThreshold = randomThreshold;
-        this.filterType = filterType;
-        this.filterWidth = filterWidth;
-        this.filterHeight = filterHeight;
-        this.weights = weights;
-        this.scalar = scalar;
     }
 
     public void run() {
@@ -100,7 +86,7 @@ class ImageThread extends Thread {
             for (int x = threadNumber; x < newImage.getWidth(); x += MAX_THREADS) { // TODO change to newImage?
                 for (int y = 0; y < newImage.getHeight(); y ++) {
                     xycounter[x][y]++;
-                    code.function(originalImage, newImage, x, y, color, randomThreshold, filterType, filterWidth, filterHeight, weights, scalar);
+                    code.function(originalImage, newImage, x, y);
 //                    sem.acquire(); // TODO adding this makes the speed go from 61 to 6138ms...
 //                    progressBar.next();
 //                    sem.release();

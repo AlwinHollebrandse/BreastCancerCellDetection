@@ -47,34 +47,39 @@ public class Main {
                     BufferedImage grayImage = grayScale.convertToSingleColor(originalImage, "gray");
                     output_file = new File("grayImage.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(grayImage, "jpg", output_file);
-
-
-                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.05);
-                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
-
-
-
-//                    startTime = System.nanoTime();
-//                    Histogram histogram=new Histogram();
-//                    double[] histogramArray = histogram.createHistogram(grayImage);
-//                    System.out.println("Histogram Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
-//                    String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
-//                    JFreeChart result = histogram.graphHistogram(histogramArray, graphTitle);
-//                    String pathName = graphTitle + ".png";
-//                    ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
 //
+//
+//                    BufferedImage saltAndPepperImage = noiseAdder.createSaltAndPepperNoise(grayImage, 0.05);
+//                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
 
-                    BufferedImage avgFilterImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(avgFilterImage, "jpg", output_file);
+
+                    long startTime = System.nanoTime();
+                    Histogram histogram=new Histogram();
+                    double[] histogramArray = histogram.createHistogram(grayImage);
+                    System.out.println("Histogram Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
+                    String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
+                    JFreeChart result = histogram.graphHistogram(histogramArray, graphTitle);
+                    String pathName = graphTitle + ".png";
+                    ChartUtilities.saveChartAsPNG(new File(pathName), result, 600, 300 );
+
+                    double[] equalizedHistogram = histogram.histogramEqualization(histogramArray);
+                    BufferedImage equalizedImage = histogram.equalizedImage(grayImage, equalizedHistogram);
+                    output_file = new File("equalizedImage.jpg");//"avg - cell1Gray.jpg");
+                    ImageIO.write(equalizedImage, "jpg", output_file);
 
 
 
-                    BufferedImage medFilterImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
-                    ImageIO.write(medFilterImage, "jpg", output_file);
+//                    BufferedImage avgFilterImage = filter.filter(grayImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+//                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(avgFilterImage, "jpg", output_file);
+//
+//
+//
+//                    BufferedImage medFilterImage = filter.filter(grayImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+//                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
+//                    ImageIO.write(medFilterImage, "jpg", output_file);
 
                 } catch (Exception e) {
                     System.out.println("Error: " + e);

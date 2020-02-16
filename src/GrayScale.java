@@ -10,6 +10,7 @@ public class GrayScale {
         void function(BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar);
     }
 
+    // based on https://www.tutorialspoint.com/java_dip/grayscale_conversion.htm
     public FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {
         Color c = new Color(originalImage.getRGB(x, y));
         if ("gray".equalsIgnoreCase(color)) {

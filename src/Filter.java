@@ -5,7 +5,7 @@ import java.util.Collections;
 public class Filter {
 
     private BufferedImage originalImage;
-    private String filterType;
+    private String filterType;  // TODO add enums
     private int filterWidth;
     private int filterHeight;
     private int[] weights;
@@ -14,10 +14,10 @@ public class Filter {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, int x, int y);
     }
 
-    public Filter.FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y) -> {
+    public Filter.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
         ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
         int newPixelValue = -1;
@@ -53,7 +53,6 @@ public class Filter {
     // NOTE a value of 1 for both of these means a 3x3 grid
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
     // TODO enums for filtertype
-//    public BufferedImage filter (BufferedImage image, String filterType, int filterWidth, int filterHeight,int[] weights, double scalar) throws NullPointerException {
     public BufferedImage filter () throws NullPointerException {
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
@@ -81,23 +80,15 @@ public class Filter {
 
         BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - filterWidth, originalImage.getHeight() - filterHeight, originalImage.getType());
 
-        // endingX and Y need to be filterImage.getWidth() and y version - 1.
-        int endingXCoordinate = filterImage.getWidth() - 1;
-        int endingYCoordinate = filterImage.getHeight() - 1;
-
-        int imageTotal = endingXCoordinate * endingYCoordinate;
         String barMessage = "error bar message";
         if ("average".equalsIgnoreCase(filterType)) {
             barMessage = "Average Filter";
         } else if("median".equalsIgnoreCase(filterType)) {
             barMessage = "Median Filter";
         }
-//        ProgressBar bar = new ProgressBar(barMessage, imageTotal);
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
-//        BufferedImage filterImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-        parallelMatrix.doInParallel(originalImage, filterImage, barMessage, getFuncInterface());
+        parallelMatrix.doInParallel(filterImage, barMessage, getFuncInterface());
         return filterImage;
     }
 

@@ -10,10 +10,10 @@ public class HistogramFunctions {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, int x, int y);
     }
 
-    public HistogramFunctions.FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y) -> {
+    public HistogramFunctions.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
         //get original pixel color
         Color c = new Color(originalImage.getRGB(x, y));
         int alpha = c.getAlpha();
@@ -58,7 +58,7 @@ public class HistogramFunctions {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
 //        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
 
-        parallelMatrix.doInParallel(originalImage, equalizedImage, "histogram equalization", getFuncInterface());
+        parallelMatrix.doInParallel(equalizedImage, "histogram equalization", getFuncInterface());
 
         for (int x = 0; x < originalImage.getWidth(); x++) {
             for (int y = 0; y < originalImage.getHeight(); y++) {

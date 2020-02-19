@@ -5,30 +5,30 @@ import java.awt.image.ColorConvertOp;
 public class GrayScale {
 
     private BufferedImage originalImage;
+    private BufferedImage newImage;
     private String color;
 
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage originalImage, BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, int x, int y);
     }
 
     // based on https://www.tutorialspoint.com/java_dip/grayscale_conversion.htm
-    public FuncInterface fobj = (BufferedImage originalImage, BufferedImage newImage, int x, int y) -> {
+    public FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
         Color c = new Color(originalImage.getRGB(x, y));
         if ("gray".equalsIgnoreCase(color)) {
             int gray = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);
-//                    int gray = c.getRed() + c.getGreen() + c.getBlue(); // TODO check what gray to use
-            Color newColor = new Color(gray, gray, gray);
+            Color newColor = new Color(gray, gray, gray, c.getAlpha());
             newImage.setRGB(x, y, newColor.getRGB());
         } else if ("red".equalsIgnoreCase(color)) {
-            Color newColor = new Color(c.getRed(), 0, 0);
+            Color newColor = new Color(c.getRed(), 0, 0, c.getAlpha());
             newImage.setRGB(x, y, newColor.getRGB());
         } else if ("green".equalsIgnoreCase(color)) {
-            Color newColor = new Color(0, c.getGreen(), 0);
+            Color newColor = new Color(0, c.getGreen(), 0, c.getAlpha());
             newImage.setRGB(x, y, newColor.getRGB());
         } else if ("blue".equalsIgnoreCase(color)) {
-            Color newColor = new Color(0, 0, c.getBlue());
+            Color newColor = new Color(0, 0, c.getBlue(), c.getAlpha());
             newImage.setRGB(x, y, newColor.getRGB());
         } else {
             throw new NullPointerException("something went wrong getting the colors");
@@ -46,18 +46,15 @@ public class GrayScale {
     }
 
     public BufferedImage convertToSingleColor() {
-//    public BufferedImage convertToSingleColor(BufferedImage originalImage, String color) {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
-//        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
         BufferedImage grayImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-
-        parallelMatrix.doInParallel(originalImage, grayImage, "Converting to GrayScale", getFuncInterface());
+        parallelMatrix.doInParallel(grayImage, "Converting to GrayScale", getFuncInterface());
         return grayImage;
     }
 
 
     /**
-     * convert a BufferedImage to RGB colourspace
+     * convert a BufferedImage to RGB colorspace
      */
     // from https://blog.idrsolutions.com/2009/10/converting-java-bufferedimage-between-colorspaces/
     public BufferedImage convertToGrayScale(BufferedImage originalImage) { // TODO is this allowed? pretty sure its not

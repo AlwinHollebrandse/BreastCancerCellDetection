@@ -35,14 +35,7 @@ public class NoiseAdder {
             }
         } else if ("gaussian".equalsIgnoreCase(noiseType)) {
             Random r = new Random();
-            double gaussianNoiseTemp = (int)(r.nextGaussian()*sigma);
-            int gaussianNoise;
-            if (gaussianNoiseTemp < 0) {
-                gaussianNoise = (int)(gaussianNoiseTemp - mean);
-            } else {
-                gaussianNoise = (int)(gaussianNoiseTemp + mean);
-            }
-
+            int gaussianNoise = (int)(r.nextGaussian() * sigma + mean);
 
             Color c = new Color(originalImage.getRGB(x, y));
 

@@ -1,5 +1,6 @@
 import java.io.File;
 import java.awt.image.BufferedImage;
+import java.nio.file.Files;
 import javax.imageio.ImageIO;
 
 import org.jfree.chart.JFreeChart;
@@ -31,8 +32,25 @@ public class Main {
             if (files[i].isFile()) { //this line weeds out other directories/folders
                 System.out.println(files[i]);
                 try {
+
+                    // Make directory for the current cell image file.
+                    int startOfPictureName = files[i].toString().lastIndexOf("/");
+                    if (startOfPictureName == -1) {
+                        startOfPictureName = files[i].toString().lastIndexOf("\\");
+                    }
+                    int endOfPictureName = files[i].toString().length() - 4; // remove the ".BMP" from the directory name
+                    String directoryPath = "results/" + files[i].toString().substring(startOfPictureName + 1,endOfPictureName) + "/";
+//                    System.out.println("directoryPath: " + directoryPath);
+                    new File(directoryPath).mkdirs();
+
+                    if (!new File(directoryPath).exists()) {
+                        System.out.println("Could not create specified directory for image: " + files[i].toString() + ". Skipping this image.");
+                        continue;
+                    }
+
+
                     final BufferedImage originalImage = ImageIO.read(files[i]);
-                    File output_file = new File("original.jpg");//"avg - cell1Gray.jpg");
+                    File output_file = new File(directoryPath + "original.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(originalImage, "jpg", output_file);
 
                     // TODO which is better gray?
@@ -42,19 +60,19 @@ public class Main {
 
                     GrayScale grayScale = new GrayScale(originalImage, color);
                     BufferedImage singleColorImage = grayScale.convertToSingleColor();
-                    output_file = new File(color + ".jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File(directoryPath + color + ".jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(singleColorImage, "jpg", output_file);
 
 
 
                     NoiseAdder noiseAdder = new NoiseAdder(singleColorImage, "saltAndPepper",0.05, 0, 0);
                     BufferedImage saltAndPepperImage = noiseAdder.addNoise();
-                    output_file = new File("saltAndPepper.jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File(directoryPath + "saltAndPepper.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(saltAndPepperImage, "jpg", output_file);
 
                     noiseAdder = new NoiseAdder(singleColorImage, "gaussian", 0, 0, 5);
                     BufferedImage gaussianImage = noiseAdder.addNoise();
-                    output_file = new File("gaussian.jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File(directoryPath + "gaussian.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(gaussianImage, "jpg", output_file);
 
 
@@ -66,14 +84,14 @@ public class Main {
 
                     HistogramFunctions histogramFunctions = new HistogramFunctions(singleColorImage, histogram);
                     BufferedImage equalizedImage = histogramFunctions.equalizedImage();
-                    output_file = new File("equalizedImage.jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File(directoryPath + "equalizedImage.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(equalizedImage, "jpg", output_file);
 
                     // print the starting histogram to a file
                     String graphTitle = "histogram";//files[i].toString(); // TODO looks shitty rn
                     JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
                     String pathName = graphTitle + ".png";
-                    ChartUtilities.saveChartAsPNG(new File(pathName), defaultHistogram, 700 , 500 );
+                    ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700 , 500 );
 
                     averageHistogram = histogramFunctions.sumHistograms(averageHistogram);
 
@@ -85,24 +103,24 @@ public class Main {
                     graphTitle = "equalizedHistogram";//files[i].toString(); // TODO looks shitty rn
                     defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
                     pathName = graphTitle + ".png";
-                    ChartUtilities.saveChartAsPNG(new File(pathName), defaultHistogram, 700 , 500 );
+                    ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700 , 500 );
 
 
 
                     Filter filter = new Filter(singleColorImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                     BufferedImage avgFilterImage = filter.filter();
-                    output_file = new File("average.jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File(directoryPath + "average.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(avgFilterImage, "jpg", output_file);
 
                     filter = new Filter(singleColorImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                     BufferedImage medFilterImage = filter.filter();
-                    output_file = new File("median.jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File(directoryPath + "median.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(medFilterImage, "jpg", output_file);
 
 
                     Quantization quantization = new Quantization(singleColorImage, 16, color); // NOTE works nicer with a scale that is a factor of 2
                     BufferedImage quantizationImage = quantization.quantization();
-                    output_file = new File("quantization.jpg");//"avg - cell1Gray.jpg");
+                    output_file = new File(directoryPath + "quantization.jpg");//"avg - cell1Gray.jpg");
                     ImageIO.write(quantizationImage, "jpg", output_file);
                     meanSquaredError += quantization.getMeanSquaredError(quantizationImage);
 

@@ -2,16 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="692c0595-0958-4d0b-b504-a3af3633a8df" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/instructions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/instructions.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/cyl01/average.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/average.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/cyl01/equalizedHistogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/equalizedHistogram.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/cyl01/equalizedImage.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/equalizedImage.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/cyl01/gaussian.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/gaussian.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/cyl01/histogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/histogram.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/cyl01/median.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/median.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/cyl01/quantization.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/quantization.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/cyl01/saltAndPepper.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/saltAndPepper.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/saltAndPepper.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/finalReport/averageHistogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/finalReport/averageHistogram.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -35,29 +33,31 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="gitignore" value="2" />
+          <entry key="gitignore" value="3" />
           <entry key="java" value="54" />
           <entry key="jpg" value="82" />
           <entry key="png" value="16" />
+          <entry key="txt" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Image" value="98" />
           <entry key="JAVA" value="54" />
-          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="PLAIN_TEXT" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="gitignore" value="31" />
-          <entry key="java" value="24971" />
+          <entry key="gitignore" value="40" />
+          <entry key="java" value="25131" />
+          <entry key="txt" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="24971" />
-          <entry key="PLAIN_TEXT" value="31" />
+          <entry key="JAVA" value="25131" />
+          <entry key="PLAIN_TEXT" value="42" />
         </counts>
       </usages-collector>
     </session>
@@ -67,11 +67,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="239" column="13" lean-forward="true" selection-start-line="239" selection-start-column="13" selection-end-line="239" selection-end-column="13" />
+            <state relative-caret-position="296">
+              <caret line="65" lean-forward="true" selection-start-line="65" selection-end-line="65" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="23" column="8" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -150,7 +159,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>origna</find>
       <find>getNeighborGray</find>
       <find>ori</find>
       <find>orign</find>
@@ -180,6 +188,7 @@
       <find>grayImage</find>
       <find>eqaulizationTime</find>
       <find>deleteDir</find>
+      <find>Gaussion</find>
     </findStrings>
     <replaceStrings>
       <replace>done</replace>
@@ -200,7 +209,6 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/ImageOperations.java" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/ProgressBar.java" />
         <option value="$PROJECT_DIR$/src/Histogram.java" />
         <option value="$PROJECT_DIR$/src/GraphHistogram.java" />
@@ -212,6 +220,9 @@
         <option value="$PROJECT_DIR$/src/HistogramFunctions.java" />
         <option value="$PROJECT_DIR$/src/Filter.java" />
         <option value="$PROJECT_DIR$/src/Quantization.java" />
+        <option value="$PROJECT_DIR$/instructions.txt" />
+        <option value="$PROJECT_DIR$/all_Instructions.txt" />
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/Main.java" />
       </list>
     </option>
@@ -256,7 +267,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="setSingleColor&#9;PSI&#9;JAVA://Utility#setSingleColor&#10;setGrayPixelColor&#9;PSI&#9;JAVA://Utility#setGrayPixelColor&#10;resultPixelCol&#9;null&#9;null" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1582497223466" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1582497806830" />
     <property name="last_opened_file_path" value="C:/Program Files/JFreeChart/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
@@ -308,7 +319,7 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1716418" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1716418" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -317,7 +328,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32952183" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32952183" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32952183" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991684" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -382,13 +393,6 @@
     <entry file="file://$PROJECT_DIR$/avg-black-and-white-tips.jpg" />
     <entry file="file://$PROJECT_DIR$/avg-result.jpg" />
     <entry file="file://$PROJECT_DIR$/result.jpg" />
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/ProgressBar.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="359">
@@ -493,10 +497,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/instructions.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="7" selection-start-line="3" selection-start-column="7" selection-end-line="3" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/all_Instructions.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="7" selection-start-line="3" selection-start-column="7" selection-end-line="3" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="8" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="239" column="13" lean-forward="true" selection-start-line="239" selection-start-column="13" selection-end-line="239" selection-end-column="13" />
+        <state relative-caret-position="296">
+          <caret line="65" lean-forward="true" selection-start-line="65" selection-end-line="65" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -60,15 +60,15 @@ public class Main {
             System.exit(1);
         }
 
+        ProgressBar progressBar = new ProgressBar("Processing Images", files.length);
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
 
-//            // TODO add progress bar?
 //            if (i >= 1)
 //                break;
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
-                System.out.println("\n\n" + files[i]);
+//                System.out.println("\n\n" + files[i]);
                 try {
 
                     // Make directory for the current cell image file.
@@ -120,7 +120,7 @@ public class Main {
                         singleColorTime += time;
                         output_file = new File(directoryPath + color + ".jpg");
                         ImageIO.write(workingImage, "jpg", output_file);
-                        System.out.println("Converting to GrayScale" + " Execution time in milliseconds : " + time);
+//                        System.out.println("Converting to GrayScale" + " Execution time in milliseconds : " + time);
                     }
 
 
@@ -133,7 +133,7 @@ public class Main {
                         quantizationTime += time;
                         ImageIO.write(workingImage, "jpg", output_file);
                         meanSquaredError += quantization.getMeanSquaredError(workingImage);
-                        System.out.println("Quantization" + " Execution time in milliseconds : " + time);
+//                        System.out.println("Quantization" + " Execution time in milliseconds : " + time);
                     }
 
 
@@ -145,7 +145,7 @@ public class Main {
                         saltAndPepperTime += time;
                         output_file = new File(directoryPath + "saltAndPepper.jpg");
                         ImageIO.write(workingImage, "jpg", output_file);
-                        System.out.println("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
+//                        System.out.println("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
                     }
 
 
@@ -157,7 +157,7 @@ public class Main {
                         gaussianTime += time;
                         output_file = new File(directoryPath + "gaussian.jpg");
                         ImageIO.write(workingImage, "jpg", output_file);
-                        System.out.println("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
+//                        System.out.println("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
                     }
 
 
@@ -169,7 +169,7 @@ public class Main {
                         linearFilterTime += time;
                         output_file = new File(directoryPath + "average.jpg");
                         ImageIO.write(workingImage, "jpg", output_file);
-                        System.out.println("Average Filter" + " Execution time in milliseconds : " + time);
+//                        System.out.println("Average Filter" + " Execution time in milliseconds : " + time);
                     }
 
 
@@ -181,7 +181,7 @@ public class Main {
                         medianFilterTime += time;
                         output_file = new File(directoryPath + "median.jpg");
                         ImageIO.write(workingImage, "jpg", output_file);
-                        System.out.println("Median Filter" + " Execution time in milliseconds : " + time);
+//                        System.out.println("Median Filter" + " Execution time in milliseconds : " + time);
                     }
 
 
@@ -191,7 +191,7 @@ public class Main {
                         histogram = graphHistogram.createHistogram(workingImage);
                         long time = (System.nanoTime() - startTime) / 1000000;
                         histogramTime += time;
-                        System.out.println("Histogram creation Execution time in milliseconds : " + time);
+//                        System.out.println("Histogram creation Execution time in milliseconds : " + time);
 
                         // print the starting histogram to a file
                         String graphTitle = "histogram";
@@ -213,7 +213,7 @@ public class Main {
                         int[] equalizedHistogram = graphHistogram.createHistogram(workingImage);
                         output_file = new File(directoryPath + "equalizedImage.jpg");
                         ImageIO.write(workingImage, "jpg", output_file);
-                        System.out.println("histogram equalization" + " Execution time in milliseconds : " + time);
+//                        System.out.println("histogram equalization" + " Execution time in milliseconds : " + time);
 
                         // print the equalized histogram to a file
                         String graphTitle = "equalizedHistogram";
@@ -226,43 +226,45 @@ public class Main {
                     System.out.println("Error: " + e);
                 }
             }
-            System.out.println("\n\n Final Metrics:");
-            getAverageHistogram(averageHistogram, files.length);
-//            o Averaged processing time per image per each procedure // TODO what
-            if (singleColorTime > 0) {// TODO write these to teh results final file?
-                System.out.println("Converting to a single color processing time for the entire batch: " + singleColorTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + singleColorTime); // TODO something with the other metric?
-            }
-            if (quantizationTime > 0) {
-                System.out.println("Quantization processing time for the entire batch: " + quantizationTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + quantizationTime); // TODO something with the other metric?\
-                System.out.println("total meanSquaredError: " + meanSquaredError); // TODO whats an acceptable/expected one
-            }
-            if (saltAndPepperTime > 0) {
-                System.out.println("Adding salt and pepper noise processing time for the entire batch: " + saltAndPepperTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + saltAndPepperTime); // TODO something with the other metric?
-            }
-            if (gaussianTime > 0) {
-                System.out.println("Adding gaussian noise processing time for the entire batch: " + gaussianTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + gaussianTime); // TODO something with the other metric?
-            }
-            if (linearFilterTime > 0) {
-                System.out.println("Linear filter processing time for the entire batch: " + linearFilterTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + linearFilterTime); // TODO something with the other metric?
-            }
-            if (medianFilterTime > 0) {
-                System.out.println("Median filter processing time for the entire batch: " + medianFilterTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + medianFilterTime); // TODO something with the other metric?
-            }
-            if (histogramTime > 0) {
-                System.out.println("Histogram creation processing time for the entire batch: " + histogramTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + histogramTime); // TODO something with the other metric?
-            }
-            if (equalizationTime > 0) {
-                System.out.println("Equalized histogram creation processing time for the entire batch: " + equalizationTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + eqaulizationTime); // TODO something with the other metric?
-            }
+            progressBar.next();
         }
+        System.out.println("\n\n Final Metrics:");
+        getAverageHistogram(averageHistogram, files.length);
+//            o Averaged processing time per image per each procedure // TODO what
+        if (singleColorTime > 0) {// TODO write these to teh results final file?
+            System.out.println("Converting to a single color processing time for the entire batch (ms): " + singleColorTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + singleColorTime); // TODO something with the other metric?
+        }
+        if (quantizationTime > 0) {
+            System.out.println("Quantization processing time for the entire batch (ms): " + quantizationTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + quantizationTime); // TODO something with the other metric?\
+            System.out.println("total meanSquaredError: " + meanSquaredError); // TODO whats an acceptable/expected one
+        }
+        if (saltAndPepperTime > 0) {
+            System.out.println("Adding salt and pepper noise processing time for the entire batch (ms): " + saltAndPepperTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + saltAndPepperTime); // TODO something with the other metric?
+        }
+        if (gaussianTime > 0) {
+            System.out.println("Adding gaussian noise processing time for the entire batch (ms): " + gaussianTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + gaussianTime); // TODO something with the other metric?
+        }
+        if (linearFilterTime > 0) {
+            System.out.println("Linear filter processing time for the entire batch (ms): " + linearFilterTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + linearFilterTime); // TODO something with the other metric?
+        }
+        if (medianFilterTime > 0) {
+            System.out.println("Median filter processing time for the entire batch (ms): " + medianFilterTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + medianFilterTime); // TODO something with the other metric?
+        }
+        if (histogramTime > 0) {
+            System.out.println("Histogram creation processing time for the entire batch (ms): " + histogramTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + histogramTime); // TODO something with the other metric?
+        }
+        if (equalizationTime > 0) {
+            System.out.println("Equalized histogram creation processing time for the entire batch (ms): " + equalizationTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + eqaulizationTime); // TODO something with the other metric?
+        }
+        System.out.println("Total RunTime: " + (singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime));
     }
 
 

@@ -2,7 +2,7 @@ import java.awt.image.BufferedImage;
 
 public class ParallelMatrix {
 
-    public void doInParallel (BufferedImage newImage, String barMessage,
+    public void doInParallel (BufferedImage newImage,
                               OverHeadInterface.FuncInterface code) {
 
         final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
@@ -15,13 +15,13 @@ public class ParallelMatrix {
             threadArray[i].start();
         }
 
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
         try {
             //wait for all threads
             for (int i = 0; i < MAX_THREADS; i++) {
                 threadArray[i].join();
             }
-            System.out.println(barMessage + " Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
+//            System.out.println(barMessage + " Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
         } catch (InterruptedException e) {
             System.out.println("threads were interrupted!"); // TODO what happens then?
         }

@@ -75,7 +75,7 @@ public class Quantization {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         BufferedImage quantizationImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        parallelMatrix.doInParallel(quantizationImage, "Quantization", getFuncInterface());
+        parallelMatrix.doInParallel(quantizationImage, getFuncInterface());
         return quantizationImage;
     }
 

@@ -48,7 +48,7 @@ public class GrayScale {
     public BufferedImage convertToSingleColor() {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         BufferedImage grayImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-        parallelMatrix.doInParallel(grayImage, "Converting to GrayScale", getFuncInterface());
+        parallelMatrix.doInParallel(grayImage, getFuncInterface());
         return grayImage;
     }
 

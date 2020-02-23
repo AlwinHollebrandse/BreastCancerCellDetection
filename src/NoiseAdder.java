@@ -70,17 +70,10 @@ public class NoiseAdder {
             throw new IllegalArgumentException("randomThreshold must be between 0-1");
         }
 
-        String barMessage = "error bar message";
-        if ("saltAndPepper".equalsIgnoreCase(noiseType)) {
-            barMessage = "Adding Salt and Pepper Noise";
-        } else if("gaussian".equalsIgnoreCase(noiseType)) {
-            barMessage = "Adding Gaussian Noise";
-        }
-
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         BufferedImage saltAndPepperImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        parallelMatrix.doInParallel(saltAndPepperImage, barMessage, getFuncInterface());
+        parallelMatrix.doInParallel(saltAndPepperImage, getFuncInterface());
         return saltAndPepperImage;
     }
 }

@@ -38,12 +38,11 @@ public class HistogramFunctions {
     }
 
     // created by modifying https://github.com/schauhan19/Histogram-Equalization/blob/master/HistogramEQ.java
-    public BufferedImage equalizedImage() {// TODO the printed time of this one does not account for the look up table creation
+    public BufferedImage equalizedImage() {
+        // Creates the look up table that is used to reassign pixels
         double scaleFactor = 255.0 / (double) (originalImage.getWidth() * originalImage.getHeight());
-
         int sum = 0;
         imageLUT = new int[256];
-        //create the equalized look up table
         for (int i = 0; i < 256; i++) {
             sum += histogram[i];
             int valr = (int) (sum * scaleFactor);
@@ -56,27 +55,7 @@ public class HistogramFunctions {
         BufferedImage equalizedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
-//        ProgressBar bar = new ProgressBar("Converting to GrayScale", originalImage.getWidth() * originalImage.getHeight());
-
-        parallelMatrix.doInParallel(equalizedImage, "histogram equalization", getFuncInterface());
-
-        for (int x = 0; x < originalImage.getWidth(); x++) {
-            for (int y = 0; y < originalImage.getHeight(); y++) {
-
-                //get original pixel color
-                Color c = new Color(originalImage.getRGB(x, y));
-                int alpha = c.getAlpha();
-                int gray = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);
-
-                // Use the look up table to get the equalized value
-                int nVal = imageLUT[gray];
-
-                // set the new value
-                Color newColor = new Color(nVal, nVal, nVal, alpha);
-                equalizedImage.setRGB(x, y, newColor.getRGB());
-            }
-        }
-
+        parallelMatrix.doInParallel(equalizedImage, getFuncInterface());
         return equalizedImage;
     }
 

@@ -80,15 +80,8 @@ public class Filter {
 
         BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - filterWidth, originalImage.getHeight() - filterHeight, originalImage.getType());
 
-        String barMessage = "error bar message";
-        if ("average".equalsIgnoreCase(filterType)) {
-            barMessage = "Average Filter";
-        } else if("median".equalsIgnoreCase(filterType)) {
-            barMessage = "Median Filter";
-        }
-
         ParallelMatrix parallelMatrix = new ParallelMatrix();
-        parallelMatrix.doInParallel(filterImage, barMessage, getFuncInterface());
+        parallelMatrix.doInParallel(filterImage, getFuncInterface());
         return filterImage;
     }
 

@@ -1,5 +1,8 @@
 import java.io.File;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 import org.jfree.chart.JFreeChart;
@@ -12,33 +15,60 @@ public class Main {
 
         String imageFilesLocation = args[0];
         String instructions = args[1];
-        // TODO add error handling
 
         System.out.println("imageFilesLocation: " + imageFilesLocation);
         System.out.println("instructions: " + instructions);
 
         String color = "gray";
         int singleColorTime = 0;
+        int quantizationTime = 0;
         int saltAndPepperTime = 0;
         int gaussianTime = 0;
-        int histogramTime = 0;
-        int eqaulizationTime = 0;
         int linearFilterTime = 0;
         int medianFilterTime = 0;
-        int quantizationTime = 0;
-
+        int histogramTime = 0;
+        int equalizationTime = 0;
         int meanSquaredError = 0;
         int[] averageHistogram = new int[256];
-        File path = new File(imageFilesLocation); // TODO like a try catch or such
-        File [] files = path.listFiles();
 
+        // the file containing all of the images error prevention
+        File path = new File(imageFilesLocation);
+        if (!path.exists()) {
+            System.out.println("Enter a valid path that holds the images");
+            System.exit(1);
+        }
+        File [] files = path.listFiles();
+        if (files.length <= 0) {
+            System.out.println("The provided image folder has no images");
+            System.exit(1);
+        }
+
+        // the file containing the instructions logic
+        ArrayList<String> instructionList = new ArrayList<>();
+        try {
+            Scanner s = new Scanner(new File(instructions));
+            while (s.hasNext()) {
+                instructionList.add(s.next());
+            }
+            s.close();
+        } catch (IOException ex) {
+            System.out.println("Enter a valid path that has operation instructions");
+            System.exit(1);
+        }
+        if (instructionList.size() <= 0) {
+            System.out.println("The provided instruction file has no operation instructions");
+            System.exit(1);
+        }
+
+        // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
 
-            if (i >= 1)
-                break;
+//            // TODO add progress bar?
+//            if (i >= 1)
+//                break;
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
-                System.out.println(files[i]);
+                System.out.println("\n\n" + files[i]);
                 try {
 
                     // Make directory for the current cell image file.
@@ -48,133 +78,165 @@ public class Main {
                     }
                     int endOfPictureName = files[i].toString().length() - 4; // remove the ".BMP" from the directory name
                     String directoryPath = "results/" + files[i].toString().substring(startOfPictureName + 1,endOfPictureName) + "/";
-//                    System.out.println("directoryPath: " + directoryPath);
-                    new File(directoryPath).mkdirs();
 
+                    File imageResults = new File(directoryPath);
+                    // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                    if (imageResults.exists()) {
+                        if (!deleteDir(imageResults)) {
+                            System.out.println("Could not delete an old run's folder for image: " + files[i].toString() + ". Skipping this image.");
+                            continue;
+                        }
+                    }
+
+                    // once the old folder was deleted (if needed) make a fresh one.
+                    imageResults.mkdirs();
                     if (!new File(directoryPath).exists()) {
                         System.out.println("Could not create specified directory for image: " + files[i].toString() + ". Skipping this image.");
                         continue;
                     }
 
+                    //set up global vars for all image operations
+                    int[] histogram = null;
+                    BufferedImage workingImage;
 
+                    // add the original image to the relevant result folder
                     final BufferedImage originalImage = ImageIO.read(files[i]);
+                    workingImage = originalImage;// TODO does this pass by refrecen?
                     File output_file = new File(directoryPath + "original.jpg");
                     ImageIO.write(originalImage, "jpg", output_file);
 
-                    // TODO which is better gray?
+
+                    // PERFORM REQUESTED IMAGE OPERATIONS
+                    if (instructionList.contains("SingleColor")) {
+                        // TODO which is better gray?
 //                    BufferedImage singleColorImage = grayScale.convertToGrayScale(originalImage);
-//                    output_file = new File("grayscale.jpg");//"avg - cell1Gray.jpg");
+//                    output_file = new File("grayscale.jpg");
 //                    ImageIO.write(singleColorImage, "jpg", output_file);
 
-                    long startTime = System.nanoTime();
-                    GrayScale grayScale = new GrayScale(originalImage, color);
-                    BufferedImage singleColorImage = grayScale.convertToSingleColor();
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    singleColorTime += time;
-                    output_file = new File(directoryPath + color + ".jpg");
-                    ImageIO.write(singleColorImage, "jpg", output_file);
-                    System.out.println("Converting to GrayScale" + " Execution time in milliseconds : " + time);
+                        long startTime = System.nanoTime();
+                        GrayScale grayScale = new GrayScale(originalImage, color);
+                        workingImage = grayScale.convertToSingleColor();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        singleColorTime += time;
+                        output_file = new File(directoryPath + color + ".jpg");
+                        ImageIO.write(workingImage, "jpg", output_file);
+                        System.out.println("Converting to GrayScale" + " Execution time in milliseconds : " + time);
+                    }
 
 
-
-                    long startTime = System.nanoTime();
-                    NoiseAdder noiseAdder = new NoiseAdder(singleColorImage, "saltAndPepper",0.05, 0, 0);
-                    BufferedImage saltAndPepperImage = noiseAdder.addNoise();
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    saltAndPepperTime += time;
-                    output_file = new File(directoryPath + "saltAndPepper.jpg");
-                    ImageIO.write(saltAndPepperImage, "jpg", output_file);
-                    System.out.println("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
-
-                    long startTime = System.nanoTime();
-                    noiseAdder = new NoiseAdder(singleColorImage, "gaussian", 0, 0, 5);
-                    BufferedImage gaussianImage = noiseAdder.addNoise();
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    gaussianTime += time;
-                    output_file = new File(directoryPath + "gaussian.jpg");
-                    ImageIO.write(gaussianImage, "jpg", output_file);
-                    System.out.println("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
+                    if (instructionList.contains("Quantization")) {
+                        long startTime = System.nanoTime();
+                        Quantization quantization = new Quantization(workingImage, 16, color); // NOTE works nicer with a scale that is a factor of 2
+                        workingImage = quantization.quantization();
+                        output_file = new File(directoryPath + "quantization.jpg");
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        quantizationTime += time;
+                        ImageIO.write(workingImage, "jpg", output_file);
+                        meanSquaredError += quantization.getMeanSquaredError(workingImage);
+                        System.out.println("Quantization" + " Execution time in milliseconds : " + time);
+                    }
 
 
+                    if (instructionList.contains("SaltAndPepper")) {
+                        long startTime = System.nanoTime();
+                        NoiseAdder noiseAdder = new NoiseAdder(workingImage, "saltAndPepper", 0.05, 0, 0); // TODO do these params come from the instruction file?
+                        workingImage = noiseAdder.addNoise();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        saltAndPepperTime += time;
+                        output_file = new File(directoryPath + "saltAndPepper.jpg");
+                        ImageIO.write(workingImage, "jpg", output_file);
+                        System.out.println("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
+                    }
 
 
-                    long startTime = System.nanoTime();
-                    GraphHistogram graphHistogram = new GraphHistogram();
-                    int[] histogram = graphHistogram.createHistogram(singleColorImage);
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    histogramTime += time;
-                    System.out.println("Histogram creation Execution time in milliseconds : " + time);
-
-                    // print the starting histogram to a file
-                    String graphTitle = "histogram";
-                    JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
-                    String pathName = graphTitle + ".png";
-                    ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700 , 500 );
-                    HistogramFunctions histogramFunctions = new HistogramFunctions(singleColorImage, histogram);
-                    averageHistogram = histogramFunctions.sumHistograms(averageHistogram);
+                    if (instructionList.contains("Gaussian")) {
+                        long startTime = System.nanoTime();
+                        NoiseAdder noiseAdder = new NoiseAdder(workingImage, "gaussian", 0, 0, 5);
+                        workingImage = noiseAdder.addNoise();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        gaussianTime += time;
+                        output_file = new File(directoryPath + "gaussian.jpg");
+                        ImageIO.write(workingImage, "jpg", output_file);
+                        System.out.println("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
+                    }
 
 
-                    long startTime = System.nanoTime();
-                    HistogramFunctions histogramFunctions = new HistogramFunctions(singleColorImage, histogram);
-                    BufferedImage equalizedImage = histogramFunctions.equalizedImage();
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    eqaulizationTime += time;
-                    GraphHistogram graphHistogram = new GraphHistogram();
-                    histogram = graphHistogram.createHistogram(equalizedImage);
-                    output_file = new File(directoryPath + "equalizedImage.jpg");
-                    ImageIO.write(equalizedImage, "jpg", output_file);
-                    System.out.println("histogram equalization" + " Execution time in milliseconds : " + time);
-
-                    // print the equalized histogram to a file
-                    String graphTitle = "equalizedHistogram";
-                    JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
-                    String pathName = graphTitle + ".png";
-                    ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700 , 500 );
+                    if (instructionList.contains("LinearFilter")) {
+                        long startTime = System.nanoTime();
+                        Filter filter = new Filter(workingImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                        workingImage = filter.filter();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        linearFilterTime += time;
+                        output_file = new File(directoryPath + "average.jpg");
+                        ImageIO.write(workingImage, "jpg", output_file);
+                        System.out.println("Average Filter" + " Execution time in milliseconds : " + time);
+                    }
 
 
-                    long startTime = System.nanoTime();
-                    Filter filter = new Filter(singleColorImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-                    BufferedImage avgFilterImage = filter.filter();
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    linearFilterTime += time;
-                    output_file = new File(directoryPath + "average.jpg");
-                    ImageIO.write(avgFilterImage, "jpg", output_file);
-                    System.out.println("Average Filter" + " Execution time in milliseconds : " + time);
+                    if (instructionList.contains("MedianFilter")) {
+                        long startTime = System.nanoTime();
+                        Filter filter = new Filter(workingImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                        workingImage = filter.filter();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        medianFilterTime += time;
+                        output_file = new File(directoryPath + "median.jpg");
+                        ImageIO.write(workingImage, "jpg", output_file);
+                        System.out.println("Median Filter" + " Execution time in milliseconds : " + time);
+                    }
 
 
-                    long startTime = System.nanoTime();
-                    filter = new Filter(singleColorImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
-                    BufferedImage medFilterImage = filter.filter();
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    medianFilterTime += time;
-                    output_file = new File(directoryPath + "median.jpg");
-                    ImageIO.write(medFilterImage, "jpg", output_file);
-                    System.out.println("Median Filter" + " Execution time in milliseconds : " + time);
+                    if (instructionList.contains("Histogram")) {
+                        long startTime = System.nanoTime();
+                        GraphHistogram graphHistogram = new GraphHistogram();
+                        histogram = graphHistogram.createHistogram(workingImage);
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        histogramTime += time;
+                        System.out.println("Histogram creation Execution time in milliseconds : " + time);
+
+                        // print the starting histogram to a file
+                        String graphTitle = "histogram";
+                        JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
+                        String pathName = graphTitle + ".png";
+                        ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700, 500);
+                        HistogramFunctions histogramFunctions = new HistogramFunctions(workingImage, histogram);
+                        averageHistogram = histogramFunctions.sumHistograms(averageHistogram);
+                    }
 
 
+                    if (instructionList.contains("HistogramEqualization") && histogram != null) {
+                        long startTime = System.nanoTime();
+                        HistogramFunctions histogramFunctions = new HistogramFunctions(workingImage, histogram);
+                        workingImage = histogramFunctions.equalizedImage();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        equalizationTime += time;
+                        GraphHistogram graphHistogram = new GraphHistogram();
+                        int[] equalizedHistogram = graphHistogram.createHistogram(workingImage);
+                        output_file = new File(directoryPath + "equalizedImage.jpg");
+                        ImageIO.write(workingImage, "jpg", output_file);
+                        System.out.println("histogram equalization" + " Execution time in milliseconds : " + time);
 
-
-                    long startTime = System.nanoTime();
-                    Quantization quantization = new Quantization(singleColorImage, 16, color); // NOTE works nicer with a scale that is a factor of 2
-                    BufferedImage quantizationImage = quantization.quantization();
-                    output_file = new File(directoryPath + "quantization.jpg");
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    quantizationTime += time;
-                    ImageIO.write(quantizationImage, "jpg", output_file);
-                    meanSquaredError += quantization.getMeanSquaredError(quantizationImage);
-                    System.out.println("Quantization" + " Execution time in milliseconds : " + time);
+                        // print the equalized histogram to a file
+                        String graphTitle = "equalizedHistogram";
+                        JFreeChart defaultHistogram = graphHistogram.graphHistogram(equalizedHistogram, graphTitle);
+                        String pathName = graphTitle + ".png";
+                        ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700, 500);
+                    }
 
                 } catch (Exception e) {
                     System.out.println("Error: " + e);
                 }
             }
+            System.out.println("\n\n Final Metrics:");
             getAverageHistogram(averageHistogram, files.length);
-            System.out.println("total meanSquaredError: " + meanSquaredError);
-
 //            o Averaged processing time per image per each procedure // TODO what
-            if (singleColorTime > 0) {
+            if (singleColorTime > 0) {// TODO write these to teh results final file?
                 System.out.println("Converting to a single color processing time for the entire batch: " + singleColorTime);
 //                System.out.println("Converting to a single color processing time for the entire batch: " + singleColorTime); // TODO something with the other metric?
+            }
+            if (quantizationTime > 0) {
+                System.out.println("Quantization processing time for the entire batch: " + quantizationTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + quantizationTime); // TODO something with the other metric?\
+                System.out.println("total meanSquaredError: " + meanSquaredError); // TODO whats an acceptable/expected one
             }
             if (saltAndPepperTime > 0) {
                 System.out.println("Adding salt and pepper noise processing time for the entire batch: " + saltAndPepperTime);
@@ -184,14 +246,6 @@ public class Main {
                 System.out.println("Adding gaussian noise processing time for the entire batch: " + gaussianTime);
 //                System.out.println("Converting to a single color processing time for the entire batch: " + gaussianTime); // TODO something with the other metric?
             }
-            if (histogramTime > 0) {
-                System.out.println("Histogram creation processing time for the entire batch: " + histogramTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + histogramTime); // TODO something with the other metric?
-            }
-            if (eqaulizationTime > 0) {
-                System.out.println("Equalized histogram creation processing time for the entire batch: " + eqaulizationTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + eqaulizationTime); // TODO something with the other metric?
-            }
             if (linearFilterTime > 0) {
                 System.out.println("Linear filter processing time for the entire batch: " + linearFilterTime);
 //                System.out.println("Converting to a single color processing time for the entire batch: " + linearFilterTime); // TODO something with the other metric?
@@ -200,13 +254,14 @@ public class Main {
                 System.out.println("Median filter processing time for the entire batch: " + medianFilterTime);
 //                System.out.println("Converting to a single color processing time for the entire batch: " + medianFilterTime); // TODO something with the other metric?
             }
-            if (quantizationTime > 0) {
-                System.out.println("Quantization processing time for the entire batch: " + quantizationTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + quantizationTime); // TODO something with the other metric?
+            if (histogramTime > 0) {
+                System.out.println("Histogram creation processing time for the entire batch: " + histogramTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + histogramTime); // TODO something with the other metric?
             }
-
-            // TODO add error handling if not a file
-
+            if (equalizationTime > 0) {
+                System.out.println("Equalized histogram creation processing time for the entire batch: " + equalizationTime);
+//                System.out.println("Converting to a single color processing time for the entire batch: " + eqaulizationTime); // TODO something with the other metric?
+            }
         }
     }
 
@@ -220,10 +275,29 @@ public class Main {
             GraphHistogram graphHistogram = new GraphHistogram();
             String graphTitle = "averageHistogram";
             JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
-            String pathName = "results/finalReport/" + graphTitle + ".png";
-            ChartUtilities.saveChartAsPNG(new File(pathName), defaultHistogram, 700, 500);
+            String directoryPath = "results/finalReport/";
+            new File(directoryPath).mkdirs();
+            File output_file = new File(directoryPath + graphTitle + ".png");
+            ChartUtilities.saveChartAsPNG(output_file, defaultHistogram, 700, 500);
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            System.out.println("Could not create specified directory for the average histogram. Skipping this operation. Error: " + e);
         }
+    }
+
+    private static boolean deleteDir(File dir) {
+        File[] files = dir.listFiles();
+
+        try {
+            for (File myFile : files) {
+                if (myFile.isDirectory()) {
+                    deleteDir(myFile);
+                }
+                myFile.delete();
+
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+        return true;
     }
 }

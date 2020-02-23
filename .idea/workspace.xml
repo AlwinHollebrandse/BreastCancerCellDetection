@@ -3,15 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="692c0595-0958-4d0b-b504-a3af3633a8df" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/instructions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/instructions.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/average.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/average.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/cyl01/equalizedHistogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/equalizedHistogram.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/cyl01/equalizedImage.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/equalizedImage.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Filter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Filter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GrayScale.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GrayScale.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HistogramFunctions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HistogramFunctions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/gaussian.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/gaussian.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/histogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/histogram.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/median.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/median.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/quantization.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/quantization.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/saltAndPepper.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/NoiseAdder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/NoiseAdder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ParallelMatrix.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ParallelMatrix.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Quantization.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Quantization.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -50,12 +51,12 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gitignore" value="31" />
-          <entry key="java" value="23173" />
+          <entry key="java" value="24971" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="23173" />
+          <entry key="JAVA" value="24971" />
           <entry key="PLAIN_TEXT" value="31" />
         </counts>
       </usages-collector>
@@ -66,8 +67,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="746">
-              <caret line="171" column="46" selection-start-line="171" selection-start-column="46" selection-end-line="171" selection-end-column="46" />
+            <state relative-caret-position="358">
+              <caret line="239" column="13" lean-forward="true" selection-start-line="239" selection-start-column="13" selection-end-line="239" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -79,7 +80,7 @@
         <entry file="file://$PROJECT_DIR$/src/Quantization.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="580">
-              <caret line="77" column="54" lean-forward="true" selection-start-line="77" selection-start-column="54" selection-end-line="77" selection-end-column="54" />
+              <caret line="77" column="54" selection-start-line="77" selection-start-column="54" selection-end-line="77" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -88,7 +89,7 @@
         <entry file="file://$PROJECT_DIR$/src/GrayScale.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="489">
-              <caret line="50" column="46" lean-forward="true" selection-start-line="50" selection-start-column="46" selection-end-line="50" selection-end-column="46" />
+              <caret line="50" column="46" selection-start-line="50" selection-start-column="46" selection-end-line="50" selection-end-column="46" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -149,8 +150,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>done1</find>
-      <find>grey</find>
       <find>origna</find>
       <find>getNeighborGray</find>
       <find>ori</find>
@@ -179,6 +178,8 @@
       <find>setSingleColor</find>
       <find>FuncInterface</find>
       <find>grayImage</find>
+      <find>eqaulizationTime</find>
+      <find>deleteDir</find>
     </findStrings>
     <replaceStrings>
       <replace>done</replace>
@@ -255,7 +256,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="setSingleColor&#9;PSI&#9;JAVA://Utility#setSingleColor&#10;setGrayPixelColor&#9;PSI&#9;JAVA://Utility#setGrayPixelColor&#10;resultPixelCol&#9;null&#9;null" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1582488673996" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1582497223466" />
     <property name="last_opened_file_path" value="C:/Program Files/JFreeChart/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
@@ -307,7 +308,7 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1716418" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1716418" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -316,7 +317,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32952183" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32952183" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32952183" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991684" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -448,7 +449,7 @@
     <entry file="file://$PROJECT_DIR$/src/GrayScale.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="489">
-          <caret line="50" column="46" lean-forward="true" selection-start-line="50" selection-start-column="46" selection-end-line="50" selection-end-column="46" />
+          <caret line="50" column="46" selection-start-line="50" selection-start-column="46" selection-end-line="50" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -488,14 +489,14 @@
     <entry file="file://$PROJECT_DIR$/src/Quantization.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="580">
-          <caret line="77" column="54" lean-forward="true" selection-start-line="77" selection-start-column="54" selection-end-line="77" selection-end-column="54" />
+          <caret line="77" column="54" selection-start-line="77" selection-start-column="54" selection-end-line="77" selection-end-column="54" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="746">
-          <caret line="171" column="46" selection-start-line="171" selection-start-column="46" selection-end-line="171" selection-end-column="46" />
+        <state relative-caret-position="358">
+          <caret line="239" column="13" lean-forward="true" selection-start-line="239" selection-start-column="13" selection-end-line="239" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

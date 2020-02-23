@@ -19,6 +19,7 @@ public class Main {
         System.out.println("imageFilesLocation: " + imageFilesLocation);
         System.out.println("instructions: " + instructions);
 
+        String resultFileName;
         String color = "gray";
         int singleColorTime = 0;
         int quantizationTime = 0;
@@ -30,6 +31,8 @@ public class Main {
         int equalizationTime = 0;
         int meanSquaredError = 0;
         int[] averageHistogram = new int[256];
+
+        long realStartTime = System.nanoTime();
 
         // the file containing all of the images error prevention
         File path = new File(imageFilesLocation);
@@ -80,15 +83,8 @@ public class Main {
                     String directoryPath = "results/" + files[i].toString().substring(startOfPictureName + 1,endOfPictureName) + "/";
 
                     File imageResults = new File(directoryPath);
-                    // delete the image result folder if it already existed. This way, no remnants from old runs remain
-                    if (imageResults.exists()) {
-                        if (!deleteDir(imageResults)) {
-                            System.out.println("Could not delete an old run's folder for image: " + files[i].toString() + ". Skipping this image.");
-                            continue;
-                        }
-                    }
 
-                    // once the old folder was deleted (if needed) make a fresh one.
+                    // (if needed) make a new output folder for the current imagee.
                     imageResults.mkdirs();
                     if (!new File(directoryPath).exists()) {
                         System.out.println("Could not create specified directory for image: " + files[i].toString() + ". Skipping this image.");
@@ -106,7 +102,9 @@ public class Main {
                     ImageIO.write(originalImage, "jpg", output_file);
 
 
-                    // PERFORM REQUESTED IMAGE OPERATIONS
+                    ///////////////////////////////////////////// PERFORM REQUESTED IMAGE OPERATIONS ////////////////////////////////////////////////////////
+
+                    resultFileName = directoryPath + color + ".jpg";
                     if (instructionList.contains("SingleColor")) {
                         // TODO which is better gray?
 //                    BufferedImage singleColorImage = grayScale.convertToGrayScale(originalImage);
@@ -118,73 +116,134 @@ public class Main {
                         workingImage = grayScale.convertToSingleColor();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         singleColorTime += time;
-                        output_file = new File(directoryPath + color + ".jpg");
+                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
 //                        System.out.println("Converting to GrayScale" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old SingleColor of: " + files[i].toString());
+                            }
+                        }
                     }
 
 
+                    resultFileName = directoryPath + "quantization.jpg";
                     if (instructionList.contains("Quantization")) {
                         long startTime = System.nanoTime();
                         Quantization quantization = new Quantization(workingImage, 16, color); // NOTE works nicer with a scale that is a factor of 2
                         workingImage = quantization.quantization();
-                        output_file = new File(directoryPath + "quantization.jpg");
+                        output_file = new File(resultFileName);
                         long time = (System.nanoTime() - startTime) / 1000000;
                         quantizationTime += time;
                         ImageIO.write(workingImage, "jpg", output_file);
                         meanSquaredError += quantization.getMeanSquaredError(workingImage);
 //                        System.out.println("Quantization" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old Quantization of: " + files[i].toString());
+                            }
+                        }
                     }
 
 
+                    resultFileName = directoryPath + "saltAndPepper.jpg";
                     if (instructionList.contains("SaltAndPepper")) {
                         long startTime = System.nanoTime();
                         NoiseAdder noiseAdder = new NoiseAdder(workingImage, "saltAndPepper", 0.05, 0, 0); // TODO do these params come from the instruction file?
                         workingImage = noiseAdder.addNoise();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         saltAndPepperTime += time;
-                        output_file = new File(directoryPath + "saltAndPepper.jpg");
+                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
 //                        System.out.println("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old SaltAndPepperNoise of: " + files[i].toString());
+                            }
+                        }
                     }
 
 
+                    resultFileName = directoryPath + "gaussian.jpg";
                     if (instructionList.contains("Gaussian")) {
                         long startTime = System.nanoTime();
                         NoiseAdder noiseAdder = new NoiseAdder(workingImage, "gaussian", 0, 0, 5);
                         workingImage = noiseAdder.addNoise();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         gaussianTime += time;
-                        output_file = new File(directoryPath + "gaussian.jpg");
+                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
 //                        System.out.println("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old GaussianNoise of: " + files[i].toString());
+                            }
+                        }
                     }
 
 
+                    resultFileName = directoryPath + "average.jpg";
                     if (instructionList.contains("LinearFilter")) {
                         long startTime = System.nanoTime();
                         Filter filter = new Filter(workingImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         linearFilterTime += time;
-                        output_file = new File(directoryPath + "average.jpg");
+                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
 //                        System.out.println("Average Filter" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old LinearFilter of: " + files[i].toString());
+                            }
+                        }
                     }
 
 
+                    resultFileName = directoryPath + "median.jpg";
                     if (instructionList.contains("MedianFilter")) {
                         long startTime = System.nanoTime();
                         Filter filter = new Filter(workingImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         medianFilterTime += time;
-                        output_file = new File(directoryPath + "median.jpg");
+                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
 //                        System.out.println("Median Filter" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old MedianFilter of: " + files[i].toString());
+                            }
+                        }
                     }
 
 
+                    String graphTitle = "histogram";
+                    resultFileName = graphTitle + ".png";
                     if (instructionList.contains("Histogram")) {
                         long startTime = System.nanoTime();
                         GraphHistogram graphHistogram = new GraphHistogram();
@@ -194,15 +253,25 @@ public class Main {
 //                        System.out.println("Histogram creation Execution time in milliseconds : " + time);
 
                         // print the starting histogram to a file
-                        String graphTitle = "histogram";
                         JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
-                        String pathName = graphTitle + ".png";
+                        String pathName = resultFileName;
                         ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700, 500);
                         HistogramFunctions histogramFunctions = new HistogramFunctions(workingImage, histogram);
                         averageHistogram = histogramFunctions.sumHistograms(averageHistogram);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old Histogram of: " + files[i].toString());
+                            }
+                        }
                     }
 
 
+                    resultFileName = directoryPath + "equalizedImage.jpg";
+                    graphTitle = "equalizedHistogram";
                     if (instructionList.contains("HistogramEqualization") && histogram != null) {
                         long startTime = System.nanoTime();
                         HistogramFunctions histogramFunctions = new HistogramFunctions(workingImage, histogram);
@@ -211,24 +280,41 @@ public class Main {
                         equalizationTime += time;
                         GraphHistogram graphHistogram = new GraphHistogram();
                         int[] equalizedHistogram = graphHistogram.createHistogram(workingImage);
-                        output_file = new File(directoryPath + "equalizedImage.jpg");
+                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
 //                        System.out.println("histogram equalization" + " Execution time in milliseconds : " + time);
 
                         // print the equalized histogram to a file
-                        String graphTitle = "equalizedHistogram";
                         JFreeChart defaultHistogram = graphHistogram.graphHistogram(equalizedHistogram, graphTitle);
                         String pathName = graphTitle + ".png";
                         ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700, 500);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old HistogramEqualization of: " + files[i].toString());
+                            }
+                        }
+
+                        // need to delete the histogram too, and not only the equalized image
+                        imageResult = new File(graphTitle + ".png");
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old HistogramEqualization of: " + files[i].toString());
+                            }
+                        }
                     }
 
-                } catch (Exception e) {
-                    System.out.println("Error: " + e);
+                } catch (Exception ex) {
+                    System.out.println("\nThere was an error with image " + files[i].toString() + ": " + ex);
                 }
             }
             progressBar.next();
         }
-        System.out.println("\n\n Final Metrics:");
+        System.out.println("\n\nFinal Metrics:");
         getAverageHistogram(averageHistogram, files.length);
 //            o Averaged processing time per image per each procedure // TODO what
         if (singleColorTime > 0) {// TODO write these to teh results final file?
@@ -265,8 +351,23 @@ public class Main {
 //                System.out.println("Converting to a single color processing time for the entire batch: " + eqaulizationTime); // TODO something with the other metric?
         }
         System.out.println("Total RunTime: " + (singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime));
+        System.out.println("Real run time: " + (System.nanoTime() - realStartTime) / 1000000);
     }
 
+
+//    // sample output. TODO deletet after report
+//    Final Metrics:
+//    Converting to a single color processing time for the entire batch (ms): 21191
+//    Quantization processing time for the entire batch (ms): 23387
+//    total meanSquaredError: 2147483647
+//    Adding salt and pepper noise processing time for the entire batch (ms): 25464
+//    Adding gaussian noise processing time for the entire batch (ms): 35940
+//    Linear filter processing time for the entire batch (ms): 32133
+//    Median filter processing time for the entire batch (ms): 43217
+//    Histogram creation processing time for the entire batch (ms): 3248
+//    Equalized histogram creation processing time for the entire batch (ms): 16247
+//    Total RunTime: 200827
+//    Real run time: 298155
 
     private static void getAverageHistogram(int[] histogram, int divisor) {
         for (int i = 0; i < histogram.length; i++) {

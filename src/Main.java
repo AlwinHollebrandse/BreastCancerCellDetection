@@ -81,6 +81,7 @@ public class Main {
                     }
                     int endOfPictureName = files[i].toString().length() - 4; // remove the ".BMP" from the directory name
                     String directoryPath = "results/" + files[i].toString().substring(startOfPictureName + 1,endOfPictureName) + "/";
+//                    System.out.println("directoryPath: " + directoryPath);
 
                     File imageResults = new File(directoryPath);
 
@@ -243,7 +244,7 @@ public class Main {
 
 
                     String graphTitle = "histogram";
-                    resultFileName = graphTitle + ".png";
+                    resultFileName = directoryPath + graphTitle + ".png";
                     if (instructionList.contains("Histogram")) {
                         long startTime = System.nanoTime();
                         GraphHistogram graphHistogram = new GraphHistogram();
@@ -253,9 +254,8 @@ public class Main {
 //                        System.out.println("Histogram creation Execution time in milliseconds : " + time);
 
                         // print the starting histogram to a file
-                        JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
-                        String pathName = resultFileName;
-                        ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700, 500);
+                        JFreeChart histogramGraph = graphHistogram.graphHistogram(histogram, graphTitle);
+                        ChartUtilities.saveChartAsPNG(new File(resultFileName), histogramGraph, 700, 500);
                         HistogramFunctions histogramFunctions = new HistogramFunctions(workingImage, histogram);
                         averageHistogram = histogramFunctions.sumHistograms(averageHistogram);
                     } else {
@@ -272,7 +272,11 @@ public class Main {
 
                     resultFileName = directoryPath + "equalizedImage.jpg";
                     graphTitle = "equalizedHistogram";
-                    if (instructionList.contains("HistogramEqualization") && histogram != null) {
+                    if (instructionList.contains("HistogramEqualization")) {
+                        if (histogram == null) {
+                            GraphHistogram graphHistogram = new GraphHistogram();
+                            histogram = graphHistogram.createHistogram(workingImage);
+                        }
                         long startTime = System.nanoTime();
                         HistogramFunctions histogramFunctions = new HistogramFunctions(workingImage, histogram);
                         workingImage = histogramFunctions.equalizedImage();
@@ -285,9 +289,8 @@ public class Main {
 //                        System.out.println("histogram equalization" + " Execution time in milliseconds : " + time);
 
                         // print the equalized histogram to a file
-                        JFreeChart defaultHistogram = graphHistogram.graphHistogram(equalizedHistogram, graphTitle);
-                        String pathName = graphTitle + ".png";
-                        ChartUtilities.saveChartAsPNG(new File(directoryPath + pathName), defaultHistogram, 700, 500);
+                        JFreeChart equalizedHistogramGraph = graphHistogram.graphHistogram(equalizedHistogram, graphTitle);
+                        ChartUtilities.saveChartAsPNG(new File(directoryPath + graphTitle + ".png"), equalizedHistogramGraph, 700, 500);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
@@ -299,7 +302,7 @@ public class Main {
                         }
 
                         // need to delete the histogram too, and not only the equalized image
-                        imageResult = new File(graphTitle + ".png");
+                        imageResult = new File(directoryPath + graphTitle + ".png");
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
@@ -310,6 +313,7 @@ public class Main {
 
                 } catch (Exception ex) {
                     System.out.println("\nThere was an error with image " + files[i].toString() + ": " + ex);
+                    ex.printStackTrace();
                 }
             }
             progressBar.next();
@@ -356,18 +360,18 @@ public class Main {
 
 
 //    // sample output. TODO deletet after report
-//    Final Metrics:
-//    Converting to a single color processing time for the entire batch (ms): 21191
-//    Quantization processing time for the entire batch (ms): 23387
-//    total meanSquaredError: 2147483647
-//    Adding salt and pepper noise processing time for the entire batch (ms): 25464
-//    Adding gaussian noise processing time for the entire batch (ms): 35940
-//    Linear filter processing time for the entire batch (ms): 32133
-//    Median filter processing time for the entire batch (ms): 43217
-//    Histogram creation processing time for the entire batch (ms): 3248
-//    Equalized histogram creation processing time for the entire batch (ms): 16247
-//    Total RunTime: 200827
-//    Real run time: 298155
+//Final Metrics:
+//Converting to a single color processing time for the entire batch (ms): 21437
+//Quantization processing time for the entire batch (ms): 23641
+//total meanSquaredError: 2147483647
+//Adding salt and pepper noise processing time for the entire batch (ms): 25852
+//Adding gaussian noise processing time for the entire batch (ms): 35861
+//Linear filter processing time for the entire batch (ms): 32867
+//Median filter processing time for the entire batch (ms): 47520
+//Histogram creation processing time for the entire batch (ms): 3319
+//Equalized histogram creation processing time for the entire batch (ms): 16758
+//Total RunTime: 207255
+//Real run time: 307348
 
     private static void getAverageHistogram(int[] histogram, int divisor) {
         for (int i = 0; i < histogram.length; i++) {
@@ -388,19 +392,21 @@ public class Main {
     }
 
     private static boolean deleteDir(File dir) {
-        File[] files = dir.listFiles();
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            try {
+                for (File myFile : files) {
+                    if (myFile.isDirectory()) {
+                        deleteDir(myFile);
+                    }
+                    myFile.delete();
 
-        try {
-            for (File myFile : files) {
-                if (myFile.isDirectory()) {
-                    deleteDir(myFile);
                 }
-                myFile.delete();
-
+            } catch (Exception ex) {
+                return false;
             }
-        } catch (Exception ex) {
-            return false;
+            return true;
         }
-        return true;
+        return dir.delete();
     }
 }

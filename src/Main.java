@@ -354,24 +354,10 @@ public class Main {
             System.out.println("Equalized histogram creation processing time for the entire batch (ms): " + equalizationTime);
 //                System.out.println("Converting to a single color processing time for the entire batch: " + eqaulizationTime); // TODO something with the other metric?
         }
-        System.out.println("Total RunTime: " + (singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime));
+        System.out.println("Total RunTime (without image exporting): " + (singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime));
         System.out.println("Real run time: " + (System.nanoTime() - realStartTime) / 1000000);
     }
 
-
-//    // sample output. TODO delete after report
-//Final Metrics:
-//Converting to a single color processing time for the entire batch (ms): 21437
-//Quantization processing time for the entire batch (ms): 23641
-//total meanSquaredError: 2147483647
-//Adding salt and pepper noise processing time for the entire batch (ms): 25852
-//Adding gaussian noise processing time for the entire batch (ms): 35861
-//Linear filter processing time for the entire batch (ms): 32867
-//Median filter processing time for the entire batch (ms): 47520
-//Histogram creation processing time for the entire batch (ms): 3319
-//Equalized histogram creation processing time for the entire batch (ms): 16758
-//Total RunTime: 207255
-//Real run time: 307348
 
     private static void getAverageHistogram(int[] histogram, int divisor) {
         for (int i = 0; i < histogram.length; i++) {

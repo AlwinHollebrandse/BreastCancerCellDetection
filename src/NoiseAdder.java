@@ -18,11 +18,11 @@ public class NoiseAdder {
 
     public NoiseAdder.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {//}, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {
         Random rand = new Random();
-        double rand_dub1 = rand.nextDouble();
         int imagePixelRGB = originalImage.getRGB(x, y);
         Utility utility = new Utility();
 
         if ("saltAndPepper".equalsIgnoreCase(noiseType)) {
+            double rand_dub1 = rand.nextDouble();
             if (rand_dub1 <= randomThreshold) {// if the random threshold is met
                 rand_dub1 = rand.nextDouble(); // 50/50 to see if the pixel will be white or black
                 if (rand_dub1 > .5) {
@@ -34,14 +34,25 @@ public class NoiseAdder {
                 newImage.setRGB(x, y, imagePixelRGB);
             }
         } else if ("gaussian".equalsIgnoreCase(noiseType)) {
-            Random r = new Random();
-            int gaussianNoise = (int)(r.nextGaussian() * sigma + mean);
+            int gaussianNoise = (int)(rand.nextGaussian() * sigma + mean);
 
             Color c = new Color(originalImage.getRGB(x, y));
 
-            int red = utility.normalizeColorInt(c.getRed() + gaussianNoise);
-            int green = utility.normalizeColorInt(c.getGreen() + gaussianNoise);
-            int blue = utility.normalizeColorInt(c.getBlue() + gaussianNoise);
+            int red = c.getRed();
+            if (red != 0) {
+                red = utility.normalizeColorInt(c.getRed() + gaussianNoise);
+            }
+
+            int green = c.getGreen();
+            if (green != 0) {
+                green = utility.normalizeColorInt(c.getGreen() + gaussianNoise);
+            }
+
+            int blue = c.getBlue();
+            if (blue !=0) {
+                blue = utility.normalizeColorInt(c.getBlue() + gaussianNoise);
+            }
+
 
             Color newColor = new Color(red, green, blue, c.getAlpha());
             newImage.setRGB(x, y, newColor.getRGB());
@@ -71,9 +82,9 @@ public class NoiseAdder {
         }
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
-        BufferedImage saltAndPepperImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage noiseImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        parallelMatrix.doInParallel(saltAndPepperImage, getFuncInterface());
-        return saltAndPepperImage;
+        parallelMatrix.doInParallel(noiseImage, getFuncInterface());
+        return noiseImage;
     }
 }

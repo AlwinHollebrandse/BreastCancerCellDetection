@@ -2,10 +2,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 
-public class GrayScale {
+public class SingleColorScale {
 
     private BufferedImage originalImage;
-    private BufferedImage newImage;
     private String color;
 
     @FunctionalInterface
@@ -40,7 +39,7 @@ public class GrayScale {
     }
 
 
-    public GrayScale (BufferedImage originalImage, String color) {
+    public SingleColorScale (BufferedImage originalImage, String color) {
         this.originalImage = originalImage;
         this.color = color;
     }

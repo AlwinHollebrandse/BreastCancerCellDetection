@@ -16,6 +16,7 @@ public class GraphHistogram extends JFrame {
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 Color c = new Color(image.getRGB(x, y));
+                // TODO add other color channels?
                 int keyValue = (int)(c.getRed() * 0.299) + (int)(c.getGreen() * 0.587) + (int)(c.getBlue() *0.114);
                 histogram[keyValue]++;
             }

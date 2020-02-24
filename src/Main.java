@@ -113,8 +113,8 @@ public class Main {
 //                    ImageIO.write(singleColorImage, "jpg", output_file);
 
                         long startTime = System.nanoTime();
-                        GrayScale grayScale = new GrayScale(originalImage, color);
-                        workingImage = grayScale.convertToSingleColor();
+                        SingleColorScale singleColorScale = new SingleColorScale(originalImage, color);
+                        workingImage = singleColorScale.convertToSingleColor();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         singleColorTime += time;
                         output_file = new File(resultFileName);
@@ -199,10 +199,10 @@ public class Main {
                     }
 
 
-                    resultFileName = directoryPath + "average.jpg";
+                    resultFileName = directoryPath + "linear.jpg";
                     if (instructionList.contains("LinearFilter")) {
                         long startTime = System.nanoTime();
-                        Filter filter = new Filter(workingImage, "average", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                        Filter filter = new Filter(workingImage, "linear", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         linearFilterTime += time;
@@ -359,7 +359,7 @@ public class Main {
     }
 
 
-//    // sample output. TODO deletet after report
+//    // sample output. TODO delete after report
 //Final Metrics:
 //Converting to a single color processing time for the entire batch (ms): 21437
 //Quantization processing time for the entire batch (ms): 23641

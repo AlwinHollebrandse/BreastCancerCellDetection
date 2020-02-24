@@ -21,7 +21,7 @@ public class Filter {
         ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
         int newPixelValue = -1;
-        if ("average".equalsIgnoreCase(filterType)) {
+        if ("linear".equalsIgnoreCase(filterType)) {
             newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);// calcAvgGray(neighborRGBValueArray, weights, scalar);
         }
 
@@ -85,6 +85,7 @@ public class Filter {
         return filterImage;
     }
 
+
     // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4) // TODO delte this method. its the same as the RGB one
     public static ArrayList<Integer> getNeighborValues (BufferedImage originalImage, int originalX, int originalY, int filterHeight, int filterWidth) {
         ArrayList<Integer> neighborRGBValueArray = new ArrayList<>();
@@ -105,6 +106,7 @@ public class Filter {
         return neighborRGBValueArray;
     }
 
+
     public int calcMedian (ArrayList<Integer> list, int[] weights) throws NullPointerException {
         if (list.size() != weights.length) {
             throw new NullPointerException("weights array was not the size of the filter");
@@ -115,7 +117,7 @@ public class Filter {
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < weights[i]; j++) {
 //                int listValue = list.get(i);
-                int listValue = list.get(i) & 0xFF;
+                int listValue = list.get(i) & 0xFF; // TODO THeres a bug where this sorts on the wrong color portion
                 weightedMedianList.add(listValue);
             }
         }
@@ -127,13 +129,14 @@ public class Filter {
         return utility.setSingleColor(medianValue, "gray");
     }
 
+
     // TODO could add color filter here (RGB intensity)
     // does the above but for red, green, and blue at once
     public static int calcAvgRGB (ArrayList<Integer> list, int[] weights, double scalar) throws NullPointerException { // TODO this one works, but the "gray" version doesnt
         if (list.size() != weights.length) {
             throw new NullPointerException("weights array was not the size of the filter");
         }
-
+        // TODO use the color functionality
         int redAvg = 0;
         int greenAvg = 0;
         int blueAvg = 0;

@@ -15,15 +15,15 @@ public class ParallelMatrix {
             threadArray[i].start();
         }
 
-//        long startTime = System.nanoTime();
         try {
             //wait for all threads
             for (int i = 0; i < MAX_THREADS; i++) {
                 threadArray[i].join();
             }
-//            System.out.println(barMessage + " Execution time in milliseconds : " + (System.nanoTime() - startTime) / 1000000);
         } catch (InterruptedException e) {
-            System.out.println("threads were interrupted!"); // TODO what happens then?
+            System.out.println("threads were interrupted!");
+            e.printStackTrace();
+            throw new NullPointerException("threads were interrupted!");
         }
     }
 }
@@ -38,7 +38,7 @@ class ImageThread extends Thread {
     private int threadNumber;
 
     // for code lambdas
-    private OverHeadInterface.FuncInterface code; // TODO change to lambda object?
+    private OverHeadInterface.FuncInterface code;
 
     // store parameter for later user
     public ImageThread(BufferedImage newImage, int MAX_THREADS, int threadNumber, //for thread objects
@@ -58,7 +58,7 @@ class ImageThread extends Thread {
             // Displaying the thread that is running
 //            System.out.println ("Thread " + Thread.currentThread().getId() + " is running"  + ", MAX_THREADS: " + MAX_THREADS + ", startingXCoordinate: " + startingXCoordinate + ", startingYCoordinate: " + startingYCoordinate);;//", xJumpSize: " + xJumpSize + ", yJumpSize: " + yJumpSize);
 
-            for (int x = threadNumber; x < newImage.getWidth(); x += MAX_THREADS) { // TODO change to newImage?
+            for (int x = threadNumber; x < newImage.getWidth(); x += MAX_THREADS) {
                 for (int y = 0; y < newImage.getHeight(); y ++) {
                     code.function(newImage, x, y);
                 }

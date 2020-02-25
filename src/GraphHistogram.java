@@ -11,13 +11,33 @@ import java.awt.image.BufferedImage;
 
 public class GraphHistogram extends JFrame {
 
-    public int[] createHistogram (BufferedImage image) { // TODO move to histogram functions?
+    private String color;
+
+    public GraphHistogram (String color) {
+        this.color = color;
+    }
+
+    public int[] createHistogram (BufferedImage image) {
         int[] histogram = new int[256];//256 color values of gray
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 Color c = new Color(image.getRGB(x, y));
-                // TODO add other color channels?
-                int keyValue = (int)(c.getRed() * 0.299) + (int)(c.getGreen() * 0.587) + (int)(c.getBlue() *0.114);
+                int keyValue = -1;
+
+                if ("gray".equalsIgnoreCase(color)) {
+                    keyValue = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);
+                } else if ("red".equalsIgnoreCase(color)) {
+                    keyValue = c.getRed();
+                } else if ("green".equalsIgnoreCase(color)) {
+                    keyValue = c.getGreen();
+                } else if ("blue".equalsIgnoreCase(color)) {
+                    keyValue = c.getBlue();
+                }
+
+                if (keyValue == -1) {
+                    throw new NullPointerException("something went wrong getting the colors");
+                }
+
                 histogram[keyValue]++;
             }
         }

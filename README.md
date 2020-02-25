@@ -47,14 +47,14 @@ This section is found under HistogramFunctions.java. It accepts the following pa
 
 ## Example Metrics
 Final Metrics:
-Converting to a single color processing time for the entire batch (ms): 21437
-Quantization processing time for the entire batch (ms): 23641
+Converting to a single color processing time for the entire batch (ms): 21434
+Quantization processing time for the entire batch (ms): 23163
 total meanSquaredError: 2147483647
-Adding salt and pepper noise processing time for the entire batch (ms): 25852
-Adding gaussian noise processing time for the entire batch (ms): 35861
-Linear filter processing time for the entire batch (ms): 32867
-Median filter processing time for the entire batch (ms): 47520
-Histogram creation processing time for the entire batch (ms): 3319
-Equalized histogram creation processing time for the entire batch (ms): 16758
-Total RunTime (without image exporting): 207255
-Real run time: 307348
+Adding salt and pepper noise processing time for the entire batch (ms): 24286
+Adding gaussian noise processing time for the entire batch (ms): 31418
+Linear filter processing time for the entire batch (ms): 30819
+Median filter processing time for the entire batch (ms): 46695
+Histogram creation processing time for the entire batch (ms): 3246
+Equalized histogram creation processing time for the entire batch (ms): 15082
+Total RunTime (without image exporting): 196143
+Real run time: 287391

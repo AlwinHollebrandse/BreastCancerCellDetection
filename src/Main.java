@@ -208,7 +208,7 @@ public class Main {
                         linearFilterTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
-//                        System.out.println("Average Filter" + " Execution time in milliseconds : " + time);
+//                        System.out.println("Linear Filter" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
@@ -247,7 +247,7 @@ public class Main {
                     resultFileName = directoryPath + graphTitle + ".png";
                     if (instructionList.contains("Histogram")) {
                         long startTime = System.nanoTime();
-                        GraphHistogram graphHistogram = new GraphHistogram();
+                        GraphHistogram graphHistogram = new GraphHistogram(color);
                         histogram = graphHistogram.createHistogram(workingImage);
                         long time = (System.nanoTime() - startTime) / 1000000;
                         histogramTime += time;
@@ -274,7 +274,7 @@ public class Main {
                     graphTitle = "equalizedHistogram";
                     if (instructionList.contains("HistogramEqualization")) {
                         if (histogram == null) {
-                            GraphHistogram graphHistogram = new GraphHistogram();
+                            GraphHistogram graphHistogram = new GraphHistogram(color);
                             histogram = graphHistogram.createHistogram(workingImage);
                         }
                         long startTime = System.nanoTime();
@@ -282,7 +282,7 @@ public class Main {
                         workingImage = histogramFunctions.equalizedImage();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         equalizationTime += time;
-                        GraphHistogram graphHistogram = new GraphHistogram();
+                        GraphHistogram graphHistogram = new GraphHistogram(color);
                         int[] equalizedHistogram = graphHistogram.createHistogram(workingImage);
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
@@ -319,7 +319,7 @@ public class Main {
             progressBar.next();
         }
         System.out.println("\n\nFinal Metrics:");
-        getAverageHistogram(averageHistogram, files.length);
+        getAverageHistogram(averageHistogram, files.length, color);
 //            o Averaged processing time per image per each procedure // TODO what
         if (singleColorTime > 0) {// TODO write these to teh results final file?
             System.out.println("Converting to a single color processing time for the entire batch (ms): " + singleColorTime);
@@ -359,13 +359,13 @@ public class Main {
     }
 
 
-    private static void getAverageHistogram(int[] histogram, int divisor) {
+    private static void getAverageHistogram(int[] histogram, int divisor, String color) {
         for (int i = 0; i < histogram.length; i++) {
             histogram[i] /= divisor;
         }
 
         try {
-            GraphHistogram graphHistogram = new GraphHistogram();
+            GraphHistogram graphHistogram = new GraphHistogram(color);
             String graphTitle = "averageHistogram";
             JFreeChart defaultHistogram = graphHistogram.graphHistogram(histogram, graphTitle);
             String directoryPath = "results/finalReport/";

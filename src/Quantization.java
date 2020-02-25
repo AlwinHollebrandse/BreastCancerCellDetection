@@ -58,7 +58,7 @@ public class Quantization {
 
     public Quantization (BufferedImage originalImage, int scale, String color) {
         this.originalImage = originalImage;
-//        this.color= color;
+        this.color= color;
 
         int numberOfPixelsInScale = 256 / scale;
         for (int i = 0; i < 256; i += numberOfPixelsInScale) {

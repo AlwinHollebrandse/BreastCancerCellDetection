@@ -13,7 +13,7 @@ public class NoiseAdder {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y); //   TODO why pass in og image here?
+        void function(BufferedImage newImage, int x, int y);
     }
 
     public NoiseAdder.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {//}, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {

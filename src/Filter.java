@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,11 +49,9 @@ public class Filter {
     }
 
 
-    // NOTE and TODO currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
+    // NOTE currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution
-    // NOTE a value of 1 for both of these means a 3x3 grid
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
-    // TODO enums for filtertype
     public BufferedImage filter () throws NullPointerException {
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
@@ -86,7 +85,7 @@ public class Filter {
     }
 
 
-    // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4) // TODO delte this method. its the same as the RGB one
+    // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4)
     public static ArrayList<Integer> getNeighborValues (BufferedImage originalImage, int originalX, int originalY, int filterHeight, int filterWidth) {
         ArrayList<Integer> neighborRGBValueArray = new ArrayList<>();
 
@@ -116,9 +115,10 @@ public class Filter {
         ArrayList<Integer> weightedMedianList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < weights[i]; j++) {
-//                int listValue = list.get(i);
-                int listValue = list.get(i) & 0xFF; // TODO THeres a bug where this sorts on the wrong color portion
-                weightedMedianList.add(listValue);
+                Color c = new Color(list.get(i));
+                int gray = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);
+//                Color newColor = new Color(gray, gray, gray, c.getAlpha());
+                weightedMedianList.add(gray);
             }
         }
 
@@ -130,38 +130,37 @@ public class Filter {
     }
 
 
-    // TODO could add color filter here (RGB intensity)
     // does the above but for red, green, and blue at once
-    public static int calcAvgRGB (ArrayList<Integer> list, int[] weights, double scalar) throws NullPointerException { // TODO this one works, but the "gray" version doesnt
+    public static int calcAvgRGB (ArrayList<Integer> list, int[] weights, double scalar) throws NullPointerException {
         if (list.size() != weights.length) {
             throw new NullPointerException("weights array was not the size of the filter");
         }
-        // TODO use the color functionality
+
         int redAvg = 0;
         int greenAvg = 0;
         int blueAvg = 0;
+        int alphaAvg = 0;
         for (int i = 0; i < list.size(); i++) {
             // add the respective RGB element to the correct color avg
-            int clr = list.get(i);
-            redAvg += ((clr & 0x00ff0000) >> 16) * weights[i]; // red element * weight of pixel
-            greenAvg += ((clr & 0x0000ff00) >> 8) * weights[i]; // green element * weight of pixel
-            blueAvg += (clr & 0x000000ff) * weights[i]; // blue element * weight of pixel
+            Color c = new Color(list.get(i));
+            redAvg += c.getRed() * weights[i]; // red element * weight of pixel
+            greenAvg += c.getGreen() * weights[i]; // green element * weight of pixel
+            blueAvg += c.getBlue() * weights[i]; // blue element * weight of pixel
+            alphaAvg += c.getAlpha() * weights[i];
         }
         redAvg /= list.size();
         greenAvg /= list.size();
         blueAvg /= list.size();
+        alphaAvg /= list.size();
 
         redAvg *= scalar;
         greenAvg *= scalar;
         blueAvg *= scalar;
+        alphaAvg *= scalar;
 
         //combine each of the RGB elements into a single int
-        int result = 0x00000000;
-        result = (result | redAvg) << 8; // after this line, result is 0x0000(red)00
-        result = (result | greenAvg) << 8; // after this line, result is 0x00(red)(green)00
-        result = (result | blueAvg); // after this line, result is 0x00(red)(green)(blue)
-
-        return result;
+        Color newColor = new Color(redAvg, greenAvg, blueAvg, alphaAvg);
+        return newColor.getRGB();
     }
 
 }

@@ -111,7 +111,7 @@ public class Filter {
             throw new NullPointerException("weights array was not the size of the filter");
         }
 
-        //create and fill out a weighted medina list, where each pixel gets replicated by the associated weight value number of times. This is then sorted and the median is found.
+        //create and fill out a weighted medina list, where each pixel gets replicated by the associated weight value number of times. Median of medians is then used and the median is found.
         ArrayList<Integer> weightedMedianList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < weights[i]; j++) {
@@ -122,9 +122,9 @@ public class Filter {
             }
         }
 
-        Collections.sort(weightedMedianList);
+        MedianOfMedians medianOfMedians = new MedianOfMedians();
+        int medianValue = medianOfMedians.findMedian(list,(list.size())/2 + 1,0,list.size() - 1);
 
-        int medianValue = weightedMedianList.get(weightedMedianList.size()/2);
         Utility utility = new Utility();
         return utility.setSingleColor(medianValue, "gray");
     }

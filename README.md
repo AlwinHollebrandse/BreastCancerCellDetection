@@ -8,6 +8,15 @@ This is the first argument of the program. It should contain a path to where all
 
 ## Instruction File arg:
 This is the second command line argument for the program. It should be a txt file. It is used to build the operation arraylist (discussed under Implentation/General). Accepted Strings that will cause action are (ignoring case): SingleColor, Quantization, SaltAndPepper, Gaussian, LinearFilter, MedianFilter, Histogram, HistogramEqualization. These can be found in the all_Instructions.txt file.
+Note that each of the params must be separated by spaces, and array params are denoted by having each element be separated by a space and the characters: [ and ].
+SingleColor takes in 1 param in the file: the color to convert to. Current options are: Gray, Red, Green, and Blue
+Quantization takes in 1 param in the file: the scale to scale to. Ex:16
+SaltAndPepper takes in 3 param in the file; random threshold, mean, and sigma. Ex: 0.05 0 0
+Gaussian takes in 3 param in the file; random threshold, mean, and sigma. Ex: 0.05 0 00 0 5
+LinearFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form), and the scalar multiplier. Ex: 0.05 0 03 3 [ 0 0 0 0 0 0 0 0 0 ] 1
+MedianFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form)(can also be null), and the scalar multiplier. EX: 3 3 null 1
+Histogram takes no params.
+HistogramEqualization takes no params.
 
 ## Example Instruction File Contents:
 SingleColor Gray

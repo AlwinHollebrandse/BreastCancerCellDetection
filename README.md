@@ -9,6 +9,16 @@ This is the first argument of the program. It should contain a path to where all
 ## Instruction File arg:
 This is the second command line argument for the program. It should be a txt file. It is used to build the operation arraylist (discussed under Implentation/General). Accepted Strings that will cause action are (ignoring case): SingleColor, Quantization, SaltAndPepper, Gaussian, LinearFilter, MedianFilter, Histogram, HistogramEqualization. These can be found in the all_Instructions.txt file.
 
+## Example Instruction File Contents:
+SingleColor Gray
+Quantization 16
+SaltAndPepper 0.05 0 0
+Gaussian 0 0 5
+LinearFilter 3 3 [ 0 0 0 0 0 0 0 0 0 ] 1
+MedianFilter 3 3 null 1
+Histogram
+HistogramEqualization
+
 # Implentation:
 ## General:
 This program requires the user to provide two command line args. The first is file location that holds all images of interest. The second argument is instruction file. This code will create a new results folder in the current directory that eill have a folder per image that will house all operation outputs.  See the “Results” section for example output.
@@ -47,14 +57,30 @@ This section is found under HistogramFunctions.java. It accepts the following pa
 
 ## Example Metrics
 Final Metrics:
-Converting to a single color processing time for the entire batch (ms): 21434
-Quantization processing time for the entire batch (ms): 23163
+
+Converting to a single color processing time for the entire batch (ms): 23118
+Average converting to a single color processing time (ms): 46
+
+Quantization processing time for the entire batch (ms): 23049
+Average quantization processing time (ms): 46
 total meanSquaredError: 2147483647
-Adding salt and pepper noise processing time for the entire batch (ms): 24286
-Adding gaussian noise processing time for the entire batch (ms): 31418
-Linear filter processing time for the entire batch (ms): 30819
-Median filter processing time for the entire batch (ms): 46695
-Histogram creation processing time for the entire batch (ms): 3246
-Equalized histogram creation processing time for the entire batch (ms): 15082
-Total RunTime (without image exporting): 196143
-Real run time: 287391
+
+Adding salt and pepper noise processing time for the entire batch (ms): 25213
+Average adding salt and pepper noise processing time (ms): 50
+
+Adding gaussian noise processing time for the entire batch (ms): 31483
+Average adding gaussian noise processing time (ms): 62
+
+Linear filter processing time for the entire batch (ms): 31555
+Average linear filter processing time (ms): 63
+
+Median filter processing time for the entire batch (ms): 45897
+Average median filter processing time (ms): 91
+
+Histogram creation processing time for the entire batch (ms): 4724
+Average histogram creation processing time (ms): 9
+
+Equalized histogram creation processing time for the entire batch (ms): 15526
+Average equalized histogram creation processing time (ms): 31
+Total RunTime (without image exporting) (s): 200
+Real run time (s): 287

@@ -123,7 +123,7 @@ public class Filter {
         }
 
         MedianOfMedians medianOfMedians = new MedianOfMedians();
-        int medianValue = medianOfMedians.findMedian(list,(list.size())/2 + 1,0,list.size() - 1);
+        int medianValue = medianOfMedians.findMedian(weightedMedianList,(weightedMedianList.size())/2 + 1,0,weightedMedianList.size() - 1);
 
         Utility utility = new Utility();
         return utility.setSingleColor(medianValue, "gray");

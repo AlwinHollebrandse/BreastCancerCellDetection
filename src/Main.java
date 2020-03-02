@@ -19,8 +19,25 @@ public class Main {
         System.out.println("imageFilesLocation: " + imageFilesLocation);
         System.out.println("instructions: " + instructions);
 
+        // operation params
         String resultFileName;
         String color = "gray";
+        int quantizationScale = -1;
+        double saltAndPepperNoiseRandomThreshold = -1;
+        double saltAndPepperNoiseMean = -1;
+        double saltAndPepperNoiseSigma = -1;
+        double gaussianNoiseRandomThreshold = -1;
+        double gaussianNoiseMean = -1;
+        double gaussianNoiseSigma = -1;
+        int linearFilterWidth = -1;
+        int linearFilterHeight = -1;
+        int[] linearFilterWeights = null;
+        double linearFilterScalar = -1;
+        int medianFilterWidth = -1;
+        int medianFilterHeight = -1;
+        int[] medianFilterWeights = null;
+        double medianFilterScalar = -1;
+
         int singleColorTime = 0;
         int quantizationTime = 0;
         int saltAndPepperTime = 0;
@@ -50,8 +67,62 @@ public class Main {
         ArrayList<String> instructionList = new ArrayList<>();
         try {
             Scanner s = new Scanner(new File(instructions));
-            while (s.hasNext()) {
-                instructionList.add(s.next());
+            while (s.hasNextLine()) {
+                String currentLine = s.nextLine();
+
+                if (currentLine.toLowerCase().contains("singlecolor")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("SingleColor");
+                    color = lineArray[1];
+                }
+
+                if (currentLine.toLowerCase().contains("quantization")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("Quantization");
+                    quantizationScale = Integer.parseInt(lineArray[1]);
+                }
+
+                if (currentLine.toLowerCase().contains("saltandpepper")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("SaltAndPepper");
+                    saltAndPepperNoiseRandomThreshold = Double.parseDouble(lineArray[1]);
+                    saltAndPepperNoiseMean = Double.parseDouble(lineArray[2]);
+                    saltAndPepperNoiseSigma = Double.parseDouble(lineArray[3]);
+                }
+
+                if (currentLine.toLowerCase().contains("gaussian")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("Gaussian");
+                    gaussianNoiseRandomThreshold = Double.parseDouble(lineArray[1]);
+                    gaussianNoiseMean = Double.parseDouble(lineArray[2]);
+                    gaussianNoiseSigma = Double.parseDouble(lineArray[3]);
+                }
+
+                if (currentLine.toLowerCase().contains("linearfilter")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("LinearFilter");
+                    linearFilterWidth = Integer.parseInt(lineArray[1]);
+                    linearFilterHeight = Integer.parseInt(lineArray[2]);
+                    linearFilterWeights = parseArray(lineArray);
+                    linearFilterScalar = Double.parseDouble(lineArray[lineArray.length - 1]); // last element
+                }
+
+                if (currentLine.toLowerCase().contains("medianfilter")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("MedianFilter");
+                    medianFilterWidth = Integer.parseInt(lineArray[1]);
+                    medianFilterHeight = Integer.parseInt(lineArray[2]);
+                    medianFilterWeights = parseArray(lineArray);
+                    medianFilterScalar = Double.parseDouble(lineArray[lineArray.length - 1]); // last element
+                }
+
+                if (currentLine.toLowerCase().contains("histogram")) {
+                    instructionList.add("Histogram");
+                }
+
+                if (currentLine.toLowerCase().contains("histogramequalization")) {
+                    instructionList.add("HistogramEqualization");
+                }
             }
             s.close();
         } catch (IOException ex) {
@@ -62,6 +133,10 @@ public class Main {
             System.out.println("The provided instruction file has no operation instructions");
             System.exit(1);
         }
+
+
+
+
 
         ProgressBar progressBar = new ProgressBar("Processing Images", files.length);
         // loop through all images and do each specified operation
@@ -80,7 +155,7 @@ public class Main {
                         startOfPictureName = files[i].toString().lastIndexOf("\\");
                     }
                     int endOfPictureName = files[i].toString().length() - 4; // remove the ".BMP" from the directory name
-                    String directoryPath = "results/" + files[i].toString().substring(startOfPictureName + 1,endOfPictureName) + "/";
+                    String directoryPath = "results/" + files[i].toString().substring(startOfPictureName + 1, endOfPictureName) + "/";
 //                    System.out.println("directoryPath: " + directoryPath);
 
                     File imageResults = new File(directoryPath);
@@ -98,7 +173,7 @@ public class Main {
 
                     // add the original image to the relevant result folder
                     final BufferedImage originalImage = ImageIO.read(files[i]);
-                    workingImage = originalImage;// TODO does this pass by refrecen?
+                    workingImage = originalImage;// TODO does this pass by reference?
                     File output_file = new File(directoryPath + "original.jpg");
                     ImageIO.write(originalImage, "jpg", output_file);
 
@@ -134,8 +209,12 @@ public class Main {
 
                     resultFileName = directoryPath + "quantization.jpg";
                     if (instructionList.contains("Quantization")) {
+                        if (quantizationScale == -1) {
+                            System.out.println("Quantization parameter was set incorrectly");
+                            System.exit(1);
+                        }
                         long startTime = System.nanoTime();
-                        Quantization quantization = new Quantization(workingImage, 16, color); // NOTE works nicer with a scale that is a factor of 2
+                        Quantization quantization = new Quantization(workingImage, quantizationScale, color); // NOTE works nicer with a scale that is a factor of 2
                         workingImage = quantization.quantization();
                         output_file = new File(resultFileName);
                         long time = (System.nanoTime() - startTime) / 1000000;
@@ -158,7 +237,7 @@ public class Main {
                     resultFileName = directoryPath + "saltAndPepper.jpg";
                     if (instructionList.contains("SaltAndPepper")) {
                         long startTime = System.nanoTime();
-                        NoiseAdder noiseAdder = new NoiseAdder(workingImage, "saltAndPepper", 0.05, 0, 0); // TODO do these params come from the instruction file?
+                        NoiseAdder noiseAdder = new NoiseAdder(workingImage, "saltAndPepper", saltAndPepperNoiseRandomThreshold, saltAndPepperNoiseMean, saltAndPepperNoiseSigma);
                         workingImage = noiseAdder.addNoise();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         saltAndPepperTime += time;
@@ -180,7 +259,7 @@ public class Main {
                     resultFileName = directoryPath + "gaussian.jpg";
                     if (instructionList.contains("Gaussian")) {
                         long startTime = System.nanoTime();
-                        NoiseAdder noiseAdder = new NoiseAdder(workingImage, "gaussian", 0, 0, 5);
+                        NoiseAdder noiseAdder = new NoiseAdder(workingImage, "gaussian", gaussianNoiseRandomThreshold, gaussianNoiseMean, gaussianNoiseSigma);
                         workingImage = noiseAdder.addNoise();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         gaussianTime += time;
@@ -201,8 +280,12 @@ public class Main {
 
                     resultFileName = directoryPath + "linear.jpg";
                     if (instructionList.contains("LinearFilter")) {
+                        if (linearFilterWidth == -1 || linearFilterHeight == -1) {
+                            System.out.println("linear filter parameters were set incorrectly");
+                            System.exit(1);
+                        }
                         long startTime = System.nanoTime();
-                        Filter filter = new Filter(workingImage, "linear", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                        Filter filter = new Filter(workingImage, "linear", linearFilterWidth, linearFilterHeight, linearFilterWeights, linearFilterScalar);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         linearFilterTime += time;
@@ -223,8 +306,12 @@ public class Main {
 
                     resultFileName = directoryPath + "median.jpg";
                     if (instructionList.contains("MedianFilter")) {
+                        if (medianFilterWidth == -1 || medianFilterHeight == -1) {
+                            System.out.println("median filter parameters were set incorrectly");
+                            System.exit(1);
+                        }
                         long startTime = System.nanoTime();
-                        Filter filter = new Filter(workingImage, "median", 3, 3, null, 1);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                        Filter filter = new Filter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, medianFilterScalar);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         medianFilterTime += time;
@@ -322,40 +409,40 @@ public class Main {
         getAverageHistogram(averageHistogram, files.length, color);
 //            o Averaged processing time per image per each procedure // TODO what
         if (singleColorTime > 0) {// TODO write these to teh results final file?
-            System.out.println("Converting to a single color processing time for the entire batch (ms): " + singleColorTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + singleColorTime); // TODO something with the other metric?
+            System.out.println("\nConverting to a single color processing time for the entire batch (ms): " + singleColorTime);
+            System.out.println("Average converting to a single color processing time (ms): " + singleColorTime / files.length);
         }
         if (quantizationTime > 0) {
-            System.out.println("Quantization processing time for the entire batch (ms): " + quantizationTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + quantizationTime); // TODO something with the other metric?\
+            System.out.println("\nQuantization processing time for the entire batch (ms): " + quantizationTime);
+            System.out.println("Average quantization processing time (ms): " + quantizationTime / files.length);
             System.out.println("total meanSquaredError: " + meanSquaredError); // TODO whats an acceptable/expected one
         }
         if (saltAndPepperTime > 0) {
-            System.out.println("Adding salt and pepper noise processing time for the entire batch (ms): " + saltAndPepperTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + saltAndPepperTime); // TODO something with the other metric?
+            System.out.println("\nAdding salt and pepper noise processing time for the entire batch (ms): " + saltAndPepperTime);
+            System.out.println("Average adding salt and pepper noise processing time (ms): " + saltAndPepperTime / files.length);
         }
         if (gaussianTime > 0) {
-            System.out.println("Adding gaussian noise processing time for the entire batch (ms): " + gaussianTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + gaussianTime); // TODO something with the other metric?
+            System.out.println("\nAdding gaussian noise processing time for the entire batch (ms): " + gaussianTime);
+            System.out.println("Average adding gaussian noise processing time (ms): " + gaussianTime / files.length);
         }
         if (linearFilterTime > 0) {
-            System.out.println("Linear filter processing time for the entire batch (ms): " + linearFilterTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + linearFilterTime); // TODO something with the other metric?
+            System.out.println("\nLinear filter processing time for the entire batch (ms): " + linearFilterTime);
+            System.out.println("Average linear filter processing time (ms): " + linearFilterTime / files.length);
         }
         if (medianFilterTime > 0) {
-            System.out.println("Median filter processing time for the entire batch (ms): " + medianFilterTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + medianFilterTime); // TODO something with the other metric?
+            System.out.println("\nMedian filter processing time for the entire batch (ms): " + medianFilterTime);
+            System.out.println("Average median filter processing time (ms): " + medianFilterTime / files.length);
         }
         if (histogramTime > 0) {
-            System.out.println("Histogram creation processing time for the entire batch (ms): " + histogramTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + histogramTime); // TODO something with the other metric?
+            System.out.println("\nHistogram creation processing time for the entire batch (ms): " + histogramTime);
+            System.out.println("Average histogram creation processing time (ms): " + histogramTime / files.length);
         }
         if (equalizationTime > 0) {
-            System.out.println("Equalized histogram creation processing time for the entire batch (ms): " + equalizationTime);
-//                System.out.println("Converting to a single color processing time for the entire batch: " + eqaulizationTime); // TODO something with the other metric?
+            System.out.println("\nEqualized histogram creation processing time for the entire batch (ms): " + equalizationTime);
+            System.out.println("Average equalized histogram creation processing time (ms): " + equalizationTime / files.length);
         }
-        System.out.println("Total RunTime (without image exporting): " + (singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime));
-        System.out.println("Real run time: " + (System.nanoTime() - realStartTime) / 1000000);
+        System.out.println("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime) / 1000));
+        System.out.println("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
     }
 
 
@@ -394,5 +481,36 @@ public class Main {
             return true;
         }
         return dir.delete();
+    }
+
+
+    // any errors thrown by this method will get caught in the instruction file reader
+    private static int[] parseArray(String[] stringArray) {
+        ArrayList<Integer> temp = new ArrayList<>();
+        Boolean inArray = false;
+        for (int i = 0; i < stringArray.length; i++) {
+            if (stringArray[i].equalsIgnoreCase("]")) {
+                break;
+            } else if (stringArray[i].equalsIgnoreCase("[")) {
+                inArray = true;
+                continue;
+            }
+
+            if (inArray) {
+                temp.add(Integer.parseInt(stringArray[i]));
+            }
+        }
+
+        // convert to required array
+        int[] result = new int[temp.size()];
+        for (int i=0; i < result.length; i++)
+        {
+            result[i] = temp.get(i);
+        }
+
+        if (result.length <= 0) {
+            return null;
+        }
+        return result;
     }
 }

@@ -2,9 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="692c0595-0958-4d0b-b504-a3af3633a8df" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/MedianOfMedians.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/all_Instructions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/all_Instructions.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/instructions.txt" beforeDir="false" afterPath="$PROJECT_DIR$/instructions.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/equalizedHistogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/equalizedHistogram.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/equalizedImage.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/equalizedImage.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/histogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/histogram.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/median.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/median.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/cyl01/saltAndPepper.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/results/cyl01/saltAndPepper.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/finalReport/averageHistogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/finalReport/averageHistogram.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Filter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Filter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,32 +37,32 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="gitignore" value="3" />
-          <entry key="java" value="60" />
+          <entry key="java" value="64" />
           <entry key="jpg" value="82" />
           <entry key="md" value="2" />
           <entry key="png" value="16" />
-          <entry key="txt" value="3" />
+          <entry key="txt" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Image" value="98" />
-          <entry key="JAVA" value="60" />
-          <entry key="PLAIN_TEXT" value="8" />
+          <entry key="JAVA" value="64" />
+          <entry key="PLAIN_TEXT" value="10" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gitignore" value="40" />
-          <entry key="java" value="27463" />
-          <entry key="md" value="98" />
-          <entry key="txt" value="2" />
+          <entry key="java" value="29041" />
+          <entry key="md" value="102" />
+          <entry key="txt" value="57" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="27463" />
-          <entry key="PLAIN_TEXT" value="140" />
+          <entry key="JAVA" value="29041" />
+          <entry key="PLAIN_TEXT" value="199" />
         </counts>
       </usages-collector>
     </session>
@@ -61,22 +70,40 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/instructions.txt">
+        <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="12" selection-start-line="1" selection-end-line="1" selection-end-column="12" />
+            <state relative-caret-position="403">
+              <caret line="470" column="35" selection-start-line="470" selection-start-column="35" selection-end-line="470" selection-end-column="35" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/SingleColorScale.java">
+        <entry file="file://$PROJECT_DIR$/instructions.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="33" column="9" selection-start-line="18" selection-start-column="8" selection-end-line="33" selection-end-column="9" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="119">
+              <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/all_Instructions.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="476">
+              <caret line="67" column="77" selection-start-line="67" selection-start-column="72" selection-end-line="67" selection-end-column="77" />
             </state>
           </provider>
         </entry>
@@ -84,17 +111,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/HistogramFunctions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
+            <state relative-caret-position="187">
               <caret line="21" column="35" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="816">
-              <caret line="48" selection-start-line="48" selection-end-line="59" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -102,20 +120,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Filter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="98" column="52" lean-forward="true" selection-start-line="98" selection-start-column="52" selection-end-line="98" selection-end-column="52" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/MedianOfMedians.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="95" column="16" selection-start-line="95" selection-start-column="12" selection-end-line="95" selection-end-column="16" />
+            <state relative-caret-position="53">
+              <caret line="125" column="126" selection-start-line="125" selection-start-column="126" selection-end-line="125" selection-end-column="126" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -124,10 +130,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Quantization.java">
+        <entry file="file://$PROJECT_DIR$/src/MedianOfMedians.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="969">
-              <caret line="61" selection-start-line="61" selection-end-line="61" />
+            <state relative-caret-position="204">
+              <caret line="12" selection-start-line="12" selection-end-line="12" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -137,24 +146,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="136">
               <caret line="19" selection-start-line="19" selection-end-line="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ParallelMatrix.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" selection-start-line="17" selection-end-line="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/NoiseAdder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="15" column="60" selection-start-line="15" selection-start-column="60" selection-end-line="15" selection-end-column="60" />
             </state>
           </provider>
         </entry>
@@ -170,9 +161,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setGrayPixelColor</find>
-      <find>(i, j,</find>
-      <find>code</find>
       <find>MultithreadingDemo</find>
       <find>MAX_THREADS</find>
       <find>startingYCoordinate</find>
@@ -200,6 +188,9 @@
       <find>H2</find>
       <find>meanSquaredError</find>
       <find>TODO</find>
+      <find>array</find>
+      <find>singleColorTime</find>
+      <find>singleColorLine</find>
     </findStrings>
     <replaceStrings>
       <replace>done</replace>
@@ -211,6 +202,7 @@
       <replace>originalImage</replace>
       <replace>int</replace>
       <replace>singleColorImage</replace>
+      <replace>lineArray</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -225,7 +217,6 @@
         <option value="$PROJECT_DIR$/src/OverHeadInterface.java" />
         <option value="$PROJECT_DIR$/src/GrayScale.java" />
         <option value="$PROJECT_DIR$/src/HistogramFunctions.java" />
-        <option value="$PROJECT_DIR$/all_Instructions.txt" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/SingleColorScale.java" />
         <option value="$PROJECT_DIR$/src/ParallelMatrix.java" />
@@ -233,11 +224,12 @@
         <option value="$PROJECT_DIR$/src/GraphHistogram.java" />
         <option value="$PROJECT_DIR$/src/NoiseAdder.java" />
         <option value="$PROJECT_DIR$/src/Quantization.java" />
+        <option value="$PROJECT_DIR$/src/MedianOfMedians.java" />
         <option value="$PROJECT_DIR$/instructions.txt" />
+        <option value="$PROJECT_DIR$/all_Instructions.txt" />
+        <option value="$PROJECT_DIR$/src/Filter.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/src/Filter.java" />
-        <option value="$PROJECT_DIR$/src/MedianOfMedians.java" />
       </list>
     </option>
   </component>
@@ -281,7 +273,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="setSingleColor&#9;PSI&#9;JAVA://Utility#setSingleColor&#10;setGrayPixelColor&#9;PSI&#9;JAVA://Utility#setGrayPixelColor&#10;resultPixelCol&#9;null&#9;null" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1583167462358" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1583172940141" />
     <property name="last_opened_file_path" value="C:/Program Files/JFreeChart/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
@@ -342,12 +334,12 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32952183" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32952183" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32952183" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991684" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32952183" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32952183" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32952183" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32952183" />
@@ -393,6 +385,28 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Main.java</url>
+          <line>184</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Main.java</url>
+          <line>308</line>
+          <properties />
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/MedianOfMedians.java</url>
+          <line>12</line>
+          <properties />
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="list.get(0)" />
@@ -444,13 +458,6 @@
     <entry file="file://$PROJECT_DIR$/median.jpg" />
     <entry file="file://$PROJECT_DIR$/average.jpg" />
     <entry file="file://$PROJECT_DIR$/averageHistogram.png" />
-    <entry file="file://$PROJECT_DIR$/all_Instructions.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="7" selection-start-line="3" selection-start-column="7" selection-end-line="3" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
@@ -465,58 +472,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="160" column="24" selection-start-line="160" selection-start-column="24" selection-end-line="160" selection-end-column="106" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/instructions.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="12" selection-start-line="1" selection-end-line="1" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/SingleColorScale.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="33" column="9" selection-start-line="18" selection-start-column="8" selection-end-line="33" selection-end-column="9" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/HistogramFunctions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="21" column="35" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="816">
-          <caret line="48" selection-start-line="48" selection-end-line="59" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Quantization.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="969">
           <caret line="61" selection-start-line="61" selection-end-line="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GraphHistogram.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
         </state>
       </provider>
     </entry>
@@ -527,30 +486,85 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/NoiseAdder.java">
+    <entry file="file://$PROJECT_DIR$/src/SingleColorScale.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="15" column="60" selection-start-line="15" selection-start-column="60" selection-end-line="15" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Filter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="98" column="52" lean-forward="true" selection-start-line="98" selection-start-column="52" selection-end-line="98" selection-end-column="52" />
+        <state relative-caret-position="512">
+          <caret line="33" column="9" selection-start-line="18" selection-start-column="8" selection-end-line="33" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/NoiseAdder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="67" column="119" selection-start-line="67" selection-start-column="70" selection-end-line="67" selection-end-column="119" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/HistogramFunctions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="21" column="35" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GraphHistogram.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/all_Instructions.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/instructions.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="21" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/MedianOfMedians.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="95" column="16" selection-start-line="95" selection-start-column="12" selection-end-line="95" selection-end-column="16" />
+        <state relative-caret-position="204">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Filter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="53">
+          <caret line="125" column="126" selection-start-line="125" selection-start-column="126" selection-end-line="125" selection-end-column="126" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="403">
+          <caret line="470" column="35" selection-start-line="470" selection-start-column="35" selection-end-line="470" selection-end-column="35" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="67" column="77" selection-start-line="67" selection-start-column="72" selection-end-line="67" selection-end-column="77" />
         </state>
       </provider>
     </entry>

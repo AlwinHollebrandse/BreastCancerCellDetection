@@ -11,12 +11,19 @@ This is the second command line argument for the program. It should be a txt fil
 
 ## Example Instruction File Contents:
 SingleColor Gray
+
 Quantization 16
+
 SaltAndPepper 0.05 0 0
+
 Gaussian 0 0 5
+
 LinearFilter 3 3 [ 0 0 0 0 0 0 0 0 0 ] 1
+
 MedianFilter 3 3 null 1
+
 Histogram
+
 HistogramEqualization
 
 # Implentation:

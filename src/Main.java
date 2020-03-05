@@ -415,7 +415,7 @@ public class Main {
         if (quantizationTime > 0) {
             System.out.println("\nQuantization processing time for the entire batch (ms): " + quantizationTime);
             System.out.println("Average quantization processing time (ms): " + quantizationTime / files.length);
-            System.out.println("total meanSquaredError: " + meanSquaredError); // TODO whats an acceptable/expected one
+            System.out.println("Average meanSquaredError: " + meanSquaredError / files.length); // TODO whats an acceptable/expected one
         }
         if (saltAndPepperTime > 0) {
             System.out.println("\nAdding salt and pepper noise processing time for the entire batch (ms): " + saltAndPepperTime);

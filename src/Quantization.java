@@ -116,6 +116,6 @@ public class Quantization {
             }
         }
 
-        return meanSquaredError;
+        return meanSquaredError / (originalImage.getWidth() * originalImage.getHeight());
     }
 }

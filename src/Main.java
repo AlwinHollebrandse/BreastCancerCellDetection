@@ -46,6 +46,7 @@ public class Main {
         int medianFilterTime = 0;
         int histogramTime = 0;
         int equalizationTime = 0;
+        int edgeDetectionTime = 0;
         int meanSquaredError = 0;
         int[] averageHistogram = new int[256];
 
@@ -123,6 +124,10 @@ public class Main {
                 if (currentLine.toLowerCase().contains("histogramequalization")) {
                     instructionList.add("HistogramEqualization");
                 }
+
+                if (currentLine.toLowerCase().contains("edgedetection")) {
+                    instructionList.add("EdgeDetection");
+                }
             }
             s.close();
         } catch (IOException ex) {
@@ -142,8 +147,8 @@ public class Main {
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
 
-//            if (i >= 1)
-//                break;
+            if (i >= 1)
+                break;
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
 //                System.out.println("\n\n" + files[i]);
@@ -311,7 +316,7 @@ public class Main {
                             System.exit(1);
                         }
                         long startTime = System.nanoTime();
-                        Filter filter = new Filter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, medianFilterScalar);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                        Filter filter = new Filter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, medianFilterScalar);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         medianFilterTime += time;
@@ -398,6 +403,27 @@ public class Main {
                         }
                     }
 
+                    resultFileName = directoryPath + "edgeDetection.jpg";
+                    if (instructionList.contains("EdgeDetection")) {
+                        long startTime = System.nanoTime();
+                        EdgeDetection edgeDetection = new EdgeDetection();
+                        BufferedImage edgeMap = edgeDetection.edgeDetection(workingImage);
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        edgeDetectionTime += time;
+                        output_file = new File(resultFileName);
+                        ImageIO.write(edgeMap, "jpg", output_file);
+//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old edgeDetection of: " + files[i].toString());
+                            }
+                        }
+                    }
+
                 } catch (Exception ex) {
                     System.out.println("\nThere was an error with image " + files[i].toString() + ": " + ex);
                     ex.printStackTrace();
@@ -441,7 +467,11 @@ public class Main {
             System.out.println("\nEqualized histogram creation processing time for the entire batch (ms): " + equalizationTime);
             System.out.println("Average equalized histogram creation processing time (ms): " + equalizationTime / files.length);
         }
-        System.out.println("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime) / 1000));
+        if (edgeDetectionTime > 0) {
+            System.out.println("\nEdge Detection creation processing time for the entire batch (ms): " + edgeDetectionTime);
+            System.out.println("Average edge detection processing time (ms): " + edgeDetectionTime / files.length);
+        }
+        System.out.println("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime) / 1000));
         System.out.println("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
     }
 
@@ -464,6 +494,7 @@ public class Main {
         }
     }
 
+
     private static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
@@ -473,7 +504,6 @@ public class Main {
                         deleteDir(myFile);
                     }
                     myFile.delete();
-
                 }
             } catch (Exception ex) {
                 return false;
@@ -514,3 +544,14 @@ public class Main {
         return result;
     }
 }
+
+//part 2 tasks:
+//        1. Implement one selected edge detection algorithm.
+//        2. Implement dilation and erosion operators.
+//        3. Apply segmentation into two groups – foreground (cells) and background (everything
+//        else).
+//        4. Implement two segmentation techniques (they must be implemented by you, not API
+//        calls): + histogram thresholding + histogram clustering (basic approach using two clusters
+//        and k-means)
+//        5. Present example results before and after edge detection / dilation / erosion
+//        /segmentation for each respective class of cells (seven in total)

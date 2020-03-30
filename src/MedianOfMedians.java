@@ -51,7 +51,7 @@ public class MedianOfMedians {
                 high--;
             }
 
-            if(list.get(low) == list.get(high)) {
+            if(list.get(low).equals(list.get(high))) {
                 low ++;
             }
             else if(low < high) {

@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Filter {
@@ -122,6 +123,10 @@ public class Filter {
             }
         }
 
+        // TODO speed test
+//        Collections.sort(weightedMedianList);
+//        int medianValue = weightedMedianList.get(weightedMedianList.size() / 2);
+
         MedianOfMedians medianOfMedians = new MedianOfMedians();
         int medianValue = medianOfMedians.findMedian(weightedMedianList,(weightedMedianList.size())/2 + 1,0,weightedMedianList.size() - 1);
 
@@ -157,6 +162,14 @@ public class Filter {
         greenAvg *= scalar;
         blueAvg *= scalar;
         alphaAvg *= scalar;
+
+        Utility utility = new Utility(); // TODO due to the weights, most pixels resulted with a negative average value. Meaning that they had to be normalized (-'s go back to 0, and >255 go back to 255)
+        redAvg = utility.normalizeColorInt(redAvg);
+        greenAvg = utility.normalizeColorInt(greenAvg);
+        blueAvg = utility.normalizeColorInt(blueAvg);
+        alphaAvg = utility.normalizeColorInt(alphaAvg);
+
+        // TODO is there a bug here with the scalar being a double, but the results is an int? like int division. because color cons needs ints.... if scalar < 1
 
         //combine each of the RGB elements into a single int
         Color newColor = new Color(redAvg, greenAvg, blueAvg, alphaAvg);

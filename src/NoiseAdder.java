@@ -26,9 +26,9 @@ public class NoiseAdder {
             if (rand_dub1 <= randomThreshold) {// if the random threshold is met
                 rand_dub1 = rand.nextDouble(); // 50/50 to see if the pixel will be white or black
                 if (rand_dub1 > .5) {
-                    newImage.setRGB(x, y, utility.setSingleColor(255, "gray"));//utility.setGrayPixelColor(imagePixelRGB, 255));
+                    newImage.setRGB(x, y, utility.setSingleColorRBG(255, "gray"));//utility.setGrayPixelColor(imagePixelRGB, 255));
                 } else {
-                    newImage.setRGB(x, y, utility.setSingleColor(0, "gray"));//utility.setGrayPixelColor(imagePixelRGB, 0));
+                    newImage.setRGB(x, y, utility.setSingleColorRBG(0, "gray"));//utility.setGrayPixelColor(imagePixelRGB, 0));
                 }
             } else {
                 newImage.setRGB(x, y, imagePixelRGB);

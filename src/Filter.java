@@ -1,11 +1,10 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class Filter {
 
+    private Utility utility = new Utility();
     private BufferedImage originalImage;
     private String filterType;  // TODO add enums
     private int filterWidth;
@@ -20,7 +19,7 @@ public class Filter {
     }
 
     public Filter.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
-        ArrayList<Integer> neighborRGBValueArray = getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
+        ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
         int newPixelValue = -1;
         if ("linear".equalsIgnoreCase(filterType)) {
@@ -85,28 +84,6 @@ public class Filter {
         return filterImage;
     }
 
-
-    // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4)
-    public static ArrayList<Integer> getNeighborValues (BufferedImage originalImage, int originalX, int originalY, int filterHeight, int filterWidth) {
-        ArrayList<Integer> neighborRGBValueArray = new ArrayList<>();
-
-        // get the starting and ending valid coordinate values
-        int startingX = originalX - filterWidth/2;
-        int startingY = originalY - filterHeight/2;
-        int endingX = originalX + filterWidth/2;
-        int endingY = originalY + filterHeight/2;
-
-        // get the pixels within the designated borders
-        for (int x = startingX; x <= endingX; x++) {
-            for (int y = startingY; y <= endingY; y++) {
-                neighborRGBValueArray.add(originalImage.getRGB(x, y));
-            }
-        }
-
-        return neighborRGBValueArray;
-    }
-
-
     public int calcMedian (ArrayList<Integer> list, int[] weights) throws NullPointerException {
         if (list.size() != weights.length) {
             throw new NullPointerException("weights array was not the size of the filter");
@@ -131,7 +108,7 @@ public class Filter {
         int medianValue = medianOfMedians.findMedian(weightedMedianList,(weightedMedianList.size())/2 + 1,0,weightedMedianList.size() - 1);
 
         Utility utility = new Utility();
-        return utility.setSingleColor(medianValue, "gray");
+        return utility.setSingleColorRBG(medianValue, "gray");
     }
 
 

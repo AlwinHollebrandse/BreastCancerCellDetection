@@ -35,11 +35,11 @@ public class EdgeDetection {
 
         Utility utility = new Utility();
         if (edgeStrength >= 1) { // TODO is there a threshold for this? or just >= 1?
-            int colorValue = utility.setSingleColor(255, "gray"); // white
+            int colorValue = utility.setSingleColorRBG(255, "gray"); // white
             newImage.setRGB(x, y, colorValue);
         } else {
             stop = true;
-            int colorValue = utility.setSingleColor(0, "gray"); // black
+            int colorValue = utility.setSingleColorRBG(0, "gray"); // black
             newImage.setRGB(x, y, colorValue);
         }
     };
@@ -63,7 +63,7 @@ public class EdgeDetection {
         Utility utility = new Utility();
         for (int x = 200; x < 300; x ++) {
             for (int y = 0; y < sharpenedImage.getHeight(); y ++) {
-                sharpenedImage.setRGB(x, y, utility.setSingleColor(255, "gray"));
+                sharpenedImage.setRGB(x, y, utility.setSingleColorRBG(255, "gray"));
             }
         }
 

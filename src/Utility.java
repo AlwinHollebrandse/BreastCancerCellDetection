@@ -24,7 +24,7 @@ public class Utility {
         throw new NullPointerException("something went wrong setting the colors");
     }
 
-    public int getSingleColorRGB (int pixelRGB, String color) {
+    public int getSingleColor (int pixelRGB, String color) {
         Color newColor = new Color(pixelRGB);
         if ("gray".equalsIgnoreCase(color)) {
             return newColor.getRed(); // all 3 colors are the same

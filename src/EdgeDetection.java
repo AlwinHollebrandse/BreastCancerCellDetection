@@ -57,25 +57,23 @@ public class EdgeDetection {
         this.stop = false;
 
         // apply Laplace Filter to sharpen edges TODO do it
-        Filter filter = new Filter(originalImage, "median", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1);//(1/8.0)); // TODO check scalar
+        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1}, 1);
+//        Filter filter = new Filter(originalImage, "median", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1);//(1/8.0)); // TODO check scalar
         this.sharpenedImage = filter.filter();
 
-        Utility utility = new Utility();
-        for (int x = 200; x < 300; x ++) {
-            for (int y = 0; y < sharpenedImage.getHeight(); y ++) {
-                sharpenedImage.setRGB(x, y, utility.setSingleColorRBG(255, "gray"));
-            }
-        }
+//        Utility utility = new Utility();
+//        for (int x = 200; x < 300; x ++) {
+//            for (int y = 0; y < sharpenedImage.getHeight(); y ++) {
+//                sharpenedImage.setRGB(x, y, utility.setSingleColorRBG(255, "gray"));
+//            }
+//        }
 
-        File output_file = new File("sharpenedImage.jpg");
-        try {
-            ImageIO.write(sharpenedImage, "jpg", output_file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("HERE2");
-
-
+//        File output_file = new File("sharpenedImage.jpg");
+//        try {
+//            ImageIO.write(sharpenedImage, "jpg", output_file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         BufferedImage edgeMapImage = new BufferedImage(sharpenedImage.getWidth() - filterWidth, sharpenedImage.getHeight() - filterHeight, sharpenedImage.getType()); // NOTE all Compass directions are 3x3
 

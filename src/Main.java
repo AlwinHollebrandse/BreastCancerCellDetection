@@ -47,6 +47,8 @@ public class Main {
         int histogramTime = 0;
         int equalizationTime = 0;
         int edgeDetectionTime = 0;
+        int histogramThresholdingSegmentationTime = 0;
+        int kMeansSegmentationTime = 0;
         int meanSquaredError = 0;
         int[] averageHistogram = new int[256];
 
@@ -127,6 +129,14 @@ public class Main {
 
                 if (currentLine.toLowerCase().contains("edgedetection")) {
                     instructionList.add("EdgeDetection");
+                }
+
+                if (currentLine.toLowerCase().contains("histogramthresholdingsegmentation")) {
+                    instructionList.add("HistogramThresholdingSegmentation");
+                }
+
+                if (currentLine.toLowerCase().contains("kmeanssegmentation")) {
+                    instructionList.add("KMeansSegmentation");
                 }
             }
             s.close();
@@ -424,6 +434,50 @@ public class Main {
                         }
                     }
 
+                    resultFileName = directoryPath + "histogramThresholdingSegmentation.jpg";
+                    if (instructionList.contains("HistogramThresholdingSegmentation")) {
+                        // TODO add error handling if there is no histogram command
+                        long startTime = System.nanoTime();
+                        ThresholdSegmentation thresholdSegmentation = new ThresholdSegmentation(workingImage, histogram);
+                        BufferedImage thresholdSegmentationImage = thresholdSegmentation.thresholdSegmentation();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        histogramThresholdingSegmentationTime += time;
+                        output_file = new File(resultFileName);
+                        ImageIO.write(thresholdSegmentationImage, "jpg", output_file);
+//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old histogram thresholding segmentation of: " + files[i].toString());
+                            }
+                        }
+                    }
+
+                    resultFileName = directoryPath + "kMeansSegmentation.jpg";
+                    if (instructionList.contains("KMeansSegmentation")) {
+                        // TODO add error handling if there is no histogram command
+                        long startTime = System.nanoTime();
+                        KMeansSegmentation kMeansSegmentation = new KMeansSegmentation(workingImage, histogram);
+                        BufferedImage kMeansSegmentationImage = kMeansSegmentation.kMeansSegmentation();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        kMeansSegmentationTime += time;
+                        output_file = new File(resultFileName);
+                        ImageIO.write(kMeansSegmentationImage, "jpg", output_file);
+//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not delete old kmeans segmentation of: " + files[i].toString());
+                            }
+                        }
+                    }
+
                 } catch (Exception ex) {
                     System.out.println("\nThere was an error with image " + files[i].toString() + ": " + ex);
                     ex.printStackTrace();
@@ -468,10 +522,20 @@ public class Main {
             System.out.println("Average equalized histogram creation processing time (ms): " + equalizationTime / files.length);
         }
         if (edgeDetectionTime > 0) {
-            System.out.println("\nEdge Detection creation processing time for the entire batch (ms): " + edgeDetectionTime);
+            System.out.println("\nEdge detection creation processing time for the entire batch (ms): " + edgeDetectionTime);
             System.out.println("Average edge detection processing time (ms): " + edgeDetectionTime / files.length);
         }
-        System.out.println("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime + gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime) / 1000));
+        if (histogramThresholdingSegmentationTime > 0) {
+            System.out.println("\nHistogram thresholding segmentation time creation processing time for the entire batch (ms): " + histogramThresholdingSegmentationTime);
+            System.out.println("Average histogram thresholding segmentation processing time (ms): " + histogramThresholdingSegmentationTime / files.length);
+        }
+        if (kMeansSegmentationTime > 0) {
+            System.out.println("\nK means segmentation time creation processing time for the entire batch (ms): " + kMeansSegmentationTime);
+            System.out.println("Average k means segmentation processing time (ms): " + kMeansSegmentationTime / files.length);
+        }
+        System.out.println("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
+                gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime +
+                histogramThresholdingSegmentationTime + kMeansSegmentationTime) / 1000));
         System.out.println("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
     }
 

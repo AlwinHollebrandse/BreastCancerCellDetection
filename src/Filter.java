@@ -30,7 +30,7 @@ public class Filter {
             newPixelValue = calcMedian(neighborRGBValueArray, weights);
         }
 
-        newImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, theres an error
+        newImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, there is an error // TODO throw an error?
     };
 
     public Filter.FuncInterface getFuncInterface () {

@@ -26,7 +26,7 @@ public class Contour {
         // TODO can this be parallelized without race conditions?
         for (int x = 0; x < contourMap.getWidth(); x++) {
             for (int y = 0; y < contourMap.getHeight(); y++) {
-                int pixelColor = utility.getSingleColorRGB(originalEdgeMap.getRGB(x, y), color);
+                int pixelColor = utility.getSingleColor(originalEdgeMap.getRGB(x, y), color);
                 if (pixelColor == UNUSEDEDGE) {
                     incrementContour(x, y);
                 }
@@ -44,7 +44,7 @@ public class Contour {
     // TODO so far this only works if both filter width and height are 3
     private void getFirstUnusedEdgeInReach(ArrayList<Integer> neighborRGBValueArray) {
         for (int i = 0; i < neighborRGBValueArray.size(); i++) {
-            int pixelColor = utility.getSingleColorRGB(neighborRGBValueArray.get(i), color);
+            int pixelColor = utility.getSingleColor(neighborRGBValueArray.get(i), color);
             if (pixelColor == UNUSEDEDGE) {
                 int temp;
 //                incrementContour(x, y);

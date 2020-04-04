@@ -16,26 +16,23 @@ public class SingleColorScale {
 
     // based on https://www.tutorialspoint.com/java_dip/grayscale_conversion.htm
     public FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
-        int newColorRGB = utility.setSingleColorRBG(originalImage.getRGB(x, y), color);
-        newImage.setRGB(x, y, newColorRGB);
-//
-//        Color c = new Color(originalImage.getRGB(x, y));
-//        if ("gray".equalsIgnoreCase(color)) {
-//            int gray = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);
-//            Color newColor = new Color(gray, gray, gray, c.getAlpha());
-//            newImage.setRGB(x, y, newColor.getRGB());
-//        } else if ("red".equalsIgnoreCase(color)) {
-//            Color newColor = new Color(c.getRed(), 0, 0, c.getAlpha());
-//            newImage.setRGB(x, y, newColor.getRGB());
-//        } else if ("green".equalsIgnoreCase(color)) {
-//            Color newColor = new Color(0, c.getGreen(), 0, c.getAlpha());
-//            newImage.setRGB(x, y, newColor.getRGB());
-//        } else if ("blue".equalsIgnoreCase(color)) {
-//            Color newColor = new Color(0, 0, c.getBlue(), c.getAlpha());
-//            newImage.setRGB(x, y, newColor.getRGB());
-//        } else {
-//            throw new NullPointerException("something went wrong getting the colors");
-//        }
+        Color c = new Color(originalImage.getRGB(x, y));
+        if ("gray".equalsIgnoreCase(color)) {
+            int gray = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);
+            Color newColor = new Color(gray, gray, gray, c.getAlpha());
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else if ("red".equalsIgnoreCase(color)) {
+            Color newColor = new Color(c.getRed(), 0, 0, c.getAlpha());
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else if ("green".equalsIgnoreCase(color)) {
+            Color newColor = new Color(0, c.getGreen(), 0, c.getAlpha());
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else if ("blue".equalsIgnoreCase(color)) {
+            Color newColor = new Color(0, 0, c.getBlue(), c.getAlpha());
+            newImage.setRGB(x, y, newColor.getRGB());
+        } else {
+            throw new NullPointerException("something went wrong getting the colors");
+        }
     };
 
     public FuncInterface getFuncInterface() {

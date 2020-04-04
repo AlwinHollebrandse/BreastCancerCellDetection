@@ -1,2 +1,5 @@
 SingleColor Gray
 EdgeDetection
+Histogram
+HistogramThresholdingSegmentation
+KMeansSegmentation

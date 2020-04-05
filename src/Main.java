@@ -214,7 +214,9 @@ public class Main {
 
                     // add the original image to the relevant result folder
                     final BufferedImage originalImage = ImageIO.read(files[i]);
-                    workingImage = originalImage;// TODO does this pass by reference?
+                    workingImage = originalImage;
+                    edgeMap = originalImage;
+                    segmentationImage = originalImage;
                     File output_file = new File(directoryPath + "original.jpg");
                     ImageIO.write(originalImage, "jpg", output_file);
 
@@ -502,7 +504,7 @@ public class Main {
                     resultFileName = directoryPath + "erosion.jpg";
                     if (instructionList.contains("Erosion")) {
                         long startTime = System.nanoTime();
-                        MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(workingImage, "erosion", erosionFilterWidth, erosionFilterHeight, erosionFilterColors);
+                        MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(segmentationImage, "erosion", erosionFilterWidth, erosionFilterHeight, erosionFilterColors);
                         segmentationImage = morphologicalFunctions.morphologicalFunctions();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         erosionTime += time;
@@ -523,7 +525,7 @@ public class Main {
                     resultFileName = directoryPath + "dilation.jpg";
                     if (instructionList.contains("Dilation")) {
                         long startTime = System.nanoTime();
-                        MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(workingImage, "dilation", dilationFilterWidth, dilationFilterHeight, dilationFilterColors);
+                        MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(segmentationImage, "dilation", dilationFilterWidth, dilationFilterHeight, dilationFilterColors);
                         segmentationImage = morphologicalFunctions.morphologicalFunctions();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         dilationTime += time;

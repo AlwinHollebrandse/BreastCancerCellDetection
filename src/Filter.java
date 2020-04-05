@@ -79,7 +79,7 @@ public class Filter {
 
 //        originalImage = new BufferedImage(4, 4, originalImage.getType());
 
-        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - ((filterWidth/2) * 2), originalImage.getHeight() - ((filterHeight/2) * 2), originalImage.getType());// TODO is the new image too small?
+        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - ((filterWidth/2) * 2), originalImage.getHeight() - ((filterHeight/2) * 2), originalImage.getType());
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         parallelMatrix.doInParallel(filterImage, getFuncInterface());

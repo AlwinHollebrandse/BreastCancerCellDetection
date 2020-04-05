@@ -11,6 +11,10 @@ public class MorphologicalFunctions {
     private int[] colors;
     private String color = "gray";
 
+    // NOTE this image is needed to avoid out of bound errors. The threads loop through a cropped version, but access all pixels in the
+    // "cropped" part of the original image. This result image is needed as a placeholder/copy of the original so that the original image is unchanged
+    BufferedImage resultImage;
+
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
@@ -70,11 +74,12 @@ public class MorphologicalFunctions {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
 
-        BufferedImage changedImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
+        resultImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
+        BufferedImage changedImage = new BufferedImage(originalImage.getWidth() - ((filterWidth/2) * 2), originalImage.getHeight() - ((filterHeight/2) * 2), originalImage.getType());
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         parallelMatrix.doInParallel(changedImage, getFuncInterface());
-        return changedImage;
+        return resultImage;
     }
 
     private void dilation(BufferedImage newImage, int originalX, int originalY) {
@@ -86,17 +91,10 @@ public class MorphologicalFunctions {
         int currentColorIndex = 0;
         boolean growPixel = false;
 
-        if (utility.getSingleColor(originalImage.getRGB(originalX, originalY), color) != 0) { // NOTE due to how graying works, when the pixel gets set to 255 on a gray scale, the returned value is 254) {
+        int tempRGB = originalImage.getRGB(originalX, originalY);
+        int temp = utility.getSingleColor(tempRGB, color);
+        if (temp != 0) { // NOTE due to how graying works, when the pixel gets set to 255 on a gray scale, the returned value is 254) {
             growPixel = true;
-        }
-
-        System.out.println("originalX: " + originalX + ", originalY: " + originalY);
-//        originalX: 1, originalY: 567
-
-        if (originalY == 567) {
-            int temp = newImage.getWidth();
-            int temp2 = newImage.getHeight();
-            currentColorIndex = 0;
         }
 
         if (growPixel) {
@@ -104,7 +102,7 @@ public class MorphologicalFunctions {
             for (int x = startingX; x <= endingX; x++) {
                 for (int y = startingY; y <= endingY; y++) {
                     if (colors[currentColorIndex] == 255) {
-                        newImage.setRGB(x, y, utility.setSingleColorRBG(255, color));// BUG the utility code has these x and ys for the OG, not the new one
+                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color));// BUG the utility code has these x and ys for the OG, not the new one
                     }
                     currentColorIndex++;
                 }

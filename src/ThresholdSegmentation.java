@@ -18,13 +18,13 @@ public class ThresholdSegmentation {
     public ThresholdSegmentation.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
         int pixelColor = utility.getSingleColor(originalImage.getRGB(x, y), color);
 
-        if (pixelColor >= threshold) {
-            int newColorRGB = utility.setSingleColorRBG(255, color); // white // TODO wrong value // TODO change color?
+        if (pixelColor < threshold) {
+            int newColorRGB = utility.setSingleColorRBG(255, color); // white // TODO wrong value
             newImage.setRGB(x, y, newColorRGB);
         }
 
         else {
-            int newColorRGB = utility.setSingleColorRBG(0, color); //black // TODO wrong value
+            int newColorRGB = utility.setSingleColorRBG(0, color); // black // TODO wrong value
             newImage.setRGB(x, y, newColorRGB);
         }
     };
@@ -51,17 +51,14 @@ public class ThresholdSegmentation {
     }
 
     private int calcThreshold() {
-        int numberOfPixelsInImage = originalImage.getWidth() * originalImage.getHeight();
+        double numberOfPixelsInImage = originalImage.getWidth() * originalImage.getHeight();
         Map<Integer, Double> thresholdVarianceMap = new HashMap<>();
-
 
         // TODO can this be parallelized without race conditions?
         for (int i = 0; i < histogram.length; i++) { // NOTE histogram.length should be 256
-            double thresholdVariance = getThresholdVariance(i, numberOfPixelsInImage); // TODO lots of NANs here BUG
+            double thresholdVariance = getThresholdVariance(i, numberOfPixelsInImage);
             thresholdVarianceMap.put(i, thresholdVariance);
         }
-
-
 
         Map.Entry<Integer, Double> min = null;
         for (Map.Entry<Integer, Double> entry : thresholdVarianceMap.entrySet()) {
@@ -69,31 +66,20 @@ public class ThresholdSegmentation {
                 min = entry;
             }
         }
-        int bestThreshold = min.getKey(); // TODO might throw an error
-//        Double bestThreshold = Collections.min(thresholdVarianceMap.values());
-        System.out.println("bestThreshold: " + bestThreshold);
+        int bestThreshold = min.getKey();
         return bestThreshold;
-
-//        for (int x = 0; x < originalImage.getWidth(); x++) {
-//            for (int y = 0; y < originalImage.getHeight(); y++) {
-//                int pixelColor = utility.getSingleColor(originalImage.getRGB(x, y), color);
-//                int thresholdVariance = getThresholdVariance(pixelColor, numberOfPixelsInImage);
-//
-//            }
-//        }
-
     }
 
-    private double getThresholdVariance(int pixelColor, int numberOfPixelsInImage) {
+    private double getThresholdVariance(int pixelColor, double numberOfPixelsInImage) {
         return (getVarianceOfObject(pixelColor, numberOfPixelsInImage) * getProbOfPixelValueInObject(pixelColor, numberOfPixelsInImage))
                 + (getVarianceOfBackground(pixelColor, numberOfPixelsInImage) * getProbOfPixelValueInBackground(pixelColor, numberOfPixelsInImage));
     }
 
-    private int getProbOfPixelValueInImage(int pixelColor, int numberOfPixelsInImage) {
+    private double getProbOfPixelValueInImage(int pixelColor, double numberOfPixelsInImage) {
         return histogram[pixelColor] / numberOfPixelsInImage;
     }
 
-    private double getProbOfPixelValueInObject(int currentThreshold, int numberOfPixelsInImage) {
+    private double getProbOfPixelValueInObject(int currentThreshold, double numberOfPixelsInImage) {
         double probOfPixelValueInObject = 0;
         for (int i = 0; i <= currentThreshold; i++) {
             probOfPixelValueInObject += getProbOfPixelValueInImage(i, numberOfPixelsInImage);
@@ -101,48 +87,52 @@ public class ThresholdSegmentation {
         return probOfPixelValueInObject;
     }
 
-    private double getMeanOfObject(int currentThreshold, int numberOfPixelsInImage) {
+    private double getMeanOfObject(int currentThreshold, double numberOfPixelsInImage) {
         double meanOfObject = 0;
         for (int i = 0; i <= currentThreshold; i++) {
             meanOfObject += (i * getProbOfPixelValueInImage(i, numberOfPixelsInImage));
         }
-        meanOfObject /= getProbOfPixelValueInObject(currentThreshold, numberOfPixelsInImage);
+        double probOfPixelValueInObject = getProbOfPixelValueInObject(currentThreshold, numberOfPixelsInImage);
+        meanOfObject /= Math.max(probOfPixelValueInObject, 1);
         return meanOfObject;
     }
 
-    private double getVarianceOfObject(int currentThreshold, int numberOfPixelsInImage) {
+    private double getVarianceOfObject(int currentThreshold, double numberOfPixelsInImage) {
         double varianceOfObject = 0;
         for (int i = 0; i <= currentThreshold; i++) {
             varianceOfObject += Math.pow((i - getMeanOfObject(currentThreshold, numberOfPixelsInImage)), 2) * getProbOfPixelValueInImage(i, numberOfPixelsInImage);
         }
-        varianceOfObject /= getProbOfPixelValueInObject(currentThreshold, numberOfPixelsInImage);
+        double probOfPixelValueInObject = getProbOfPixelValueInObject(currentThreshold, numberOfPixelsInImage);
+        varianceOfObject /= Math.max(probOfPixelValueInObject, 1);
         return varianceOfObject;
     }
 
-    private double getProbOfPixelValueInBackground(int currentThreshold, int numberOfPixelsInImage) {
+    private double getProbOfPixelValueInBackground(int currentThreshold, double numberOfPixelsInImage) {
         double probOfPixelValueInBackground = 0;
-        for (int i = currentThreshold + 1; i < 255; i++) {
+        for (int i = currentThreshold + 1; i < 256; i++) {
             probOfPixelValueInBackground += getProbOfPixelValueInImage(i, numberOfPixelsInImage);
         }
         return probOfPixelValueInBackground;
     }
 
-    private double getMeanOfBackground(int currentThreshold, int numberOfPixelsInImage) {
+    private double getMeanOfBackground(int currentThreshold, double numberOfPixelsInImage) {
         double meanOfBackground = 0;
-        for (int i = currentThreshold + 1; i < 255; i++) {
+        for (int i = currentThreshold + 1; i < 256; i++) {
             meanOfBackground += (i * getProbOfPixelValueInImage(i, numberOfPixelsInImage));
         }
-        meanOfBackground /= getProbOfPixelValueInBackground(currentThreshold, numberOfPixelsInImage);
+        double probOfPixelValueInBackground = getProbOfPixelValueInBackground(currentThreshold, numberOfPixelsInImage);
+        meanOfBackground /= Math.max(probOfPixelValueInBackground, 1);
         return meanOfBackground;
 
     }
 
-    private double getVarianceOfBackground(int currentThreshold, int numberOfPixelsInImage) {
+    private double getVarianceOfBackground(int currentThreshold, double numberOfPixelsInImage) {
         double varianceOfBackground = 0;
-        for (int i = currentThreshold + 1; i < 255; i++) {
+        for (int i = currentThreshold + 1; i < 256; i++) {
             varianceOfBackground += Math.pow((i - getMeanOfBackground(currentThreshold, numberOfPixelsInImage)), 2) * getProbOfPixelValueInImage(i, numberOfPixelsInImage);
         }
-        varianceOfBackground /= getProbOfPixelValueInBackground(currentThreshold, numberOfPixelsInImage);
+        double probOfPixelValueInBackground = getProbOfPixelValueInBackground(currentThreshold, numberOfPixelsInImage);
+        varianceOfBackground /= Math.max(probOfPixelValueInBackground, 1);
         return varianceOfBackground;
     }
 }

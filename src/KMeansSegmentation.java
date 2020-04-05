@@ -28,7 +28,7 @@ public class KMeansSegmentation {
         }
 
         else {
-            int newColorRGB = utility.setSingleColorRBG(0, color); //black // TODO wrong value
+            int newColorRGB = utility.setSingleColorRBG(0, color); // black // TODO wrong value
             newImage.setRGB(x, y, newColorRGB);
         }
     };
@@ -68,13 +68,12 @@ public class KMeansSegmentation {
 
         // Add in new data, one at a time, recalculating centroids with each new one.
         while(!finish) {
-            // TODO are clusters pass by reference or not
             prevMeanObject = meanObject;
             prevMeanBackground = meanBackground;
 
             assignToCluster(clusterObject, clusterBackground, meanObject, meanBackground);
-            reCalcClusterMean(clusterObject, meanObject);
-            reCalcClusterMean(clusterBackground, meanBackground);
+            meanObject = reCalcClusterMean(clusterObject);
+            meanBackground = reCalcClusterMean(clusterBackground);
 
             //Calculates total distance between new and old Centroids
             double meanChange = distance(prevMeanObject, meanObject) + distance(prevMeanBackground, meanBackground);
@@ -87,8 +86,11 @@ public class KMeansSegmentation {
         }
     }
 
-    // TODO are clusters pass by reference or not
     private void assignToCluster(ArrayList<Integer> clusterObject,  ArrayList<Integer> clusterBackground, double meanObject, double meanBackground) {
+        // first clear the clusters
+        clusterObject.clear();
+        clusterBackground.clear();
+
         // calc distance from each point to each k mean and add said point to the closer cluster
         for (int i = 0; i < histogram.length; i++) {
             double distanceObject = distance(i, meanObject);
@@ -102,8 +104,8 @@ public class KMeansSegmentation {
         }
     }
 
-    private double reCalcClusterMean(ArrayList<Integer> cluster, double mean) {
-        mean = 0;
+    private double reCalcClusterMean(ArrayList<Integer> cluster) {
+        double mean = 0;
         int pointsUsed = 0;
         for (int i = 0; i < cluster.size(); i++) {
             int pixelValue = cluster.get(i);
@@ -118,18 +120,30 @@ public class KMeansSegmentation {
         return Math.sqrt(Math.pow((centroid - p), 2));
     }
 
-    // the first means are located in the 2 densest areas. Hopefully this will result in less needed iterations
+    // the first means are located in the 2 densest areas. Hopefully this will result in less needed iterations // TODO ask about this approach or a better option
     private int[] initializeKPoints() {
-        int highestMax = -1;
-        int secondMax = -1;
-        for (int i =0; i< histogram.length; i++) {
-            if (histogram[i] > highestMax) {
-                secondMax = highestMax;
-                highestMax = histogram[i];
+        //firstMean is the pixel with the highest histogram value
+        int firstMean = 0;
+        for (int i =0; i < histogram.length; i++) {
+            if (histogram[i] > histogram[firstMean]) {
+                firstMean = i; //histogram[i];
             }
         }
 
-        return new int[]{highestMax,secondMax};
+        // secondMean is the existing pixel that is the furthest from the firstMean. Modified k means++ initialization
+        int secondMean = 0;
+        double maxDistance = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            if (i != firstMean && histogram[i] > 0) {
+                double distance = distance(i, firstMean);
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                    secondMean = i;
+                }
+            }
+        }
+
+        return new int[]{firstMean, secondMean};
     }
 
 }

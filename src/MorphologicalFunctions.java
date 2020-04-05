@@ -13,7 +13,7 @@ public class MorphologicalFunctions {
 
     // NOTE this image is needed to avoid out of bound errors. The threads loop through a cropped version, but access all pixels in the
     // "cropped" part of the original image. This result image is needed as a placeholder/copy of the original so that the original image is unchanged
-    BufferedImage resultImage;
+    private BufferedImage resultImage;
 
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
@@ -23,11 +23,11 @@ public class MorphologicalFunctions {
 
     public MorphologicalFunctions.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
         if ("dilation".equalsIgnoreCase(morphologicalType)) {
-            dilation(newImage, (x + filterWidth/2), (y + filterHeight/2));
+            dilation((x + filterWidth/2), (y + filterHeight/2));
         }
 
         else if("erosion".equalsIgnoreCase(morphologicalType)) {
-            erosion(newImage, (x + filterWidth/2), (y + filterHeight/2));
+            erosion((x + filterWidth/2), (y + filterHeight/2));
         }
     };
 
@@ -82,7 +82,7 @@ public class MorphologicalFunctions {
         return resultImage;
     }
 
-    private void dilation(BufferedImage newImage, int originalX, int originalY) {
+    private void dilation(int originalX, int originalY) {
         // get the starting and ending valid coordinate values
         int startingX = originalX - filterWidth/2;
         int startingY = originalY - filterHeight/2;
@@ -91,9 +91,7 @@ public class MorphologicalFunctions {
         int currentColorIndex = 0;
         boolean growPixel = false;
 
-        int tempRGB = originalImage.getRGB(originalX, originalY);
-        int temp = utility.getSingleColor(tempRGB, color);
-        if (temp != 0) { // NOTE due to how graying works, when the pixel gets set to 255 on a gray scale, the returned value is 254) {
+        if ((utility.getSingleColor(originalImage.getRGB(originalX, originalY), color)) != 0) { // NOTE due to how graying works, when the pixel gets set to 255 on a gray scale, the returned value is 254) {
             growPixel = true;
         }
 
@@ -101,8 +99,8 @@ public class MorphologicalFunctions {
             // get the pixels within the designated borders
             for (int x = startingX; x <= endingX; x++) {
                 for (int y = startingY; y <= endingY; y++) {
-                    if (colors[currentColorIndex] == 255) {
-                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color));// BUG the utility code has these x and ys for the OG, not the new one
+                    if (colors[currentColorIndex] != 0) {
+                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color));
                     }
                     currentColorIndex++;
                 }
@@ -110,25 +108,43 @@ public class MorphologicalFunctions {
         }
     }
 
-    private void erosion(BufferedImage newImage, int originalX, int originalY) {
+    // will use an overlapping approach because that's more paralizable
+    private void erosion( int originalX, int originalY) {
         // get the starting and ending valid coordinate values
         int startingX = originalX - filterWidth/2;
         int startingY = originalY - filterHeight/2;
         int endingX = originalX + filterWidth/2;
         int endingY = originalY + filterHeight/2;
         int currentColorIndex = 0;
-        boolean growPixel = false;
+        boolean addShape = true;
 
-        if (utility.getSingleColor(originalImage.getRGB(originalX, originalY), color) == 254) { // NOTE due to how graying works, when the pixel gets set to 255 on a gray scale, the returned value is 254) {
-            growPixel = true;
+        // check if the current image window matches the filter (ignoring where colors is 0)
+        for (int x = startingX; x <= endingX; x++) {
+            for (int y = startingY; y <= endingY; y++) {
+                int currentPixelColor = utility.getSingleColor(originalImage.getRGB(x, y), color);
+                int currentFilterColor = colors[currentColorIndex];
+
+                // TODO which is better. relates to: NOTE due to how graying works, when the pixel gets set to 255 on a gray scale, the returned value is 254) {
+//                if (!(currentPixelColor == currentFilterColor)) {
+                if (currentFilterColor != 0 && currentPixelColor == 0) {
+                    addShape = false;
+                    break;
+                }
+
+                currentColorIndex++;
+            }
+            if (!addShape) {
+                break;
+            }
         }
 
-        if (growPixel) {
+        if (addShape) {
+            currentColorIndex = 0;
             // get the pixels within the designated borders
             for (int x = startingX; x <= endingX; x++) {
                 for (int y = startingY; y <= endingY; y++) {
-                    if (colors[currentColorIndex] == 255) {
-                        newImage.setRGB(x, y, utility.setSingleColorRBG(255, color));
+                    if (colors[currentColorIndex] != 0) {
+                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color));
                     }
                     currentColorIndex++;
                 }

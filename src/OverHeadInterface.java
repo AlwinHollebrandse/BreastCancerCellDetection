@@ -1,7 +1,8 @@
 import java.awt.image.BufferedImage;
+import java.util.concurrent.Semaphore;
 
 public class OverHeadInterface {
     public interface FuncInterface {
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 }

@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class Quantization {
 
@@ -11,11 +12,11 @@ public class Quantization {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
     // based on https://www.tutorialspoint.com/java_dip/grayscale_conversion.htm
-    public FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
+    public FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         Boolean redDone = false;
         Boolean greenDone = false;
         Boolean blueDone = false;

@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class MorphologicalFunctions {
 
@@ -18,10 +19,10 @@ public class MorphologicalFunctions {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
-    public MorphologicalFunctions.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
+    public MorphologicalFunctions.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         if ("dilation".equalsIgnoreCase(morphologicalType)) {
             dilation((x + filterWidth/2), (y + filterHeight/2));
         }
@@ -100,7 +101,7 @@ public class MorphologicalFunctions {
             for (int x = startingX; x <= endingX; x++) {
                 for (int y = startingY; y <= endingY; y++) {
                     if (colors[currentColorIndex] != 0) {
-                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color));
+                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color)); // TODO semaphore lock? I think its needed?
                     }
                     currentColorIndex++;
                 }
@@ -144,7 +145,7 @@ public class MorphologicalFunctions {
             for (int x = startingX; x <= endingX; x++) {
                 for (int y = startingY; y <= endingY; y++) {
                     if (colors[currentColorIndex] != 0) {
-                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color));
+                        resultImage.setRGB(x, y, utility.setSingleColorRBG(255, color)); // TODO semaphore lock? I think its needed?
                     }
                     currentColorIndex++;
                 }

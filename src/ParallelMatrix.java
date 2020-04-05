@@ -1,16 +1,18 @@
 import java.awt.image.BufferedImage;
+import java.util.concurrent.Semaphore;
 
 public class ParallelMatrix {
 
     public void doInParallel (BufferedImage newImage,
                               OverHeadInterface.FuncInterface code) {
 
-        final int MAX_THREADS = 1;//Runtime.getRuntime().availableProcessors();
+        final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
+        Semaphore semaphore = new Semaphore(1);
 
         ImageThread[] threadArray = new ImageThread[MAX_THREADS];
 
         for (int i = 0; i < MAX_THREADS; i++) {
-            threadArray[i] = new ImageThread(newImage, MAX_THREADS, i,
+            threadArray[i] = new ImageThread(newImage, semaphore, MAX_THREADS, i,
                     code);
             threadArray[i].start();
         }
@@ -34,6 +36,7 @@ class ImageThread extends Thread {
 
     //for thread objects
     private BufferedImage newImage;
+    private Semaphore semaphore;
     private int MAX_THREADS;
     private int threadNumber;
 
@@ -41,11 +44,12 @@ class ImageThread extends Thread {
     private OverHeadInterface.FuncInterface code;
 
     // store parameter for later user
-    public ImageThread(BufferedImage newImage, int MAX_THREADS, int threadNumber, //for thread objects
+    public ImageThread(BufferedImage newImage, Semaphore semaphore, int MAX_THREADS, int threadNumber, //for thread objects
                        OverHeadInterface.FuncInterface code) { // for code lambdas
 
         //for thread objects
         this.newImage = newImage;
+        this.semaphore = semaphore;
         this.MAX_THREADS = MAX_THREADS;
         this.threadNumber = threadNumber;
 
@@ -60,7 +64,7 @@ class ImageThread extends Thread {
 
             for (int x = threadNumber; x < newImage.getWidth(); x += MAX_THREADS) {
                 for (int y = 0; y < newImage.getHeight(); y ++) {
-                    code.function(newImage, x, y);
+                    code.function(newImage, semaphore, x, y);
                 }
             }
         }

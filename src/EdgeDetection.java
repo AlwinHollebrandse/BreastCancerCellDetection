@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.Semaphore;
 
 public class EdgeDetection {
 
@@ -17,10 +18,10 @@ public class EdgeDetection {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
-    public EdgeDetection.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
+    public EdgeDetection.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         ArrayList<Integer> neighborRGBValueArray = getNeighborValues(sharpenedImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
         // TODO update README so that scalar is a JAVA double
 

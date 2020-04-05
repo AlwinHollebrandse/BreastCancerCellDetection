@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.Semaphore;
 
 public class HistogramFunctions {
 
@@ -10,10 +11,10 @@ public class HistogramFunctions {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
-    public HistogramFunctions.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
+    public HistogramFunctions.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         //get original pixel color
         Color c = new Color(originalImage.getRGB(x, y));
         int alpha = c.getAlpha();

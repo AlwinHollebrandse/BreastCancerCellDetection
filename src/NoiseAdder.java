@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class NoiseAdder {
 
@@ -13,10 +14,10 @@ public class NoiseAdder {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
-    public NoiseAdder.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {//}, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {
+    public NoiseAdder.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {//}, String color, double randomThreshold, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) -> {
         Random rand = new Random();
         int imagePixelRGB = originalImage.getRGB(x, y);
         Utility utility = new Utility();

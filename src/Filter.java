@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class Filter {
 
@@ -15,10 +16,10 @@ public class Filter {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
-    public Filter.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
+    public Filter.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
         int newPixelValue = -1;

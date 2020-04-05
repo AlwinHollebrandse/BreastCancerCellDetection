@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 
 public class ThresholdSegmentation {
 
@@ -12,10 +13,10 @@ public class ThresholdSegmentation {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
-    public ThresholdSegmentation.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
+    public ThresholdSegmentation.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         int pixelColor = utility.getSingleColor(originalImage.getRGB(x, y), color);
 
         // objects are white

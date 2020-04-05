@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
+import java.util.concurrent.Semaphore;
 
 public class SingleColorScale {
 
@@ -11,11 +12,11 @@ public class SingleColorScale {
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
         // An abstract function
-        void function(BufferedImage newImage, int x, int y);
+        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
     }
 
     // based on https://www.tutorialspoint.com/java_dip/grayscale_conversion.htm
-    public FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
+    public FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         Color c = new Color(originalImage.getRGB(x, y));
         if ("gray".equalsIgnoreCase(color)) {
             int gray = (int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114);

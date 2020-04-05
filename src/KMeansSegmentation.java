@@ -22,7 +22,9 @@ public class KMeansSegmentation {
     public KMeansSegmentation.FuncInterface fobj = (BufferedImage newImage, int x, int y) -> {
         int pixelColor = utility.getSingleColor(originalImage.getRGB(x, y), color);
 
+        // objects are white
         if (clusterObject.contains(pixelColor)) {
+            // NOTE due to how graying works, when the pixel gets set to 255 on a gray scale, the returned value is 254
             int newColorRGB = utility.setSingleColorRBG(255, color); // white // TODO wrong value // TODO change color? is black or white object?
             newImage.setRGB(x, y, newColorRGB);
         }

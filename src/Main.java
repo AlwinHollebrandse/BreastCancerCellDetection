@@ -37,6 +37,12 @@ public class Main {
         int medianFilterHeight = -1;
         int[] medianFilterWeights = null;
         double medianFilterScalar = -1;
+        int erosionFilterWidth = -1;
+        int erosionFilterHeight = -1;
+        int[] erosionFilterColors = null;
+        int dilationFilterWidth = -1;
+        int dilationFilterHeight = -1;
+        int[] dilationFilterColors = null;
 
         int singleColorTime = 0;
         int quantizationTime = 0;
@@ -49,6 +55,8 @@ public class Main {
         int edgeDetectionTime = 0;
         int histogramThresholdingSegmentationTime = 0;
         int kMeansSegmentationTime = 0;
+        int erosionTime = 0;
+        int dilationTime = 0;
         int meanSquaredError = 0;
         int[] averageHistogram = new int[256];
 
@@ -138,6 +146,22 @@ public class Main {
                 if (currentLine.toLowerCase().contains("kmeanssegmentation")) {
                     instructionList.add("KMeansSegmentation");
                 }
+
+                if (currentLine.toLowerCase().contains("erosion")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("Erosion");
+                    erosionFilterWidth = Integer.parseInt(lineArray[1]);
+                    erosionFilterHeight = Integer.parseInt(lineArray[2]);
+                    erosionFilterColors = parseArray(lineArray);
+                }
+
+                if (currentLine.toLowerCase().contains("dilation")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("Dilation");
+                    dilationFilterWidth = Integer.parseInt(lineArray[1]);
+                    dilationFilterHeight = Integer.parseInt(lineArray[2]);
+                    dilationFilterColors = parseArray(lineArray);
+                }
             }
             s.close();
         } catch (IOException ex) {
@@ -185,6 +209,8 @@ public class Main {
                     //set up global vars for all image operations
                     int[] histogram = null;
                     BufferedImage workingImage;
+                    BufferedImage edgeMap;
+                    BufferedImage segmentationImage;
 
                     // add the original image to the relevant result folder
                     final BufferedImage originalImage = ImageIO.read(files[i]);
@@ -197,11 +223,6 @@ public class Main {
 
                     resultFileName = directoryPath + color + ".jpg";
                     if (instructionList.contains("SingleColor")) {
-                        // TODO which is better gray?
-//                    BufferedImage singleColorImage = grayScale.convertToGrayScale(originalImage);
-//                    output_file = new File("grayscale.jpg");
-//                    ImageIO.write(singleColorImage, "jpg", output_file);
-
                         long startTime = System.nanoTime();
                         SingleColorScale singleColorScale = new SingleColorScale(originalImage, color);
                         workingImage = singleColorScale.convertToSingleColor();
@@ -417,7 +438,7 @@ public class Main {
                     if (instructionList.contains("EdgeDetection")) {
                         long startTime = System.nanoTime();
                         EdgeDetection edgeDetection = new EdgeDetection();
-                        BufferedImage edgeMap = edgeDetection.edgeDetection(workingImage);
+                        edgeMap = edgeDetection.edgeDetection(workingImage);
                         long time = (System.nanoTime() - startTime) / 1000000;
                         edgeDetectionTime += time;
                         output_file = new File(resultFileName);
@@ -439,11 +460,11 @@ public class Main {
                         // TODO add error handling if there is no histogram command
                         long startTime = System.nanoTime();
                         ThresholdSegmentation thresholdSegmentation = new ThresholdSegmentation(workingImage, histogram);
-                        BufferedImage thresholdSegmentationImage = thresholdSegmentation.thresholdSegmentation();
+                        segmentationImage = thresholdSegmentation.thresholdSegmentation();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         histogramThresholdingSegmentationTime += time;
                         output_file = new File(resultFileName);
-                        ImageIO.write(thresholdSegmentationImage, "jpg", output_file);
+                        ImageIO.write(segmentationImage, "jpg", output_file);
 //                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
@@ -461,11 +482,11 @@ public class Main {
                         // TODO add error handling if there is no histogram command
                         long startTime = System.nanoTime();
                         KMeansSegmentation kMeansSegmentation = new KMeansSegmentation(workingImage, histogram);
-                        BufferedImage kMeansSegmentationImage = kMeansSegmentation.kMeansSegmentation();
+                        segmentationImage = kMeansSegmentation.kMeansSegmentation();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         kMeansSegmentationTime += time;
                         output_file = new File(resultFileName);
-                        ImageIO.write(kMeansSegmentationImage, "jpg", output_file);
+                        ImageIO.write(segmentationImage, "jpg", output_file);
 //                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
@@ -474,6 +495,48 @@ public class Main {
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
                                 System.out.println("\nCould not delete old kmeans segmentation of: " + files[i].toString());
+                            }
+                        }
+                    }
+
+                    resultFileName = directoryPath + "erosion.jpg";
+                    if (instructionList.contains("Erosion")) {
+                        long startTime = System.nanoTime();
+                        MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(workingImage, "erosion", erosionFilterWidth, erosionFilterHeight, erosionFilterColors);
+                        segmentationImage = morphologicalFunctions.morphologicalFunctions();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        erosionTime += time;
+                        output_file = new File(resultFileName);
+                        ImageIO.write(segmentationImage, "jpg", output_file);
+//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not dilation of: " + files[i].toString());
+                            }
+                        }
+                    }
+
+                    resultFileName = directoryPath + "dilation.jpg";
+                    if (instructionList.contains("Dilation")) {
+                        long startTime = System.nanoTime();
+                        MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(workingImage, "dilation", dilationFilterWidth, dilationFilterHeight, dilationFilterColors);
+                        segmentationImage = morphologicalFunctions.morphologicalFunctions();
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        dilationTime += time;
+                        output_file = new File(resultFileName);
+                        ImageIO.write(segmentationImage, "jpg", output_file);
+//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+                    } else {
+                        // if the file was not needed, delete the file from the relevant result folder if it existed
+                        File imageResult = new File(resultFileName);
+                        // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                        if (imageResult.exists()) {
+                            if (!deleteDir(imageResult)) {
+                                System.out.println("\nCould not dilation of: " + files[i].toString());
                             }
                         }
                     }
@@ -533,9 +596,17 @@ public class Main {
             System.out.println("\nK means segmentation time creation processing time for the entire batch (ms): " + kMeansSegmentationTime);
             System.out.println("Average k means segmentation processing time (ms): " + kMeansSegmentationTime / files.length);
         }
+        if (erosionTime > 0) {
+            System.out.println("\nErosion time creation processing time for the entire batch (ms): " + erosionTime);
+            System.out.println("Average k means segmentation processing time (ms): " + erosionTime / files.length);
+        }
+        if (dilationTime > 0) {
+            System.out.println("\nDilation time creation processing time for the entire batch (ms): " + dilationTime);
+            System.out.println("Average k means segmentation processing time (ms): " + dilationTime / files.length);
+        }
         System.out.println("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
                 gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime +
-                histogramThresholdingSegmentationTime + kMeansSegmentationTime) / 1000));
+                histogramThresholdingSegmentationTime + kMeansSegmentationTime + erosionTime + dilationTime) / 1000));
         System.out.println("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
     }
 

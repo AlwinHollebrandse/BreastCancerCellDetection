@@ -8,6 +8,8 @@ public class Utility {
         pixelColor = normalizeColorInt(pixelColor);
 
         if ("gray".equalsIgnoreCase(color)) {
+            // TODO which is better gray?
+//            int gray = pixelColor;
             int gray = (int)(pixelColor * 0.299) + (int)(pixelColor * 0.587) + (int)(pixelColor *0.114); // NOTE adds in the "gray multiplier" (according to tutorialspoint.com/java_dip/grayscale_conversion.htm)
             Color newColor = new Color(gray, gray, gray);
             return newColor.getRGB();

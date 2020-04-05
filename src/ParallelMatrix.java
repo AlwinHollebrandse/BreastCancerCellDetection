@@ -5,7 +5,7 @@ public class ParallelMatrix {
     public void doInParallel (BufferedImage newImage,
                               OverHeadInterface.FuncInterface code) {
 
-        final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
+        final int MAX_THREADS = 1;//Runtime.getRuntime().availableProcessors();
 
         ImageThread[] threadArray = new ImageThread[MAX_THREADS];
 
@@ -66,7 +66,7 @@ class ImageThread extends Thread {
         }
         catch (Exception e) {
             // Throwing an exception
-            System.out.println ("Exception is caught " + e);
+            throw e;
         }
     }
 }

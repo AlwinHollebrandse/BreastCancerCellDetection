@@ -23,7 +23,7 @@ public class Filter {
 
         int newPixelValue = -1;
         if ("linear".equalsIgnoreCase(filterType)) {
-            newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);// calcAvgGray(neighborRGBValueArray, weights, scalar);
+            newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);
         }
 
         else if("median".equalsIgnoreCase(filterType)) {
@@ -77,7 +77,9 @@ public class Filter {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
 
-        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - filterWidth, originalImage.getHeight() - filterHeight, originalImage.getType());
+//        originalImage = new BufferedImage(4, 4, originalImage.getType());
+
+        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - ((filterWidth/2) * 2), originalImage.getHeight() - ((filterHeight/2) * 2), originalImage.getType());// TODO is the new image too small?
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         parallelMatrix.doInParallel(filterImage, getFuncInterface());

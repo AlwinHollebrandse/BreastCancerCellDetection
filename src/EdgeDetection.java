@@ -75,7 +75,7 @@ public class EdgeDetection {
 //            e.printStackTrace();
 //        }
 
-        BufferedImage edgeMapImage = new BufferedImage(sharpenedImage.getWidth() - filterWidth, sharpenedImage.getHeight() - filterHeight, sharpenedImage.getType()); // NOTE all Compass directions are 3x3
+        BufferedImage edgeMapImage = new BufferedImage(sharpenedImage.getWidth() - ((filterWidth/2) * 2), sharpenedImage.getHeight() - ((filterHeight/2) * 2), sharpenedImage.getType()); // NOTE all Compass directions are 3x3
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         parallelMatrix.doInParallel(edgeMapImage, getFuncInterface());

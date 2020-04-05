@@ -1,5 +1,5 @@
 SingleColor Gray
 EdgeDetection
-Histogram
 HistogramThresholdingSegmentation
 KMeansSegmentation
+dilation 3 3 [ 255 0 255 0 255 0 255 0 255 ]

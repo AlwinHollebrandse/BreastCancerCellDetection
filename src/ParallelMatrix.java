@@ -6,7 +6,7 @@ public class ParallelMatrix {
     public void doInParallel (BufferedImage newImage,
                               OverHeadInterface.FuncInterface code) {
 
-        final int MAX_THREADS = 1;//Runtime.getRuntime().availableProcessors();
+        final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
         Semaphore semaphore = new Semaphore(1);
 
         ImageThread[] threadArray = new ImageThread[MAX_THREADS];

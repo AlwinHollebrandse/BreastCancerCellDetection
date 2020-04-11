@@ -9,4 +9,5 @@ HistogramEqualization
 EdgeDetection
 HistogramThresholdingSegmentation
 KMeansSegmentation
+erosion 3 3 [ 255 0 255 0 255 0 255 0 255 ]
 dilation 3 3 [ 255 0 255 0 255 0 255 0 255 ]

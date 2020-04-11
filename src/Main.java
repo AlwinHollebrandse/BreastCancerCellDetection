@@ -503,6 +503,7 @@ public class Main {
                         }
                     }
 
+                    // TODO check that segmentation isnt just white. ie there was a segmentation operation called
                     resultFileName = directoryPath + "erosion.jpg";
                     if (instructionList.contains("Erosion")) {
                         long startTime = System.nanoTime();
@@ -524,6 +525,7 @@ public class Main {
                         }
                     }
 
+                    // TODO check that segmentation isnt just white. ie there was a segmentation operation called
                     resultFileName = directoryPath + "dilation.jpg";
                     if (instructionList.contains("Dilation")) {
                         long startTime = System.nanoTime();

@@ -23,7 +23,6 @@ public class EdgeDetection {
 
     public EdgeDetection.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
         ArrayList<Integer> neighborRGBValueArray = getNeighborValues(sharpenedImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
-        // TODO update README so that scalar is a JAVA double
 
         // define edge value in each direction. NOTE that only 4 are defined here, this is because the other 4 can be defined as the - result of these 4
         int horizontalEdge = calcEdgeStrength(neighborRGBValueArray, new int[]{-1, 0, 1, -2, 0, 2, -1, 0, 1}, 1);//(1/8.0)); // TODO check scalar
@@ -58,24 +57,24 @@ public class EdgeDetection {
         this.stop = false;
 
         // apply Laplace Filter to sharpen edges TODO do it
-//        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{1,1,1,1,1,1,1,1,1}, 1);//1/9.0);
-        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1/8.0);
-//        Filter filter = new Filter(originalImage, "median", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1);//(1/8.0)); // TODO check scalar
+        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{1,1,1,1,1,1,1,1,1}, 1);//1/9.0);
+//        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1/8.0);
+////        Filter filter = new Filter(originalImage, "median", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1);//(1/8.0)); // TODO check scalar
         this.sharpenedImage = filter.filter();
-
-//        Utility utility = new Utility();
-//        for (int x = 200; x < 300; x ++) {
-//            for (int y = 0; y < sharpenedImage.getHeight(); y ++) {
-//                sharpenedImage.setRGB(x, y, utility.setSingleColorRBG(255, "gray"));
-//            }
+//
+////        Utility utility = new Utility();
+////        for (int x = 200; x < 300; x ++) {
+////            for (int y = 0; y < sharpenedImage.getHeight(); y ++) {
+////                sharpenedImage.setRGB(x, y, utility.setSingleColorRBG(255, "gray"));
+////            }
+////        }
+//
+//        File output_file = new File("sharpenedImage.jpg");
+//        try {
+//            ImageIO.write(sharpenedImage, "jpg", output_file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
 //        }
-
-        File output_file = new File("sharpenedImage.jpg");
-        try {
-            ImageIO.write(sharpenedImage, "jpg", output_file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         BufferedImage edgeMapImage = new BufferedImage(sharpenedImage.getWidth() - ((filterWidth/2) * 2), sharpenedImage.getHeight() - ((filterHeight/2) * 2), sharpenedImage.getType()); // NOTE all Compass directions are 3x3
 

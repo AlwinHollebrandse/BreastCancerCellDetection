@@ -4,8 +4,19 @@ import java.util.ArrayList;
 
 public class Utility {
     // TODO add color enums
+    private int highestPixelValueInHistogram = 999;
+    private int lowestPixelValueInHistogram = -1;
+    private int[] histogram;
+
+    public Utility (int[] histogram) {
+        this.histogram =  histogram;
+    }
+
+    public Utility () {}
+
+
     public int setSingleColorRBG (int pixelColor, String color) {
-        pixelColor = normalizeColorInt(pixelColor);
+        pixelColor = normalizeColorIntBasic(pixelColor);
 
         if ("gray".equalsIgnoreCase(color)) {
             // TODO which is better gray?
@@ -47,6 +58,54 @@ public class Utility {
             pixelColor = 0;
         }
         return pixelColor;
+    }
+
+    public int normalizeColorIntBasic (int pixelColor) {
+        if (pixelColor > 255) {
+            pixelColor = 255;
+        } if (pixelColor < 0) {
+            pixelColor = 0;
+        }
+        return pixelColor;
+    }
+
+    public int normalizeColorIntPorportional (int pixelColor) {
+        setOldMax();
+//        setOldMin();
+        if (pixelColor > 255) {
+            pixelColor = 255;
+        } if (pixelColor < 0) {
+            pixelColor = 0;
+        }
+        return pixelColor;
+    }
+
+    private void setOldMax() {
+//        if (histogram == null) {
+//            GraphHistogram graphHistogram = new GraphHistogram(color);
+//            histogram = graphHistogram.createHistogram(workingImage);
+//        }
+        if (highestPixelValueInHistogram == 999) {
+            getHighestPixelValueInHistogram(histogram);
+        }
+    }
+
+    public void getLowestPixelValueInHistogram(int[] histogram) {
+        for (int i = 0; i < histogram.length; i++) {
+            if (histogram[i] > 0) {
+                lowestPixelValueInHistogram = i;
+                break;
+            }
+        }
+    }
+
+    public void getHighestPixelValueInHistogram(int[] histogram) {
+        for (int i = histogram.length - 1; i >= 0; i--) {
+            if (histogram[i] > 0) {
+                highestPixelValueInHistogram = i;
+                break;
+            }
+        }
     }
 
     // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4)

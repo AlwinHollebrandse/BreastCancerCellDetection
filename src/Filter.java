@@ -121,39 +121,63 @@ public class Filter {
             throw new NullPointerException("weights array was not the size of the filter");
         }
 
-        int redAvg = 0;
-        int greenAvg = 0;
-        int blueAvg = 0;
-        int alphaAvg = 0;
+//        ArrayList<Integer> redArrayList = new ArrayList<>();
+        double redAvg = 0;
+        double greenAvg = 0;
+        double blueAvg = 0;
+        double alphaAvg = 0;
         for (int i = 0; i < list.size(); i++) {
             // add the respective RGB element to the correct color avg
             Color c = new Color(list.get(i));
+//            redArrayList.add(c.getRed());
             redAvg += c.getRed() * weights[i]; // red element * weight of pixel
             greenAvg += c.getGreen() * weights[i]; // green element * weight of pixel
             blueAvg += c.getBlue() * weights[i]; // blue element * weight of pixel
             alphaAvg += c.getAlpha() * weights[i];
         }
+//        System.out.println(redArrayList.toString());
         redAvg /= list.size();
         greenAvg /= list.size();
         blueAvg /= list.size();
         alphaAvg /= list.size();
+//        System.out.println("pre scalar red avg (aka actual avg): " + redAvg);
 
         redAvg *= scalar;
         greenAvg *= scalar;
         blueAvg *= scalar;
         alphaAvg *= scalar;
+//        System.out.println("post scalar red avg: " + redAvg);
 
-        Utility utility = new Utility(); // TODO due to the weights, most pixels resulted with a negative average value. Meaning that they had to be normalized (-'s go back to 0, and >255 go back to 255)
-        redAvg = utility.normalizeColorInt(redAvg);
-        greenAvg = utility.normalizeColorInt(greenAvg);
-        blueAvg = utility.normalizeColorInt(blueAvg);
-        alphaAvg = utility.normalizeColorInt(alphaAvg);
-
-        // TODO is there a bug here with the scalar being a double, but the results is an int? like int division. because color cons needs ints.... if scalar < 1
+        Utility utility = new Utility();
+        int finalRedAvg = utility.normalizeColorInt((int)redAvg);
+        int finalGreenAvg = utility.normalizeColorInt((int)greenAvg);
+        int finalBlueAvg = utility.normalizeColorInt((int)blueAvg);
+        int finalAlphaAvg = utility.normalizeColorInt((int)alphaAvg);
 
         //combine each of the RGB elements into a single int
-        Color newColor = new Color(redAvg, greenAvg, blueAvg, alphaAvg);
+        Color newColor = new Color(finalRedAvg, finalGreenAvg, finalBlueAvg, finalAlphaAvg);
         return newColor.getRGB();
+
+//        Using weights = new int[]{1,1,1,1,1,1,1,1,1}, scalar = 1/9.0)
+//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
+//        pre scalar red avg (aka actual avg): 117.33333333333333
+//        post scalar red avg: 13.037037037037036
+
+//        Using weights = new int[]{1,1,1,1,1,1,1,1,1}, scalar = 1)
+//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
+//        pre scalar red avg (aka actual avg): 117.33333333333333
+//        post scalar red avg: 117.33333333333333
+
+//        new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1
+//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
+//        pre scalar red avg (aka actual avg): -7.666666666666667
+//        post scalar red avg: -7.666666666666667
+
+//        new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1/8.0
+//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
+//        pre scalar red avg (aka actual avg): -7.666666666666667
+//        post scalar red avg: -0.9583333333333334
+
     }
 
 }

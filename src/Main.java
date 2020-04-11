@@ -1,5 +1,7 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.awt.image.BufferedImage;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -16,8 +18,8 @@ public class Main {
         String imageFilesLocation = args[0];
         String instructions = args[1];
 
-        System.out.println("imageFilesLocation: " + imageFilesLocation);
-        System.out.println("instructions: " + instructions);
+        print("imageFilesLocation: " + imageFilesLocation);
+        print("instructions: " + instructions);
 
         // operation params
         String resultFileName;
@@ -65,12 +67,12 @@ public class Main {
         // the file containing all of the images error prevention
         File path = new File(imageFilesLocation);
         if (!path.exists()) {
-            System.out.println("Enter a valid path that holds the images");
+            print("Enter a valid path that holds the images");
             System.exit(1);
         }
         File [] files = path.listFiles();
         if (files.length <= 0) {
-            System.out.println("The provided image folder has no images");
+            print("The provided image folder has no images");
             System.exit(1);
         }
 
@@ -165,11 +167,11 @@ public class Main {
             }
             s.close();
         } catch (IOException ex) {
-            System.out.println("Enter a valid path that has operation instructions");
+            print("Enter a valid path that has operation instructions");
             System.exit(1);
         }
         if (instructionList.size() <= 0) {
-            System.out.println("The provided instruction file has no operation instructions");
+            print("The provided instruction file has no operation instructions");
             System.exit(1);
         }
 
@@ -185,7 +187,7 @@ public class Main {
                 break;
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
-//                System.out.println("\n\n" + files[i]);
+//                print("\n\n" + files[i]);
                 try {
 
                     // Make directory for the current cell image file.
@@ -195,14 +197,14 @@ public class Main {
                     }
                     int endOfPictureName = files[i].toString().length() - 4; // remove the ".BMP" from the directory name
                     String directoryPath = "results/" + files[i].toString().substring(startOfPictureName + 1, endOfPictureName) + "/";
-//                    System.out.println("directoryPath: " + directoryPath);
+//                    print("directoryPath: " + directoryPath);
 
                     File imageResults = new File(directoryPath);
 
                     // (if needed) make a new output folder for the current imagee.
                     imageResults.mkdirs();
                     if (!new File(directoryPath).exists()) {
-                        System.out.println("Could not create specified directory for image: " + files[i].toString() + ". Skipping this image.");
+                        print("Could not create specified directory for image: " + files[i].toString() + ". Skipping this image.");
                         continue;
                     }
 
@@ -232,14 +234,14 @@ public class Main {
                         singleColorTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
-//                        System.out.println("Converting to GrayScale" + " Execution time in milliseconds : " + time);
+//                        print("Converting to GrayScale" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old SingleColor of: " + files[i].toString());
+                                print("\nCould not delete old SingleColor of: " + files[i].toString());
                             }
                         }
                     }
@@ -248,7 +250,7 @@ public class Main {
                     resultFileName = directoryPath + "quantization.jpg";
                     if (instructionList.contains("Quantization")) {
                         if (quantizationScale == -1) {
-                            System.out.println("Quantization parameter was set incorrectly");
+                            print("Quantization parameter was set incorrectly");
                             System.exit(1);
                         }
                         long startTime = System.nanoTime();
@@ -259,14 +261,14 @@ public class Main {
                         quantizationTime += time;
                         ImageIO.write(workingImage, "jpg", output_file);
                         meanSquaredError += quantization.getMeanSquaredError(workingImage);
-//                        System.out.println("Quantization" + " Execution time in milliseconds : " + time);
+//                        print("Quantization" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old Quantization of: " + files[i].toString());
+                                print("\nCould not delete old Quantization of: " + files[i].toString());
                             }
                         }
                     }
@@ -281,14 +283,14 @@ public class Main {
                         saltAndPepperTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
-//                        System.out.println("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
+//                        print("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old SaltAndPepperNoise of: " + files[i].toString());
+                                print("\nCould not delete old SaltAndPepperNoise of: " + files[i].toString());
                             }
                         }
                     }
@@ -303,14 +305,14 @@ public class Main {
                         gaussianTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
-//                        System.out.println("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
+//                        print("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old GaussianNoise of: " + files[i].toString());
+                                print("\nCould not delete old GaussianNoise of: " + files[i].toString());
                             }
                         }
                     }
@@ -319,7 +321,7 @@ public class Main {
                     resultFileName = directoryPath + "linear.jpg";
                     if (instructionList.contains("LinearFilter")) {
                         if (linearFilterWidth == -1 || linearFilterHeight == -1) {
-                            System.out.println("linear filter parameters were set incorrectly");
+                            print("linear filter parameters were set incorrectly");
                             System.exit(1);
                         }
                         long startTime = System.nanoTime();
@@ -329,14 +331,14 @@ public class Main {
                         linearFilterTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
-//                        System.out.println("Linear Filter" + " Execution time in milliseconds : " + time);
+//                        print("Linear Filter" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old LinearFilter of: " + files[i].toString());
+                                print("\nCould not delete old LinearFilter of: " + files[i].toString());
                             }
                         }
                     }
@@ -345,7 +347,7 @@ public class Main {
                     resultFileName = directoryPath + "median.jpg";
                     if (instructionList.contains("MedianFilter")) {
                         if (medianFilterWidth == -1 || medianFilterHeight == -1) {
-                            System.out.println("median filter parameters were set incorrectly");
+                            print("median filter parameters were set incorrectly");
                             System.exit(1);
                         }
                         long startTime = System.nanoTime();
@@ -355,14 +357,14 @@ public class Main {
                         medianFilterTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
-//                        System.out.println("Median Filter" + " Execution time in milliseconds : " + time);
+//                        print("Median Filter" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old MedianFilter of: " + files[i].toString());
+                                print("\nCould not delete old MedianFilter of: " + files[i].toString());
                             }
                         }
                     }
@@ -376,7 +378,7 @@ public class Main {
                         histogram = graphHistogram.createHistogram(workingImage);
                         long time = (System.nanoTime() - startTime) / 1000000;
                         histogramTime += time;
-//                        System.out.println("Histogram creation Execution time in milliseconds : " + time);
+//                        print("Histogram creation Execution time in milliseconds : " + time);
 
                         // print the starting histogram to a file
                         JFreeChart histogramGraph = graphHistogram.graphHistogram(histogram, graphTitle);
@@ -389,7 +391,7 @@ public class Main {
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old Histogram of: " + files[i].toString());
+                                print("\nCould not delete old Histogram of: " + files[i].toString());
                             }
                         }
                     }
@@ -411,7 +413,7 @@ public class Main {
                         int[] equalizedHistogram = graphHistogram.createHistogram(workingImage);
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
-//                        System.out.println("histogram equalization" + " Execution time in milliseconds : " + time);
+//                        print("histogram equalization" + " Execution time in milliseconds : " + time);
 
                         // print the equalized histogram to a file
                         JFreeChart equalizedHistogramGraph = graphHistogram.graphHistogram(equalizedHistogram, graphTitle);
@@ -422,7 +424,7 @@ public class Main {
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old HistogramEqualization of: " + files[i].toString());
+                                print("\nCould not delete old HistogramEqualization of: " + files[i].toString());
                             }
                         }
 
@@ -431,7 +433,7 @@ public class Main {
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old HistogramEqualization of: " + files[i].toString());
+                                print("\nCould not delete old HistogramEqualization of: " + files[i].toString());
                             }
                         }
                     }
@@ -445,14 +447,14 @@ public class Main {
                         edgeDetectionTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(edgeMap, "jpg", output_file);
-//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+//                        print("Edge Detection" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old edgeDetection of: " + files[i].toString());
+                                print("\nCould not delete old edgeDetection of: " + files[i].toString());
                             }
                         }
                     }
@@ -467,14 +469,14 @@ public class Main {
                         histogramThresholdingSegmentationTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(segmentationImage, "jpg", output_file);
-//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+//                        print("Edge Detection" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old histogram thresholding segmentation of: " + files[i].toString());
+                                print("\nCould not delete old histogram thresholding segmentation of: " + files[i].toString());
                             }
                         }
                     }
@@ -489,14 +491,14 @@ public class Main {
                         kMeansSegmentationTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(segmentationImage, "jpg", output_file);
-//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+//                        print("Edge Detection" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not delete old kmeans segmentation of: " + files[i].toString());
+                                print("\nCould not delete old kmeans segmentation of: " + files[i].toString());
                             }
                         }
                     }
@@ -510,14 +512,14 @@ public class Main {
                         erosionTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(segmentationImage, "jpg", output_file);
-//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+//                        print("Edge Detection" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not dilation of: " + files[i].toString());
+                                print("\nCould not dilation of: " + files[i].toString());
                             }
                         }
                     }
@@ -531,85 +533,85 @@ public class Main {
                         dilationTime += time;
                         output_file = new File(resultFileName);
                         ImageIO.write(segmentationImage, "jpg", output_file);
-//                        System.out.println("Edge Detection" + " Execution time in milliseconds : " + time);
+//                        print("Edge Detection" + " Execution time in milliseconds : " + time);
                     } else {
                         // if the file was not needed, delete the file from the relevant result folder if it existed
                         File imageResult = new File(resultFileName);
                         // delete the image result folder if it already existed. This way, no remnants from old runs remain
                         if (imageResult.exists()) {
                             if (!deleteDir(imageResult)) {
-                                System.out.println("\nCould not dilation of: " + files[i].toString());
+                                print("\nCould not dilation of: " + files[i].toString());
                             }
                         }
                     }
 
                 } catch (Exception ex) {
-                    System.out.println("\nThere was an error with image " + files[i].toString() + ": " + ex);
+                    print("\nThere was an error with image " + files[i].toString() + ": " + ex);
                     ex.printStackTrace();
                 }
             }
             progressBar.next();
         }
-        System.out.println("\n\nFinal Metrics:");
+        print("\n\nFinal Metrics:");
         getAverageHistogram(averageHistogram, files.length, color);
 //            o Averaged processing time per image per each procedure // TODO what
         if (singleColorTime > 0) {// TODO write these to teh results final file?
-            System.out.println("\nConverting to a single color processing time for the entire batch (ms): " + singleColorTime);
-            System.out.println("Average converting to a single color processing time (ms): " + singleColorTime / files.length);
+            print("\nConverting to a single color processing time for the entire batch (ms): " + singleColorTime);
+            print("Average converting to a single color processing time (ms): " + singleColorTime / files.length);
         }
         if (quantizationTime > 0) {
-            System.out.println("\nQuantization processing time for the entire batch (ms): " + quantizationTime);
-            System.out.println("Average quantization processing time (ms): " + quantizationTime / files.length);
-            System.out.println("Average meanSquaredError: " + meanSquaredError / files.length); // TODO whats an acceptable/expected one
+            print("\nQuantization processing time for the entire batch (ms): " + quantizationTime);
+            print("Average quantization processing time (ms): " + quantizationTime / files.length);
+            print("Average meanSquaredError: " + meanSquaredError / files.length); // TODO whats an acceptable/expected one
         }
         if (saltAndPepperTime > 0) {
-            System.out.println("\nAdding salt and pepper noise processing time for the entire batch (ms): " + saltAndPepperTime);
-            System.out.println("Average adding salt and pepper noise processing time (ms): " + saltAndPepperTime / files.length);
+            print("\nAdding salt and pepper noise processing time for the entire batch (ms): " + saltAndPepperTime);
+            print("Average adding salt and pepper noise processing time (ms): " + saltAndPepperTime / files.length);
         }
         if (gaussianTime > 0) {
-            System.out.println("\nAdding gaussian noise processing time for the entire batch (ms): " + gaussianTime);
-            System.out.println("Average adding gaussian noise processing time (ms): " + gaussianTime / files.length);
+            print("\nAdding gaussian noise processing time for the entire batch (ms): " + gaussianTime);
+            print("Average adding gaussian noise processing time (ms): " + gaussianTime / files.length);
         }
         if (linearFilterTime > 0) {
-            System.out.println("\nLinear filter processing time for the entire batch (ms): " + linearFilterTime);
-            System.out.println("Average linear filter processing time (ms): " + linearFilterTime / files.length);
+            print("\nLinear filter processing time for the entire batch (ms): " + linearFilterTime);
+            print("Average linear filter processing time (ms): " + linearFilterTime / files.length);
         }
         if (medianFilterTime > 0) {
-            System.out.println("\nMedian filter processing time for the entire batch (ms): " + medianFilterTime);
-            System.out.println("Average median filter processing time (ms): " + medianFilterTime / files.length);
+            print("\nMedian filter processing time for the entire batch (ms): " + medianFilterTime);
+            print("Average median filter processing time (ms): " + medianFilterTime / files.length);
         }
         if (histogramTime > 0) {
-            System.out.println("\nHistogram creation processing time for the entire batch (ms): " + histogramTime);
-            System.out.println("Average histogram creation processing time (ms): " + histogramTime / files.length);
+            print("\nHistogram creation processing time for the entire batch (ms): " + histogramTime);
+            print("Average histogram creation processing time (ms): " + histogramTime / files.length);
         }
         if (equalizationTime > 0) {
-            System.out.println("\nEqualized histogram creation processing time for the entire batch (ms): " + equalizationTime);
-            System.out.println("Average equalized histogram creation processing time (ms): " + equalizationTime / files.length);
+            print("\nEqualized histogram creation processing time for the entire batch (ms): " + equalizationTime);
+            print("Average equalized histogram creation processing time (ms): " + equalizationTime / files.length);
         }
         if (edgeDetectionTime > 0) {
-            System.out.println("\nEdge detection creation processing time for the entire batch (ms): " + edgeDetectionTime);
-            System.out.println("Average edge detection processing time (ms): " + edgeDetectionTime / files.length);
+            print("\nEdge detection creation processing time for the entire batch (ms): " + edgeDetectionTime);
+            print("Average edge detection processing time (ms): " + edgeDetectionTime / files.length);
         }
         if (histogramThresholdingSegmentationTime > 0) {
-            System.out.println("\nHistogram thresholding segmentation time creation processing time for the entire batch (ms): " + histogramThresholdingSegmentationTime);
-            System.out.println("Average histogram thresholding segmentation processing time (ms): " + histogramThresholdingSegmentationTime / files.length);
+            print("\nHistogram thresholding segmentation time creation processing time for the entire batch (ms): " + histogramThresholdingSegmentationTime);
+            print("Average histogram thresholding segmentation processing time (ms): " + histogramThresholdingSegmentationTime / files.length);
         }
         if (kMeansSegmentationTime > 0) {
-            System.out.println("\nK means segmentation time creation processing time for the entire batch (ms): " + kMeansSegmentationTime);
-            System.out.println("Average k means segmentation processing time (ms): " + kMeansSegmentationTime / files.length);
+            print("\nK means segmentation time creation processing time for the entire batch (ms): " + kMeansSegmentationTime);
+            print("Average k means segmentation processing time (ms): " + kMeansSegmentationTime / files.length);
         }
         if (erosionTime > 0) {
-            System.out.println("\nErosion time creation processing time for the entire batch (ms): " + erosionTime);
-            System.out.println("Average k means segmentation processing time (ms): " + erosionTime / files.length);
+            print("\nErosion time creation processing time for the entire batch (ms): " + erosionTime);
+            print("Average k means segmentation processing time (ms): " + erosionTime / files.length);
         }
         if (dilationTime > 0) {
-            System.out.println("\nDilation time creation processing time for the entire batch (ms): " + dilationTime);
-            System.out.println("Average k means segmentation processing time (ms): " + dilationTime / files.length);
+            print("\nDilation time creation processing time for the entire batch (ms): " + dilationTime);
+            print("Average k means segmentation processing time (ms): " + dilationTime / files.length);
         }
-        System.out.println("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
+        print("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
                 gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime +
                 histogramThresholdingSegmentationTime + kMeansSegmentationTime + erosionTime + dilationTime) / 1000));
-        System.out.println("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
+        print("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
     }
 
 
@@ -627,7 +629,7 @@ public class Main {
             File output_file = new File(directoryPath + graphTitle + ".png");
             ChartUtilities.saveChartAsPNG(output_file, defaultHistogram, 700, 500);
         } catch (Exception e) {
-            System.out.println("Could not create specified directory for the average histogram. Skipping this operation. Error: " + e);
+            print("Could not create specified directory for the average histogram. Skipping this operation. Error: " + e);
         }
     }
 
@@ -680,15 +682,16 @@ public class Main {
         }
         return result;
     }
-}
 
-//part 2 tasks:
-//        1. Implement one selected edge detection algorithm.
-//        2. Implement dilation and erosion operators.
-//        3. Apply segmentation into two groups – foreground (cells) and background (everything
-//        else).
-//        4. Implement two segmentation techniques (they must be implemented by you, not API
-//        calls): + histogram thresholding + histogram clustering (basic approach using two clusters
-//        and k-means)
-//        5. Present example results before and after edge detection / dilation / erosion
-//        /segmentation for each respective class of cells (seven in total)
+    public static void print(String s) {
+        System.out.println(s);
+        try {
+            BufferedWriter out = new BufferedWriter(
+                    new FileWriter("results/report.txt", true));
+            out.write(s);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

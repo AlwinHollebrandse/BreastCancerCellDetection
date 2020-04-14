@@ -12,8 +12,8 @@ SingleColor takes in 1 param in the file: the color to convert to. Current optio
 Quantization takes in 1 param in the file: the scale to scale to. Ex:16
 SaltAndPepper takes in 3 param in the file; random threshold, mean, and sigma. Ex: 0.05 0 0
 Gaussian takes in 3 param in the file; random threshold, mean, and sigma. Ex: 0.05 0 00 0 5
-LinearFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form), and the scalar multiplier. Ex: 0.05 0 03 3 [ 0 0 0 0 0 0 0 0 0 ] 1
-MedianFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form)(can also be null), and the scalar multiplier. EX: 3 3 null 1
+LinearFilter takes in 4 param in the file; filter width, filter height, and the weights (in the afore mentioned array form). Ex: 0.05 0 03 3 [ 0 0 0 0 0 0 0 0 0 ]
+MedianFilter takes in 4 param in the file; filter width, filter height, and the weights (in the afore mentioned array form)(can also be null) Ex: 3 3 null
 Histogram takes no params.
 HistogramEqualization takes no params.
 EdgeDetection takes no params.
@@ -79,7 +79,7 @@ This section is found under Filter.java. This filter methods crops of borders of
 
 
 ## MedianFilter
-This section is found under Filter.java. This filter methods crops of borders of images that do not have a large enough border for an edge pixel. It accepts the following parameters: current image, filterType, filterWidth, filterHeight, weights, and scalar. After validating each param, this code provides this lambda: for the given pixel, check which type of filter is being applied. If it is “median”, take the user’s filter mask size and adds each pixel to a list by the corresponding weight amount of times. The median of this list is then computed. That becomes the value of the filter’s center pixel. The output of this method is saved as median.jpg.
+This section is found under Filter.java. This filter methods crops of borders of images that do not have a large enough border for an edge pixel. It accepts the following parameters: current image, filterType, filterWidth, filterHeight, and weights. After validating each param, this code provides this lambda: for the given pixel, check which type of filter is being applied. If it is “median”, take the user’s filter mask size and adds each pixel to a list by the corresponding weight amount of times. The median of this list is then computed. That becomes the value of the filter’s center pixel. The output of this method is saved as median.jpg.
 
 
 ## Histogram
@@ -103,11 +103,11 @@ This section is found under KMeansSegmentation.java. It accepts a histogram as a
 
 
 ## Erosion
-This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operations prior to this operation.This operation occurs when morphologicalType is set to “erosion.” For each non-cropped pixel, the following happens. Check if each pixel in the current image filtered window matches the associated value in the colors array. If Each does, keep the pixel. Otherwise, remove the pixel by setting it to black. This image can be found at Erosion.jpg.
+This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operation prior to this operation. This operation occurs when morphologicalType is set to “erosion.” For each non-cropped pixel, the following happens. Check if each pixel in the current image filtered window matches the associated value in the colors array. If Each does, keep the pixel. Otherwise, remove the pixel by setting it to black. This image can be found at Erosion.jpg.
 
 
 ## Dilation
-This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operations prior to this operation. This operation occurs when morphologicalType is set to “dilation.” For each non-cropped pixel, the following happens. Check if the current pixel in the provided image has a non-zero value and is “object.” If it is, set each associated pixel in the current filter window to “object” color if the associated colors value is non-zero. Otherwise, keep the pixel the same as it was. This image can be found at Dilation.jpg.
+This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operation prior to this operation. This operation occurs when morphologicalType is set to “dilation.” For each non-cropped pixel, the following happens. Check if the current pixel in the provided image has a non-zero value and is “object.” If it is, set each associated pixel in the current filter window to “object” color if the associated colors value is non-zero. Otherwise, keep the pixel the same as it was. This image can be found at Dilation.jpg.
 
 
 ## Example Metrics

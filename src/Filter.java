@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.Semaphore;
 
 public class Filter {
@@ -88,41 +89,7 @@ public class Filter {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         parallelMatrix.doInParallel(filterImage, getFuncInterface());
 
-        int[] minMax = getOldImageMinAndMax();
-        int oldMin = minMax[0];
-        int oldMax = minMax[1];
-
-        return normalizeFilterImage(filterImage, oldMin, oldMax);
-//        return filterImage;
-    }
-
-    private BufferedImage normalizeFilterImage(BufferedImage filterImage, int oldMin, int oldMax) {
-        BufferedImage normalizedFilterImage = new BufferedImage(filterImage.getWidth(), filterImage.getHeight(), originalImage.getType());
-        for (int x = 0; x < normalizedFilterImage.getWidth(); x++) {
-            for (int y = 0; y < normalizedFilterImage.getHeight(); y++) {
-                int oldPixelValue = utility.getSingleColor(tempPrePorportionalNormImageValues[x][y], "gray");
-                int newPixelValue = utility.normalizeColorIntPorportional(oldPixelValue, oldMin, oldMax);
-                normalizedFilterImage.setRGB(x, y, utility.setSingleColorRBG(newPixelValue, "gray"));
-            }
-        }
-        return normalizedFilterImage;
-    }
-
-    private int[] getOldImageMinAndMax () {
-        int min = 999;
-        int max = -1;
-        for (int x = 0; x < originalImage.getWidth(); x++) { // NOTE technically this includes the crops, which it shouldnt
-            for (int y = 0; y < originalImage.getHeight(); y++) {
-                int pixelValue = utility.getSingleColor(originalImage.getRGB(x, y), "gray");
-                if (pixelValue < min) {
-                    min = pixelValue;
-                }
-                if (pixelValue > max) {
-                    max = pixelValue;
-                }
-            }
-        }
-        return new int[] {min, max};
+        return filterImage;
     }
 
     private int[] setDefaultWeights() {
@@ -158,12 +125,9 @@ public class Filter {
             }
         }
 
-        // TODO speed test
-//        Collections.sort(weightedMedianList);
-//        int medianValue = weightedMedianList.get(weightedMedianList.size() / 2);
-
-        MedianOfMedians medianOfMedians = new MedianOfMedians();
-        int medianValue = medianOfMedians.findMedian(weightedMedianList,(weightedMedianList.size())/2 + 1,0,weightedMedianList.size() - 1);
+        // NOTE there was a median of medians implementation, but this ended up being faster
+        Collections.sort(weightedMedianList);
+        int medianValue = weightedMedianList.get(weightedMedianList.size() / 2);
 
         Utility utility = new Utility();
         return utility.setSingleColorRBG(medianValue, "gray");

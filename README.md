@@ -32,7 +32,7 @@ SaltAndPepper 0.05 0 0
 
 Gaussian 0 0 5
 
-LinearFilter 3 3 [ 0 0 0 0 0 0 0 0 0 ] 1
+LinearFilter 3 3 [ 0 0 0 0 0 0 0 0 0 ]
 
 MedianFilter 3 3 null 1
 
@@ -75,7 +75,7 @@ This section is found under NoiseAdder.java. It accepts the following parameters
 
 
 ## LinearFilter
-This section is found under Filter.java. This filter methods crops of borders of images that do not have a large enough border for an edge pixel. It accepts the following parameters: current image, filterType, filterWidth, filterHeight, weights, and scalar. After validating each param, this code provides this lambda: for the given pixel, check which type of filter is being applied. If it is “linear”, take the user’s filter mask size and compute the average of each pixel in that filter (where each pixel is first multiplied by the corresponding weight value). The center pixel of this filter is set to that average value. Note that each channel of the pixel is computed independently. The output of this method is saved as linear.jpg.
+This section is found under Filter.java. This filter methods crops of borders of images that do not have a large enough border for an edge pixel. It accepts the following parameters: current image, filterType, filterWidth, filterHeight, and weights. After validating each param, this code provides this lambda: for the given pixel, check which type of filter is being applied. If it is “linear”, take the user’s filter mask size and compute the average of each pixel in that filter (where each pixel is first multiplied by the corresponding weight value). The center pixel of this filter is set to that average value. Note that each channel of the pixel is computed independently. The output of this method is saved as linear.jpg.
 
 
 ## MedianFilter
@@ -103,11 +103,11 @@ This section is found under KMeansSegmentation.java. It accepts a histogram as a
 
 
 ## Erosion
-This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation occurs when morphologicalType is set to “erosion.” For each non-cropped pixel, the following happens. Check if each pixel in the current image filtered window matches the associated value in the colors array. If Each does, keep the pixel. Otherwise, remove the pixel by setting it to black. This image can be found at Erosion.jpg.
+This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operations prior to this operation.This operation occurs when morphologicalType is set to “erosion.” For each non-cropped pixel, the following happens. Check if each pixel in the current image filtered window matches the associated value in the colors array. If Each does, keep the pixel. Otherwise, remove the pixel by setting it to black. This image can be found at Erosion.jpg.
 
 
 ## Dilation
-This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation occurs when morphologicalType is set to “dilation.” For each non-cropped pixel, the following happens. Check if the current pixel in the provided image has a non-zero value and is “object.” If it is, set each associated pixel in the current filter window to “object” color if the associated colors value is non-zero.  Otherwise, keep the pixel the same as it was. This image can be found at Dilation.jpg.
+This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operations prior to this operation. This operation occurs when morphologicalType is set to “dilation.” For each non-cropped pixel, the following happens. Check if the current pixel in the provided image has a non-zero value and is “object.” If it is, set each associated pixel in the current filter window to “object” color if the associated colors value is non-zero. Otherwise, keep the pixel the same as it was. This image can be found at Dilation.jpg.
 
 
 ## Example Metrics

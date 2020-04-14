@@ -179,8 +179,8 @@ public class Main {
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
 
-            if (i >= 1)
-                break;
+//            if (i >= 1)
+//                break;
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
 //                print("\n\n" + files[i]);
@@ -457,7 +457,10 @@ public class Main {
 
                     resultFileName = directoryPath + "histogramThresholdingSegmentation.jpg";
                     if (instructionList.contains("HistogramThresholdingSegmentation")) {
-                        // TODO add error handling if there is no histogram command
+                        if (histogram == null) {
+                            GraphHistogram graphHistogram = new GraphHistogram(color);
+                            histogram = graphHistogram.createHistogram(workingImage);
+                        }
                         long startTime = System.nanoTime();
                         ThresholdSegmentation thresholdSegmentation = new ThresholdSegmentation(workingImage, histogram);
                         segmentationImage = thresholdSegmentation.thresholdSegmentation();
@@ -479,7 +482,10 @@ public class Main {
 
                     resultFileName = directoryPath + "kMeansSegmentation.jpg";
                     if (instructionList.contains("KMeansSegmentation")) {
-                        // TODO add error handling if there is no histogram command
+                        if (histogram == null) {
+                            GraphHistogram graphHistogram = new GraphHistogram(color);
+                            histogram = graphHistogram.createHistogram(workingImage);
+                        }
                         long startTime = System.nanoTime();
                         KMeansSegmentation kMeansSegmentation = new KMeansSegmentation(workingImage, histogram);
                         segmentationImage = kMeansSegmentation.kMeansSegmentation();

@@ -13,7 +13,6 @@ public class EdgeDetection {
     private BufferedImage sharpenedImage;
     private int filterWidth = 3; // All compass filters are 3x3
     private int filterHeight = 3;
-    private boolean stop = false; // TODO delete
 
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
@@ -38,7 +37,6 @@ public class EdgeDetection {
             int colorValue = utility.setSingleColorRBG(255, "gray"); // white
             newImage.setRGB(x, y, colorValue);
         } else {
-            stop = true;
             int colorValue = utility.setSingleColorRBG(0, "gray"); // black
             newImage.setRGB(x, y, colorValue);
         }
@@ -54,21 +52,19 @@ public class EdgeDetection {
 
     // performs laplace filter (sharpens edges then applies compass edge detection)
     public BufferedImage edgeDetection (BufferedImage originalImage) throws NullPointerException {
-        this.stop = false;
 
-        // apply Laplace Filter to sharpen edges TODO do it
-//        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{1,1,1,1,1,1,1,1,1});
-        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0});
-////        Filter filter = new Filter(originalImage, "median", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}
-        this.sharpenedImage = filter.filter();
+        // apply Laplace Filter to sharpen edges TODO theres a bug that makes the laplace image black
+//        Filter filter = new Filter(originalImage, "linear", 3, 3, new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0});
+//        this.sharpenedImage = filter.filter();
+        this.sharpenedImage = originalImage;
 
 
-        File output_file = new File("sharpenedImage.jpg");
-        try {
-            ImageIO.write(sharpenedImage, "jpg", output_file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        File output_file = new File("sharpenedImage.jpg");
+//        try {
+//            ImageIO.write(sharpenedImage, "jpg", output_file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         BufferedImage edgeMapImage = new BufferedImage(sharpenedImage.getWidth() - ((filterWidth/2) * 2), sharpenedImage.getHeight() - ((filterHeight/2) * 2), sharpenedImage.getType()); // NOTE all Compass directions are 3x3
 
@@ -86,8 +82,6 @@ public class EdgeDetection {
     // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4)
     public ArrayList<Integer> getNeighborValues (BufferedImage originalImage, int originalX, int originalY, int filterHeight, int filterWidth) {
         ArrayList<Integer> neighborRGBValueArray = new ArrayList<>();
-        ArrayList<Color> temp = new ArrayList<>();
-
 
         // get the starting and ending valid coordinate values
         int startingX = originalX - filterWidth/2;
@@ -99,12 +93,7 @@ public class EdgeDetection {
         for (int x = startingX; x <= endingX; x++) {
             for (int y = startingY; y <= endingY; y++) {
                 neighborRGBValueArray.add(originalImage.getRGB(x, y));
-                temp.add(new Color(originalImage.getRGB(x, y)));
             }
-        }
-
-        if (this.stop) {
-            int blah = 1;
         }
         return neighborRGBValueArray;
     }

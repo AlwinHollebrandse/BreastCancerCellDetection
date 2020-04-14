@@ -12,6 +12,7 @@ public class Filter {
     private int filterHeight;
     private int[] weights;
     private double scalar;
+    private int[][] tempPrePorportionalNormImageValues;
 
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
@@ -25,6 +26,7 @@ public class Filter {
         int newPixelValue = -1;
         if ("linear".equalsIgnoreCase(filterType)) {
             newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);
+            tempPrePorportionalNormImageValues[x][y] = newPixelValue;
         }
 
         else if("median".equalsIgnoreCase(filterType)) {
@@ -40,13 +42,12 @@ public class Filter {
 
 
 
-    public Filter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, double scalar) {
+    public Filter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights) {
         this.originalImage = originalImage;
         this.filterType = filterType;
         this.filterWidth = filterWidth;
         this.filterHeight = filterHeight;
         this.weights = weights;
-        this.scalar = scalar;
     }
 
 
@@ -57,12 +58,10 @@ public class Filter {
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
-            int filterSize = filterHeight * filterWidth;
-            weights = new int[filterSize];
-            for (int i = 0; i < filterSize; i++) {
-                weights[i] = 1;
-            }
+            weights = setDefaultWeights();
         }
+
+        scalar = setScalar(weights);
 
         if (weights.length != filterHeight * filterWidth) {
             throw new NullPointerException("weights array was not the size of the filter");
@@ -77,14 +76,70 @@ public class Filter {
         if ((filterHeight & 1) == 0 || (filterWidth & 1) == 0) {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
+        int newImageWidth = originalImage.getWidth() - ((filterWidth/2) * 2);
+        int newImageHeight = originalImage.getHeight() - ((filterHeight/2) * 2);
+
+        tempPrePorportionalNormImageValues = new int[newImageWidth][newImageHeight];
 
 //        originalImage = new BufferedImage(4, 4, originalImage.getType());
 
-        BufferedImage filterImage = new BufferedImage(originalImage.getWidth() - ((filterWidth/2) * 2), originalImage.getHeight() - ((filterHeight/2) * 2), originalImage.getType());
+        BufferedImage filterImage = new BufferedImage(newImageWidth, newImageHeight, originalImage.getType());
 
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         parallelMatrix.doInParallel(filterImage, getFuncInterface());
-        return filterImage;
+
+        int[] minMax = getOldImageMinAndMax();
+        int oldMin = minMax[0];
+        int oldMax = minMax[1];
+
+        return normalizeFilterImage(filterImage, oldMin, oldMax);
+//        return filterImage;
+    }
+
+    private BufferedImage normalizeFilterImage(BufferedImage filterImage, int oldMin, int oldMax) {
+        BufferedImage normalizedFilterImage = new BufferedImage(filterImage.getWidth(), filterImage.getHeight(), originalImage.getType());
+        for (int x = 0; x < normalizedFilterImage.getWidth(); x++) {
+            for (int y = 0; y < normalizedFilterImage.getHeight(); y++) {
+                int oldPixelValue = utility.getSingleColor(tempPrePorportionalNormImageValues[x][y], "gray");
+                int newPixelValue = utility.normalizeColorIntPorportional(oldPixelValue, oldMin, oldMax);
+                normalizedFilterImage.setRGB(x, y, utility.setSingleColorRBG(newPixelValue, "gray"));
+            }
+        }
+        return normalizedFilterImage;
+    }
+
+    private int[] getOldImageMinAndMax () {
+        int min = 999;
+        int max = -1;
+        for (int x = 0; x < originalImage.getWidth(); x++) { // NOTE technically this includes the crops, which it shouldnt
+            for (int y = 0; y < originalImage.getHeight(); y++) {
+                int pixelValue = utility.getSingleColor(originalImage.getRGB(x, y), "gray");
+                if (pixelValue < min) {
+                    min = pixelValue;
+                }
+                if (pixelValue > max) {
+                    max = pixelValue;
+                }
+            }
+        }
+        return new int[] {min, max};
+    }
+
+    private int[] setDefaultWeights() {
+        int filterSize = filterHeight * filterWidth;
+        weights = new int[filterSize];
+        for (int i = 0; i < filterSize; i++) {
+            weights[i] = 1;
+        }
+        return weights;
+    }
+
+    private double setScalar(int[] weights) {
+        double absoluteSum = 0;
+        for (int i = 0; i < weights.length; i++) {
+            absoluteSum += Math.abs(weights[i]);
+        }
+        return 1/absoluteSum;
     }
 
     public int calcMedian (ArrayList<Integer> list, int[] weights) throws NullPointerException {
@@ -121,7 +176,6 @@ public class Filter {
             throw new NullPointerException("weights array was not the size of the filter");
         }
 
-//        ArrayList<Integer> redArrayList = new ArrayList<>();
         double redAvg = 0;
         double greenAvg = 0;
         double blueAvg = 0;
@@ -129,24 +183,16 @@ public class Filter {
         for (int i = 0; i < list.size(); i++) {
             // add the respective RGB element to the correct color avg
             Color c = new Color(list.get(i));
-//            redArrayList.add(c.getRed());
             redAvg += c.getRed() * weights[i]; // red element * weight of pixel
             greenAvg += c.getGreen() * weights[i]; // green element * weight of pixel
             blueAvg += c.getBlue() * weights[i]; // blue element * weight of pixel
             alphaAvg += c.getAlpha() * weights[i];
         }
-//        System.out.println(redArrayList.toString());
-        redAvg /= list.size();
-        greenAvg /= list.size();
-        blueAvg /= list.size();
-        alphaAvg /= list.size();
-//        System.out.println("pre scalar red avg (aka actual avg): " + redAvg);
 
         redAvg *= scalar;
         greenAvg *= scalar;
         blueAvg *= scalar;
         alphaAvg *= scalar;
-//        System.out.println("post scalar red avg: " + redAvg);
 
         Utility utility = new Utility();
         int finalRedAvg = utility.normalizeColorInt((int)redAvg);
@@ -157,27 +203,6 @@ public class Filter {
         //combine each of the RGB elements into a single int
         Color newColor = new Color(finalRedAvg, finalGreenAvg, finalBlueAvg, finalAlphaAvg);
         return newColor.getRGB();
-
-//        Using weights = new int[]{1,1,1,1,1,1,1,1,1}, scalar = 1/9.0)
-//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
-//        pre scalar red avg (aka actual avg): 117.33333333333333
-//        post scalar red avg: 13.037037037037036
-
-//        Using weights = new int[]{1,1,1,1,1,1,1,1,1}, scalar = 1)
-//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
-//        pre scalar red avg (aka actual avg): 117.33333333333333
-//        post scalar red avg: 117.33333333333333
-
-//        new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1
-//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
-//        pre scalar red avg (aka actual avg): -7.666666666666667
-//        post scalar red avg: -7.666666666666667
-
-//        new int[]{0, 1, 0, 1, -4, 1, 0, 1, 0}, 1/8.0
-//        [187, 141, 25, 186, 141, 27, 186, 141, 22]
-//        pre scalar red avg (aka actual avg): -7.666666666666667
-//        post scalar red avg: -0.9583333333333334
-
     }
 
 }

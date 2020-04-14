@@ -34,11 +34,9 @@ public class Main {
         int linearFilterWidth = -1;
         int linearFilterHeight = -1;
         int[] linearFilterWeights = null;
-        double linearFilterScalar = -1;
         int medianFilterWidth = -1;
         int medianFilterHeight = -1;
         int[] medianFilterWeights = null;
-        double medianFilterScalar = -1;
         int erosionFilterWidth = -1;
         int erosionFilterHeight = -1;
         int[] erosionFilterColors = null;
@@ -117,7 +115,6 @@ public class Main {
                     linearFilterWidth = Integer.parseInt(lineArray[1]);
                     linearFilterHeight = Integer.parseInt(lineArray[2]);
                     linearFilterWeights = parseArray(lineArray);
-                    linearFilterScalar = Double.parseDouble(lineArray[lineArray.length - 1]); // last element
                 }
 
                 if (currentLine.toLowerCase().contains("medianfilter")) {
@@ -126,7 +123,6 @@ public class Main {
                     medianFilterWidth = Integer.parseInt(lineArray[1]);
                     medianFilterHeight = Integer.parseInt(lineArray[2]);
                     medianFilterWeights = parseArray(lineArray);
-                    medianFilterScalar = Double.parseDouble(lineArray[lineArray.length - 1]); // last element
                 }
 
                 if (currentLine.toLowerCase().contains("histogram")) {
@@ -325,7 +321,7 @@ public class Main {
                             System.exit(1);
                         }
                         long startTime = System.nanoTime();
-                        Filter filter = new Filter(workingImage, "linear", linearFilterWidth, linearFilterHeight, linearFilterWeights, linearFilterScalar);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
+                        Filter filter = new Filter(workingImage, "linear", linearFilterWidth, linearFilterHeight, linearFilterWeights);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         linearFilterTime += time;
@@ -351,7 +347,7 @@ public class Main {
                             System.exit(1);
                         }
                         long startTime = System.nanoTime();
-                        Filter filter = new Filter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, medianFilterScalar);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
+                        Filter filter = new Filter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
                         workingImage = filter.filter();
                         long time = (System.nanoTime() - startTime) / 1000000;
                         medianFilterTime += time;

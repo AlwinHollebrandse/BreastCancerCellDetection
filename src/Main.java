@@ -43,6 +43,8 @@ public class Main {
         int dilationFilterWidth = -1;
         int dilationFilterHeight = -1;
         int[] dilationFilterColors = null;
+        int k = -1;
+        int numberOfFolds = -1;
 
         int singleColorTime = 0;
         int quantizationTime = 0;
@@ -57,8 +59,13 @@ public class Main {
         int kMeansSegmentationTime = 0;
         int erosionTime = 0;
         int dilationTime = 0;
+        int featureExtractionTime = 0;
+        int machineLearningTime = 0;
         int meanSquaredError = 0;
         int[] averageHistogram = new int[256];
+
+        ArrayList<String> csvDatasetArrayList = new ArrayList<>();
+        ArrayList<CellObject> datasetArrayList = new ArrayList<>();
 
         long realStartTime = System.nanoTime();
 
@@ -160,6 +167,17 @@ public class Main {
                     dilationFilterHeight = Integer.parseInt(lineArray[2]);
                     dilationFilterColors = parseArray(lineArray);
                 }
+
+                if (currentLine.toLowerCase().contains("featureextraction")) {
+                    instructionList.add("FeatureExtraction");
+                }
+
+                if (currentLine.toLowerCase().contains("machinelearning")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("MachineLearning");
+                    k = Integer.parseInt(lineArray[1]);
+                    numberOfFolds = Integer.parseInt(lineArray[2]);
+                }
             }
             s.close();
         } catch (IOException ex) {
@@ -171,16 +189,12 @@ public class Main {
             System.exit(1);
         }
 
-
-
-
-
         ProgressBar progressBar = new ProgressBar("Processing Images", files.length);
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
 
-//            if (i >= 1)
-//                break;
+            if (i >= 100)
+                break;
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
 //                print("\n\n" + files[i]);
@@ -549,6 +563,28 @@ public class Main {
                         }
                     }
 
+                    if (instructionList.contains("FeatureExtraction")) {
+                        if (histogram == null) {
+                            GraphHistogram graphHistogram = new GraphHistogram(color);
+                            histogram = graphHistogram.createHistogram(workingImage);
+                        }
+                        // TODO add a check for non all white "default" seg image?
+
+                        long startTime = System.nanoTime();
+
+                        // Write features and label to CSV
+                        FeatureExtraction featureExtraction = new FeatureExtraction();
+                        double histogramMeanFeature = featureExtraction.getHistogramMean(histogram);
+                        double areaFeature = featureExtraction.getObjectArea(segmentationImage);
+
+                        LabelExtraction labelExtraction = new LabelExtraction();
+                        String cellClassLabel = labelExtraction.getCellClassLabel(files[i].getName());
+
+                        CellObject cellToAdd = new CellObject(new double[]{histogramMeanFeature, areaFeature}, cellClassLabel, null, -1);
+                        datasetArrayList.add(cellToAdd);
+                        csvDatasetArrayList.add(Double.toString(histogramMeanFeature) + "," + Double.toString(areaFeature) + "," + cellClassLabel+"\n");
+                        featureExtractionTime += (System.nanoTime() - startTime) / 1000000;
+                    }
                 } catch (Exception ex) {
                     print("\nThere was an error with image " + files[i].toString() + ": " + ex);
                     ex.printStackTrace();
@@ -556,6 +592,50 @@ public class Main {
             }
             progressBar.next();
         }
+
+        if (csvDatasetArrayList.size() > 0) {
+            createCSV(csvDatasetArrayList);
+        } // TODO else delete it?
+
+        if (instructionList.contains("MachineLearning")) {
+            // TODO add check fix for when datasetArrayList is empty
+            if (datasetArrayList.size() <= 0) {
+                print("something");
+            }
+
+            long startTime = System.nanoTime();
+            KNN knn = new KNN(k, datasetArrayList);
+
+            // split dataset
+            ArrayList<ArrayList<ArrayList<CellObject>>> splitKFoldSets = knn.getKFolds(numberOfFolds, datasetArrayList);
+            ArrayList<ArrayList<CellObject>> trainSets = splitKFoldSets.get(0);
+            ArrayList<ArrayList<CellObject>> testSets = splitKFoldSets.get(1);
+
+            //k fold
+            ArrayList<Double> accuracyList = new ArrayList<>();
+            for (int fold = 0; fold < numberOfFolds; fold++) {
+                knn = new KNN(k, trainSets.get(fold));
+                for (int testingI = 0; testingI < testSets.get(fold).size(); testingI++) {
+                    knn.classify(testSets.get(fold).get(testingI));
+                }
+                double accuracy = knn.calcAccuracy(testSets.get(fold));
+                accuracyList.add(accuracy);
+                String accuracyString = "fold: " + fold + ", accuracy: " +accuracy;
+                print(accuracyString);
+            }
+
+            double accuracy = 0;
+            for (int i = 0; i < accuracyList.size(); i++) {
+                accuracy += accuracyList.get(i);
+            }
+            accuracy = accuracy/accuracyList.size();
+            String accuracyString = "average accuracy: " +accuracy;
+            print(accuracyString);
+
+            machineLearningTime += (System.nanoTime() - startTime) / 1000000;
+            // calc/report metrics
+        }
+
         print("\n\nFinal Metrics:");
         getAverageHistogram(averageHistogram, files.length, color);
 //            o Averaged processing time per image per each procedure // TODO what
@@ -612,9 +692,17 @@ public class Main {
             print("\nDilation time creation processing time for the entire batch (ms): " + dilationTime);
             print("Average k means segmentation processing time (ms): " + dilationTime / files.length);
         }
+        if (featureExtractionTime > 0) {
+            print("\nFeature extraction  processing time for the entire batch (ms): " + featureExtractionTime);
+            print("Average feature extraction processing time (ms): " + featureExtractionTime / files.length);
+        }
+        if (machineLearningTime > 0) {
+            print("\nmachineLearningTime  processing time for the entire batch (ms): " + machineLearningTime);
+        }
         print("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
                 gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime +
-                histogramThresholdingSegmentationTime + kMeansSegmentationTime + erosionTime + dilationTime) / 1000));
+                histogramThresholdingSegmentationTime + kMeansSegmentationTime + erosionTime + dilationTime + featureExtractionTime +
+                machineLearningTime) / 1000));
         print("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
     }
 
@@ -634,6 +722,26 @@ public class Main {
             ChartUtilities.saveChartAsPNG(output_file, defaultHistogram, 700, 500);
         } catch (Exception e) {
             print("Could not create specified directory for the average histogram. Skipping this operation. Error: " + e);
+        }
+    }
+
+
+    private static void createCSV(ArrayList<String> csvDatasetArrayList) {
+//        System.out.println("\n" + csvDatasetArrayList.toString());
+        try {
+            File file = new File("Dataset.csv");
+            FileWriter output = new FileWriter(file);
+
+            String headerLine = "Mean,Area,Label\n"; // TODO move to outside file for loop?
+            output.append(headerLine);
+
+            for (int i = 0; i < csvDatasetArrayList.size(); i++) {
+                output.append(csvDatasetArrayList.get(i));
+            }
+            output.close();
+        } catch (IOException ex) {
+            String errorMessage = "Could not create the dataset CSV: " + ex;
+            print(errorMessage);
         }
     }
 

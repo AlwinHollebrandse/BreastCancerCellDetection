@@ -179,7 +179,7 @@ class ClassificationThread extends Thread {
         ArrayList<CellObject> distanceArrayList = new ArrayList<>();
         for (int i = 0; i < dataset.size(); i++) {
             double distance = getEuclideanDistanceBetween(object.getFeatures(), dataset.get(i).getFeatures());
-            CellObject cellToAdd = new CellObject(null, object.getActualCellLabel(), null, distance);
+            CellObject cellToAdd = new CellObject(null, dataset.get(i).getActualCellLabel(), null, distance);
             distanceArrayList.add(cellToAdd);
         }
 

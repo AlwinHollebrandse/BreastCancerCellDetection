@@ -614,13 +614,13 @@ public class Main {
                         FeatureExtraction featureExtraction = new FeatureExtraction();
                         double histogramMeanFeature = featureExtraction.getHistogramMean(histogram);
                         double histogramStdDevFeature = featureExtraction.getHistogramStdDev(histogram);
-                        double imageEntropy = featureExtraction.getImageEntropy(histogram); // TODO NaN s?
+//                        double imageEntropy = featureExtraction.getImageEntropy(histogram); // TODO NaN s?
                         double areaFeature = featureExtraction.getObjectArea(segmentationImage);
 
                         LabelExtraction labelExtraction = new LabelExtraction();
                         String cellClassLabel = labelExtraction.getCellClassLabel(files[i].getName());
 
-                        CellObject cellToAdd = new CellObject(new double[]{histogramMeanFeature, histogramStdDevFeature, imageEntropy, areaFeature}, cellClassLabel, null, -1);
+                        CellObject cellToAdd = new CellObject(new double[]{histogramMeanFeature, histogramStdDevFeature, areaFeature}, cellClassLabel, null, -1);
                         datasetArrayList.add(cellToAdd);
                         csvDatasetArrayList.add(Double.toString(histogramMeanFeature) + "," + Double.toString(areaFeature) + "," + cellClassLabel+"\n");
                         featureExtractionTime += (System.nanoTime() - startTime) / 1000000;
@@ -747,7 +747,7 @@ public class Main {
         if (machineLearningTime > 0) {
             print("\nmachineLearningTime  processing time for the entire batch (ms): " + machineLearningTime);
         }
-        print("\nTotal RunTime (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
+        print("\nTotal RunTime for all operations (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
                 gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime +
                 histogramThresholdingSegmentationTime + kMeansSegmentationTime + erosionTime + dilationTime + featureExtractionTime +
                 machineLearningTime) / 1000));

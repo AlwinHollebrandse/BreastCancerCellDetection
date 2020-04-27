@@ -1,3 +1,5 @@
+DeletePreviousImages true
+UsePreviousImage false
 SingleColor Gray
 Quantization 16
 SaltAndPepper 0.05 0 0
@@ -11,3 +13,5 @@ HistogramThresholdingSegmentation
 KMeansSegmentation
 erosion 3 3 [ 255 0 255 0 255 0 255 0 255 ]
 dilation 3 3 [ 255 0 255 0 255 0 255 0 255 ]
+FeatureExtraction
+MachineLearning 5 10

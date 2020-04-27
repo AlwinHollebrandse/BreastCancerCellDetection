@@ -30,8 +30,6 @@ public class ParallelMatrix {
     }
 }
 
-//ExecutorService executorService = Executors.newFixedThreadPool(2);
-
 class ImageThread extends Thread {
 
     //for thread objects

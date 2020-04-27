@@ -66,10 +66,8 @@ public class Utility {
         return pixelColor;
     }
 
-    public int normalizeColorIntPorportional (int pixelColor, int oldMin, int oldMax) {
-        int newMin = 0;
-        int newMax = 255;
-        return (pixelColor - oldMin) * ((newMax - newMin) / (oldMax - oldMin)) + newMin;
+    public double normalizePorportional (double value, double newMin, double newMax, double oldMin, double oldMax) {
+        return (value - oldMin) * ((newMax - newMin) / (oldMax - oldMin)) + newMin;
     }
 
     // NOTE this only supports odd rectangles with a center pixel. (ex: 3x3, 5x3, etc not 4x4)

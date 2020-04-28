@@ -7,23 +7,33 @@ Alwin Hollebrandse
 This is the first argument of the program. It should contain a path to where all of the images are located. In thoery, any images that Java’s Buffered Image supports would be supported by my code. An example image can found in the results section under “original”.
 
 ## Instruction File arg:
-all_Instructions.txt file with their respective parameters. Note that SingleColor is not a required operation, but without it, all other operations default to a “gray” color operation use.  Note that each of the params must be separated by spaces, and array params are denoted by having each element be separated by a space and the characters: [ and ].
+This is the second command line argument for the program. It should be a txt file. It is used to build the operation arraylist (discussed under Implentation/General). Accepted Strings that will cause the actions of interest are (ignoring case): DeletePreviousImages, UsePreviousImage, SingleColor, Quantization, SaltAndPepper, Gaussian, LinearFilter, MedianFilter, Histogram, HistogramEqualization, EdgeDetection, HistogramThresholdingSegmentation, KMeansSegmentation, Erosion, Dilation, FeatureExtraction, and MachineLearning. These can be found in the all_Instructions.txt file with their respective parameters. Note that SingleColor is not a required operation, but without it, all other operations default to a “gray” color operation use.  Note that each of the params must be separated by spaces, and array params are denoted by having each element be separated by a space and the characters: [ and ].
+DeletePreviousImages takes in 1 param: a Boolean
+UsePreviousImage takes in 1 param: a Boolean
 SingleColor takes in 1 param in the file: the color to convert to. Current options are: Gray, Red, Green, and Blue
 Quantization takes in 1 param in the file: the scale to scale to. Ex:16
 SaltAndPepper takes in 3 param in the file; random threshold, mean, and sigma. Ex: 0.05 0 0
 Gaussian takes in 3 param in the file; random threshold, mean, and sigma. Ex: 0.05 0 00 0 5
 LinearFilter takes in 4 param in the file; filter width, filter height, and the weights (in the afore mentioned array form). Ex: 0.05 0 03 3 [ 0 0 0 0 0 0 0 0 0 ]
-MedianFilter takes in 4 param in the file; filter width, filter height, and the weights (in the afore mentioned array form)(can also be null) Ex: 3 3 null
+MedianFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form)(can also be null) EX: 3 3 null
 Histogram takes no params.
 HistogramEqualization takes no params.
 EdgeDetection takes no params.
 HistogramThresholdingSegmentation takes no params.
 KMeansSegmentation takes no params.
-erosion takes in 3 params: filter width, filter height, colors
-dilation takes in 3 params: filter width, filter height, colors
+Erosion takes in 3 params: filter width, filter height, colors
+Dilation takes in 3 params: filter width, filter height, colors
+FeatureExtraction takes no params
+MachineLearning takes in 2 params: k, and numberOfFolds
+
 
 
 ## Example Instruction File Contents:
+
+DeletePreviousImages true
+
+UsePreviousImage false
+
 SingleColor Gray
 
 Quantization 16
@@ -46,16 +56,27 @@ HistogramThresholdingSegmentation
 
 KMeansSegmentation
 
-erosion 3 3 [ 255 0 255 0 255 0 255 0 255 ]
+Erosion 3 3 [ 255 0 255 0 255 0 255 0 255 ]
 
-dilation 3 3 [ 255 0 255 0 255 0 255 0 255 ]
+Dilation 3 3 [ 255 0 255 0 255 0 255 0 255 ]
+
+FeatureExtraction
+
+MachineLearning 5 10
 
 
 # Implentation:
 ## General:
-This program does the following: first it validates the users command line args. It then parses the instructions.txt file into an arraylist that holds the found Strings that match those and explained in the Instrcution File arg section. This code then loops through all of the images found in the first command line argument.  It then performs the user requested operations in the following order (skipping operations not requested): SingleColor, Quantization, SaltAndPepper, Gaussian, LinearFilter, MedianFilter, Histogram, HistogramEqualization, EdgeDetection, HistogramThresholdingSegmentation, KMeansSegmentation, Erosion, and Dilation.. If there is an error within one of these operations, the operation will be skipped (or if it severe enough, the whole image will be skipped). If the operation was not requested, the code will check if there are any output files related to said operation already in the results folder for the current image. If there is, it will be deleted. This was implanted such that there will be no confusion when checking results. If the operation was requested, it will be completed and added to ./results/{{current image’s name}}/{{operation output}}. Each of these operations works on the outcome of the previous specified operation.
-Each operation loops through all pixels in the image, which is performed in parallel. This was accomplished by creating a ParallelMatrix File. This file creates how ever many threads the system can support and divides the image pixel matrix into segments of equal size. This was done by looping through all the width pixels but jumping by MAX_THREADS and by looping through all height pixels per width iteration. Each thread starts at an incremented x value. Each thread then calls a code lambda defined in the respective operation’s java file for the current width and height value of the pixel matrix.
+This program does the following: first it validates the users command line args. It then parses the instructions.txt file into an arraylist that holds the found Strings that match those and explained in the Instrcution File arg section. This code then loops through all of the images found in the first command line argument.  It then performs the user requested operations in the following order (skipping operations not requested): SingleColor, Quantization, SaltAndPepper, Gaussian, LinearFilter, MedianFilter, Histogram, HistogramEqualization, EdgeDetection, HistogramThresholdingSegmentation, KMeansSegmentation, Erosion, Dilation, FeatureExtraction, and MachineLearning. If there is an error within one of these operations, the operation will be skipped (or if it severe enough, the whole image will be skipped). If the operation was not requested, the code will check if there are any output files related to said operation already in the results folder for the current image. If there is, it will be deleted. This was implanted such that there will be no confusion when checking results. If the operation was requested, it will be completed and added to ./results/{{current image’s name}}/{{operation output}}. Each of these operations works on the outcome of the previous specified operation. Each operation loops through all pixels in the image, which is performed in parallel. This was accomplished by creating a ParallelMatrix File. This file creates how ever many threads the system can support and divides the image pixel matrix into segments of equal size. This was done by looping through all the width pixels but jumping by MAX_THREADS and by looping through all height pixels per width iteration. Each thread starts at an incremented x value. Each thread then calls a code lambda defined in the respective operation’s java file for the current width and height value of the pixel matrix.
 The end of the program prints out time metrics collected through the code’s run. These metrics also appear under “results/report.txt”.
+
+
+## DeletePreviousImages:
+This param makes it optional to delete the output of previous runs (if the current instruction file does not cause the files in question to be overridden. For example, the first run contained a “Histogram” call but the second run did not. This param determines if the old “histogram.png” file will be present under the results file of the given image.
+
+
+## UsePreviousImage:
+This param determines if old image.png files that came from previous run’s operation calls should be used instead of the operations from the current call. This still works in combination with the operations below. This means that if the instruction file has this param set to true and contains “KMeansSegmentation” then the old “kMeansSegmentation.png” file will be used to create the programs “segmentationImage.” This does require that the previous file exists though. This param can be used to speed up subsequent program calls to prevent redundant operations that will produce identical results to what already exists.
 
 
 ## SingleColor:
@@ -103,15 +124,31 @@ This section is found under KMeansSegmentation.java. It accepts a histogram as a
 
 
 ## Erosion
-This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operation prior to this operation. This operation occurs when morphologicalType is set to “erosion.” For each non-cropped pixel, the following happens. Check if each pixel in the current image filtered window matches the associated value in the colors array. If Each does, keep the pixel. Otherwise, remove the pixel by setting it to black. This image can be found at Erosion.jpg.
+This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. If there was no segmentation instruction, then this operation first performs HistogramThresholdingSegmentation. This operation occurs when morphologicalType is set to “erosion.” For each non-cropped pixel, the following happens. Check if each pixel in the current image filtered window matches the associated value in the colors array. If Each does, keep the pixel. Otherwise, remove the pixel by setting it to black. This image can be found at Erosion.jpg.
 
 
 ## Dilation
-This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. This operation has a soft requirement of calling a segmentation operation prior to this operation. This operation occurs when morphologicalType is set to “dilation.” For each non-cropped pixel, the following happens. Check if the current pixel in the provided image has a non-zero value and is “object.” If it is, set each associated pixel in the current filter window to “object” color if the associated colors value is non-zero. Otherwise, keep the pixel the same as it was. This image can be found at Dilation.jpg.
+This section is found under MorphologicalFunctions.java. It accepts the following parameters: filterWidth, filterHeight, colors, and morphologicalType. If there was no segmentation instruction, then this operation first performs HistogramThresholdingSegmentation. This operation occurs when morphologicalType is set to “dilation.” For each non-cropped pixel, the following happens. Check if the current pixel in the provided image has a non-zero value and is “object.” If it is, set each associated pixel in the current filter window to “object” color if the associated colors value is non-zero.  Otherwise, keep the pixel the same as it was. This image can be found at Dilation.jpg.
+
+
+## FeatureExtraction:
+Provided a “segmentationImage” was set (if not, histogramThresholding is called) and a histogram exists (if not, one is created), then this operation computes the following features:
+•	The mean of the histogram
+•	The standard deviation of the histogram
+•	The area of the objects in the segmented image (a count of the white pixels in the “segmentationImage”)
+•	The entropy of the image (where “Entropy is a statistical measure of randomness that can be used to characterize the texture of the input image.” And is defined as -sum(p.*log2(p))
+
+## MachineLearning:
+This code uses two parameters: k and numberOfFolds. This code first normalizes each feature set independently proportionally between 0 and 1. Then the dataset is taken and shuffled. This mixed data is the split into “numberOfFolds” segments. These segments are used to craft the training and testing sets used in cross validation. For each training set and associated test set (these two data sets are mutually exclusive and describe the entire dataset), a kNN classifier is used. This classifier calculates the Euclidean Distance of the current test Cell to classify to each cell in the training set. The top “k” closest cells are then taken. The cell to be classified is assigned to the class/label of which ever label appears more in the closest “k” cells from the training set. Each fold reports its own accuracy. Then a final combination accuracy is computed and reported. This score is a combination of all other folds and is calculated by taken the mean of all folds’ accuracies.
+
 
 
 ## Example Metrics
-Final Metrics:
+Accuracy per fold: [0.14285714285714285, 0.2653061224489796, 0.20408163265306123, 0.22448979591836735, 0.12244897959183673, 0.16326530612244897, 0.1836734693877551, 0.16326530612244897, 0.24489795918367346, 0.24489795918367346]
+Average accuracy: 0.1959183673469388
+
+Final Time Metrics:
+
 
 Converting to a single color processing time for the entire batch (ms): 23118
 Average converting to a single color processing time (ms): 46
@@ -152,6 +189,11 @@ Average k means segmentation processing time (ms): 21
 
 Dilation time creation processing time for the entire batch (ms): 7038
 Average k means segmentation processing time (ms): 14
+
+Feature extraction processing time for the entire batch (ms): 3008
+Average feature extraction processing time (ms): 6
+
+Machine Learning processing time for the entire batch (ms): 54
 
 Total RunTime (without image exporting) (s): 365
 Real run time (s): 576

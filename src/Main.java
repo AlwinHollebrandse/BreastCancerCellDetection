@@ -702,9 +702,9 @@ public class Main {
                         accuracy += accuracyList.get(i);
                     }
                     accuracy = accuracy / accuracyList.size();
-                    String foldAccuracyString = "accuracy per fold: " + accuracyList.toString();
+                    String foldAccuracyString = "Accuracy per fold: " + accuracyList.toString();
                     print(foldAccuracyString);
-                    String avgAccuracyString = "average accuracy: " + accuracy;
+                    String avgAccuracyString = "Average accuracy: " + accuracy;
                     print(avgAccuracyString);
 
                     machineLearningTime += (System.nanoTime() - startTime) / 1000000;
@@ -715,7 +715,7 @@ public class Main {
             ex.printStackTrace();
         }
 
-        print("\n\nFinal Metrics:");
+        print("\n\nFinal Time Metrics:");
         getAverageHistogram(averageHistogram, files.length, color);
         if (singleColorTime > 0) {
             print("\nConverting to a single color processing time for the entire batch (ms): " + singleColorTime);
@@ -771,11 +771,11 @@ public class Main {
             print("Average k means segmentation processing time (ms): " + dilationTime / files.length);
         }
         if (featureExtractionTime > 0) {
-            print("\nFeature extraction  processing time for the entire batch (ms): " + featureExtractionTime);
+            print("\nFeature extraction processing time for the entire batch (ms): " + featureExtractionTime);
             print("Average feature extraction processing time (ms): " + featureExtractionTime / files.length);
         }
         if (machineLearningTime > 0) {
-            print("\nmachineLearningTime  processing time for the entire batch (ms): " + machineLearningTime);
+            print("\nMachine Learning processing time for the entire batch (ms): " + machineLearningTime);
         }
         print("\nTotal RunTime for all operations (without image exporting) (s): " + ((singleColorTime + quantizationTime + saltAndPepperTime +
                 gaussianTime + linearFilterTime + medianFilterTime + histogramTime + equalizationTime + edgeDetectionTime +

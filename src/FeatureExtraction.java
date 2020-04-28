@@ -2,12 +2,6 @@ import java.awt.image.BufferedImage;
 
 public class FeatureExtraction {
 
-    //possible features to use:
-//    histogram stats, maybe mean, ,stnd dev, the standard deviation; the entropy; the median; percentiles etc.
-//    area of largest object/permiter... or just area of all "objects"..aka white pixels
-//    symmetry
-//    max-min radii
-    // TODO these arent weighted the same... like really skewed
     public double getHistogramMean(int[] histogram) {
         double mean = 0;
         int numberOfPixels = 0;

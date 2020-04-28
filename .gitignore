@@ -22,6 +22,7 @@
 # cell images
 images/
 results/
+Docs for grading/
 Dataset.csv
 pa*
 

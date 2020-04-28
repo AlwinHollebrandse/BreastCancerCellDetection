@@ -89,4 +89,21 @@ public class Utility {
 
         return neighborRGBValueArray;
     }
+
+    public boolean checkIfAllBlackImage(BufferedImage image) {
+        boolean allBlack = true;
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                int pixelColor = getSingleColor(image.getRGB(x, y), "gray");
+                if (pixelColor != 0) {
+                    allBlack = false;
+                    break;
+                }
+            }
+            if (!allBlack) {
+                break;
+            }
+        }
+        return allBlack;
+    }
 }

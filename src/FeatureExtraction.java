@@ -47,7 +47,7 @@ public class FeatureExtraction {
 //    Entropy is a statistical measure of randomness that can be used to characterize the texture of the input image.
 //    Entropy is defined as -sum(p.*log2(p)), where p contains the normalized histogram counts returned from imhist.
     public double getImageEntropy(int[] histogram) {
-        int numberOfPixels = 0;
+        double numberOfPixels = 0;
         for (int i = 0; i < histogram.length; i++) {
             numberOfPixels += histogram[i];
         }

@@ -205,8 +205,8 @@ public class Main {
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
 
-            if (i >= 100)
-                break;
+//            if (i >= 1)
+//                break;
 
             if (files[i].isFile()) { //this line weeds out other directories/folders
 //                print("\n\n" + files[i]);
@@ -240,7 +240,7 @@ public class Main {
                     final BufferedImage originalImage = ImageIO.read(files[i]);
                     workingImage = originalImage;
                     edgeMap = originalImage;
-                    segmentationImage = originalImage;
+                    segmentationImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
                     File output_file = new File(directoryPath + "original.jpg");
                     ImageIO.write(originalImage, "jpg", output_file);
 
@@ -552,9 +552,19 @@ public class Main {
                         }
                     }
 
-                    // TODO check that segmentation isnt just white. ie there was a segmentation operation called
                     resultFileName = directoryPath + "erosion.jpg";
                     if (!usePreviousImages && instructionList.contains("Erosion")) {
+                        Utility utility = new Utility();
+                        if (utility.checkIfAllBlackImage(segmentationImage)) {
+                            long startTime = System.nanoTime();
+                            ThresholdSegmentation thresholdSegmentation = new ThresholdSegmentation(workingImage, histogram);
+                            segmentationImage = thresholdSegmentation.thresholdSegmentation();
+                            histogramThresholdingSegmentationTime += (System.nanoTime() - startTime) / 1000000;
+                            String segmentationFileName = directoryPath + "histogramThresholdingSegmentation.jpg";
+                            output_file = new File(segmentationFileName);
+                            ImageIO.write(segmentationImage, "jpg", output_file);
+                        }
+
                         long startTime = System.nanoTime();
                         MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(segmentationImage, "erosion", erosionFilterWidth, erosionFilterHeight, erosionFilterColors);
                         segmentationImage = morphologicalFunctions.morphologicalFunctions();
@@ -576,9 +586,19 @@ public class Main {
                         }
                     }
 
-                    // TODO check that segmentation isnt just white. ie there was a segmentation operation called
                     resultFileName = directoryPath + "dilation.jpg";
                     if (!usePreviousImages && instructionList.contains("Dilation")) {
+                        Utility utility = new Utility();
+                        if (utility.checkIfAllBlackImage(segmentationImage)) {
+                            long startTime = System.nanoTime();
+                            ThresholdSegmentation thresholdSegmentation = new ThresholdSegmentation(workingImage, histogram);
+                            segmentationImage = thresholdSegmentation.thresholdSegmentation();
+                            histogramThresholdingSegmentationTime += (System.nanoTime() - startTime) / 1000000;
+                            String segmentationFileName = directoryPath + "histogramThresholdingSegmentation.jpg";
+                            output_file = new File(segmentationFileName);
+                            ImageIO.write(segmentationImage, "jpg", output_file);
+                        }
+
                         long startTime = System.nanoTime();
                         MorphologicalFunctions morphologicalFunctions = new MorphologicalFunctions(segmentationImage, "dilation", dilationFilterWidth, dilationFilterHeight, dilationFilterColors);
                         segmentationImage = morphologicalFunctions.morphologicalFunctions();
@@ -602,11 +622,22 @@ public class Main {
 
                     // TODO add a "usePreviousImages" option for FeatureExtraction
                     if (instructionList.contains("FeatureExtraction")) {
+
                         if (histogram == null) {
                             GraphHistogram graphHistogram = new GraphHistogram(color);
                             histogram = graphHistogram.createHistogram(workingImage);
                         }
-                        // TODO add a check for non all white "default" seg image?
+
+                        Utility utility = new Utility();
+                        if (utility.checkIfAllBlackImage(segmentationImage)) {
+                            long startTime = System.nanoTime();
+                            ThresholdSegmentation thresholdSegmentation = new ThresholdSegmentation(workingImage, histogram);
+                            segmentationImage = thresholdSegmentation.thresholdSegmentation();
+                            histogramThresholdingSegmentationTime += (System.nanoTime() - startTime) / 1000000;
+                            String segmentationFileName = directoryPath + "histogramThresholdingSegmentation.jpg";
+                            output_file = new File(segmentationFileName);
+                            ImageIO.write(segmentationImage, "jpg", output_file);
+                        }
 
                         long startTime = System.nanoTime();
 
@@ -614,13 +645,13 @@ public class Main {
                         FeatureExtraction featureExtraction = new FeatureExtraction();
                         double histogramMeanFeature = featureExtraction.getHistogramMean(histogram);
                         double histogramStdDevFeature = featureExtraction.getHistogramStdDev(histogram);
-//                        double imageEntropy = featureExtraction.getImageEntropy(histogram); // TODO NaN s?
+                        double imageEntropy = featureExtraction.getImageEntropy(histogram);
                         double areaFeature = featureExtraction.getObjectArea(segmentationImage);
 
                         LabelExtraction labelExtraction = new LabelExtraction();
                         String cellClassLabel = labelExtraction.getCellClassLabel(files[i].getName());
 
-                        CellObject cellToAdd = new CellObject(new double[]{histogramMeanFeature, histogramStdDevFeature, areaFeature}, cellClassLabel, null, -1);
+                        CellObject cellToAdd = new CellObject(new double[]{histogramMeanFeature, histogramStdDevFeature, imageEntropy, areaFeature}, cellClassLabel, null, -1);
                         datasetArrayList.add(cellToAdd);
                         csvDatasetArrayList.add(Double.toString(histogramMeanFeature) + "," + Double.toString(areaFeature) + "," + cellClassLabel+"\n");
                         featureExtractionTime += (System.nanoTime() - startTime) / 1000000;
@@ -664,8 +695,6 @@ public class Main {
                         knn.classifyTestSet(testSets.get(fold));
                         double accuracy = knn.calcAccuracy(testSets.get(fold));
                         accuracyList.add(accuracy);
-                        String accuracyString = "fold: " + fold + ", accuracy: " + accuracy;
-                        print(accuracyString);
                     }
 
                     double accuracy = 0;
@@ -673,8 +702,10 @@ public class Main {
                         accuracy += accuracyList.get(i);
                     }
                     accuracy = accuracy / accuracyList.size();
-                    String accuracyString = "average accuracy: " + accuracy;
-                    print(accuracyString);
+                    String foldAccuracyString = "accuracy per fold: " + accuracyList.toString();
+                    print(foldAccuracyString);
+                    String avgAccuracyString = "average accuracy: " + accuracy;
+                    print(avgAccuracyString);
 
                     machineLearningTime += (System.nanoTime() - startTime) / 1000000;
                 }
@@ -686,15 +717,14 @@ public class Main {
 
         print("\n\nFinal Metrics:");
         getAverageHistogram(averageHistogram, files.length, color);
-//            o Averaged processing time per image per each procedure // TODO what
-        if (singleColorTime > 0) {// TODO write these to teh results final file?
+        if (singleColorTime > 0) {
             print("\nConverting to a single color processing time for the entire batch (ms): " + singleColorTime);
             print("Average converting to a single color processing time (ms): " + singleColorTime / files.length);
         }
         if (quantizationTime > 0) {
             print("\nQuantization processing time for the entire batch (ms): " + quantizationTime);
             print("Average quantization processing time (ms): " + quantizationTime / files.length);
-            print("Average meanSquaredError: " + meanSquaredError / files.length); // TODO whats an acceptable/expected one
+            print("Average meanSquaredError: " + meanSquaredError / files.length);
         }
         if (saltAndPepperTime > 0) {
             print("\nAdding salt and pepper noise processing time for the entire batch (ms): " + saltAndPepperTime);
@@ -782,7 +812,7 @@ public class Main {
                 File file = new File(fileName);
                 FileWriter output = new FileWriter(file);
 
-                String headerLine = "Mean,Area,Label\n"; // TODO move to outside file for loop?
+                String headerLine = "Mean,Area,Label\n";
                 output.append(headerLine);
 
                 for (int i = 0; i < csvDatasetArrayList.size(); i++) {

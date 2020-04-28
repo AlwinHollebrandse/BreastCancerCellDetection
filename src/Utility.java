@@ -1,5 +1,9 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Utility {
@@ -105,5 +109,35 @@ public class Utility {
             }
         }
         return allBlack;
+    }
+
+    public void print(String s) {
+        System.out.println(s);
+        try {
+            BufferedWriter out = new BufferedWriter(
+                    new FileWriter("results/report.txt", true));
+            out.write(s);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            try {
+                for (File myFile : files) {
+                    if (myFile.isDirectory()) {
+                        deleteDir(myFile);
+                    }
+                    myFile.delete();
+                }
+            } catch (Exception ex) {
+                return false;
+            }
+            return true;
+        }
+        return dir.delete();
     }
 }

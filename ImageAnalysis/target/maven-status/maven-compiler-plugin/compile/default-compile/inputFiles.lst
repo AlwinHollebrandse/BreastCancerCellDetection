@@ -15,8 +15,10 @@
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/ImageOperationsCall.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/LabelExtraction.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/ThresholdSegmentation.java
+/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/MpiFilter.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/OverHeadInterface.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/SingleColorScale.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/GraphHistogram.java
+/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/SerialFilter.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/ParallelMatrix.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/Main.java

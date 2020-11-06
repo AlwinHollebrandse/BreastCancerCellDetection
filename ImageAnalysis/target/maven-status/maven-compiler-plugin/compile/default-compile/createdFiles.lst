@@ -1,4 +1,5 @@
 com/alwin/ThresholdSegmentation$FuncInterface.class
+com/alwin/App.class
 com/alwin/KMeansSegmentation$FuncInterface.class
 com/alwin/SingleColorScale.class
 com/alwin/EdgeDetection$FuncInterface.class

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.alwin.AppTest" time="0.019" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.alwin.AppTest" time="0.014" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="sun.desktop" value="gnome"/>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-11-openjdk-amd64/lib"/>
-    <property name="sun.java.command" value="/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/surefire/surefirebooter18049062748262613207.jar /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/surefire 2020-11-06T15-04-06_907-jvmRun1 surefire6422902424052414412tmp surefire_09410858915862013860tmp"/>
+    <property name="sun.java.command" value="/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/surefire/surefirebooter8191181115922507581.jar /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/surefire 2020-11-06T16-24-50_071-jvmRun1 surefire10969991493119476218tmp surefire_05441797609270638580tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/test-classes:/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/classes:/home/alwinhollebrandse/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/alwinhollebrandse/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/alwinhollebrandse/.m2/repository/org/jfree/jfreechart/1.0.19/jfreechart-1.0.19.jar:/home/alwinhollebrandse/.m2/repository/org/jfree/jcommon/1.0.23/jcommon-1.0.23.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -32,7 +32,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/surefire/surefirebooter18049062748262613207.jar"/>
+    <property name="surefire.real.class.path" value="/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/target/surefire/surefirebooter8191181115922507581.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="11.0.9+11-Ubuntu-0ubuntu1.18.04.1"/>
     <property name="user.name" value="alwinhollebrandse"/>

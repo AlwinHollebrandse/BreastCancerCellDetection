@@ -1,9 +1,11 @@
 com/alwin/ThresholdSegmentation$FuncInterface.class
 com/alwin/App.class
 com/alwin/KMeansSegmentation$FuncInterface.class
+com/alwin/MpiFilter$FuncInterface.class
 com/alwin/SingleColorScale.class
 com/alwin/EdgeDetection$FuncInterface.class
 com/alwin/Metrics.class
+com/alwin/SerialFilter.class
 com/alwin/ProgressBar.class
 com/alwin/MorphologicalFunctions.class
 com/alwin/FeatureExtraction.class
@@ -23,6 +25,7 @@ com/alwin/Quantization.class
 com/alwin/NoiseAdder.class
 com/alwin/NoiseAdder$FuncInterface.class
 com/alwin/HistogramFunctions$FuncInterface.class
+com/alwin/MpiFilter.class
 com/alwin/ClassificationThread$1.class
 com/alwin/EdgeDetection.class
 com/alwin/CellObject.class

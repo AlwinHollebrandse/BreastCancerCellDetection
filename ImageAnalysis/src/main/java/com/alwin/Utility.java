@@ -113,6 +113,19 @@ public class Utility {
         return allBlack;
     }
 
+    public void createResultsIfNeeded() {
+        try {
+            File results = new File("results");
+            if (!results.isDirectory()) {
+                if (!results.mkdir()) {
+                    System.out.println("Failed to make results directory");
+                };
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void print(String s) {
         System.out.println(s);
         try {

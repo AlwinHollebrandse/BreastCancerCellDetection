@@ -19,6 +19,7 @@ public class Main {
         String instructions = args[1];
 
         Utility utility = new Utility();
+        utility.createResultsIfNeeded();
         utility.print("imageFilesLocation: " + imageFilesLocation);
         utility.print("instructions: " + instructions);
 

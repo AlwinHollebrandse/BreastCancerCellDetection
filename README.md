@@ -2,11 +2,14 @@
 Alwin Hollebrandse
 
 ## Running:
-A terminal with Maven installed is required to run this code. Provided that requirement is met, run `mvn package` in the terminal within the correct maven directory. If the buid was successful, then run the following command to run the project:
+A terminal with Maven installed is required to run this code. Provided that requirement is met, run `mvn package` in the terminal within the correct maven directory (ImageAnalysis). If the buid was successful, then run the following command to run the project:
 `java -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar <image folder> <instructions.txt>`. See below for more information about these parameters.
  
 ### Sample Input:
 `java -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar ./images instructions.txt`.
+
+## Adding MPJ to the Project
+Inorder to add MPJ (Java's MPI) to the project, this [link](https://github.com/victorskl/mpj-maven) was used.
 
 ## Image File location Arg:
 This is the first argument of the program. It should contain a path to where all of the images are located. In thoery, any images that Java’s Buffered Image supports would be supported by my code. An example image can found in the results section under “original”.

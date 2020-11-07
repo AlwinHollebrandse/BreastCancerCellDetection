@@ -22,6 +22,12 @@
 			<artifactId>jfreechart</artifactId>
 			<version>1.0.19</version>
 		</dependency>
+        <dependency>
+            <groupId>mpj</groupId>
+            <artifactId>mpj</artifactId>
+            <version>0.44</version>
+            <scope>provided</scope>
+        </dependency>   
 	</dependencies>	<build>
         <plugins>
             <plugin>

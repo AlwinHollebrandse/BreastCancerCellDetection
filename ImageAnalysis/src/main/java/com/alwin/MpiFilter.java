@@ -2,7 +2,7 @@ package com.alwin;
 
 // for getting java mpi to work: https://www.open-mpi.org/faq/?category=java
 
-// import mpi.*;
+import mpi.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,6 +20,7 @@ public class MpiFilter {
     private int[] weights;
     private double scalar;
     private int[][] tempPrePorportionalNormImageValues;
+    private
 
     @FunctionalInterface
     interface FuncInterface extends OverHeadInterface.FuncInterface {
@@ -62,11 +63,15 @@ public class MpiFilter {
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
     public BufferedImage filter () throws NullPointerException {
-        // MPI.Init(args); // TODO pass args from mian here // TODO move all mpi to main?
-        // int myrank = MPI.COMM_WORLD.Rank();
-        // if (myrank == 0) {
-        //     System.out.println("REACHED RANK 0!!!!");
-        // }
+        // TODO move all mpi to main? Can do serial, vs lambda, vs mpi. then mpi for going thorugh image folder for both cases
+        // how would the image folder mpi stuff work with mpi here? - thinking you cant do both at once...
+        MPI.Init(args); // TODO pass args from main here or init and finalize in mian...but hten all rest is rank 0...
+        int myrank = MPI.COMM_WORLD.Rank();
+        int numberOfProcessors = MPI.COMM_WORLD.Size();
+        if (myrank == 0) {
+            System.out.println("REACHED RANK 0!!!!");
+        }
+
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
@@ -100,7 +105,7 @@ public class MpiFilter {
         ParallelMatrix parallelMatrix = new ParallelMatrix();
         parallelMatrix.doInParallel(filterImage, getFuncInterface());
 
-        // MPI.Finalize();
+        MPI.Finalize();
         return filterImage;
     }
 

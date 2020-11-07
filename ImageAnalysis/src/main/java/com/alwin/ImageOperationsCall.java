@@ -271,6 +271,61 @@ public class ImageOperationsCall {
                     }
                 }
 
+                resultFileName = directoryPath + "serialMedian.jpg";
+                if (!usePreviousImages && instructionList.contains("SerialMedianFilter")) {
+                    if (medianFilterWidth == -1 || medianFilterHeight == -1) {
+                        utility.print("serial median filter parameters were set incorrectly");
+                        System.exit(1);
+                    }
+                    long startTime = System.nanoTime();
+                    SerialFilter filter = new SerialFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
+                    workingImage = filter.filter();
+                    long time = (System.nanoTime() - startTime) / 1000000;
+                    timeDict.put("serialMedianFilterTime", (int)(timeDict.get("serialMedianFilterTime") + time));
+                    output_file = new File(resultFileName);
+                    ImageIO.write(workingImage, "jpg", output_file);
+//                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
+                } else if (usePreviousImages && instructionList.contains("SerialMedianFilter")) {
+                    workingImage = ImageIO.read( new File(resultFileName));
+                } else if (deletePreviousImages){
+                    // if the file was not needed, delete the file from the relevant result folder if it existed
+                    File imageResult = new File(resultFileName);
+                    // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                    if (imageResult.exists()) {
+                        if (!utility.deleteDir(imageResult)) {
+                            utility.print("\nCould not delete old SerialMedianFilter of: " + file.toString());
+                        }
+                    }
+                }
+
+                // TODO make this the only one that doesnt have a rank check?
+                resultFileName = directoryPath + "mpiMedian.jpg";
+                if (!usePreviousImages && instructionList.contains("MpiMedianFilter")) {
+                    if (medianFilterWidth == -1 || medianFilterHeight == -1) {
+                        utility.print("mpi median filter parameters were set incorrectly");
+                        System.exit(1);
+                    }
+                    long startTime = System.nanoTime();
+                    MpiFilter filter = new MpiFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
+                    workingImage = filter.filter();
+                    long time = (System.nanoTime() - startTime) / 1000000;
+                    timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
+                    output_file = new File(resultFileName);
+                    ImageIO.write(workingImage, "jpg", output_file);
+//                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
+                } else if (usePreviousImages && instructionList.contains("MpiMedianFilter")) {
+                    workingImage = ImageIO.read( new File(resultFileName));
+                } else if (deletePreviousImages){
+                    // if the file was not needed, delete the file from the relevant result folder if it existed
+                    File imageResult = new File(resultFileName);
+                    // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                    if (imageResult.exists()) {
+                        if (!utility.deleteDir(imageResult)) {
+                            utility.print("\nCould not delete old MpiMedianFilter of: " + file.toString());
+                        }
+                    }
+                }
+
 
                 // TODO add a "usePreviousImages" option for histogram
                 String graphTitle = "histogram";

@@ -57,6 +57,8 @@ public class Main {
         timeDict.put("gaussianTime", 0);
         timeDict.put("linearFilterTime", 0);
         timeDict.put("medianFilterTime", 0);
+        timeDict.put("serialMedianFilterTime", 0);
+        timeDict.put("mpiMedianFilterTime", 0);
         timeDict.put("histogramTime", 0);
         timeDict.put("equalizationTime", 0);
         timeDict.put("edgeDetectionTime", 0);
@@ -143,6 +145,22 @@ public class Main {
                 if (currentLine.toLowerCase().contains("medianfilter")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("MedianFilter");
+                    medianFilterWidth = Integer.parseInt(lineArray[1]);
+                    medianFilterHeight = Integer.parseInt(lineArray[2]);
+                    medianFilterWeights = parseArray(lineArray);
+                }
+
+                if (currentLine.toLowerCase().contains("serialmedianfilter")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("SerialMedianFilter");
+                    medianFilterWidth = Integer.parseInt(lineArray[1]);
+                    medianFilterHeight = Integer.parseInt(lineArray[2]);
+                    medianFilterWeights = parseArray(lineArray);
+                }
+
+                if (currentLine.toLowerCase().contains("mpimedianfilter")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("MpiMedianFilter");
                     medianFilterWidth = Integer.parseInt(lineArray[1]);
                     medianFilterHeight = Integer.parseInt(lineArray[2]);
                     medianFilterWeights = parseArray(lineArray);

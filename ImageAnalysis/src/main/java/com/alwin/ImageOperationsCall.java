@@ -325,12 +325,13 @@ public class ImageOperationsCall {
                         utility.print("mpi median filter parameters were set incorrectly");
                         System.exit(1);
                     }
+                    long startTime = System.nanoTime();
                     
                     int newImageWidth = workingImage.getWidth() - ((medianFilterWidth/2) * 2);
                     int newImageHeight = workingImage.getHeight() - ((medianFilterHeight/2) * 2);
-                    // mpi can only send 1d array...
+
                     // each rank computes its starting and ending `x` (for double for loop)
-                    int rowsPerProcess = Math.ceil(newImageWidth / numberOfProcessors);
+                    int rowsPerProcess = (int)Math.ceil((double)newImageWidth / numberOfProcessors);
                     int pixelsPerProcess = rowsPerProcess * newImageHeight;
                     int startingX = rowsPerProcess * myrank; // TODO test correctness
                     int endingX = rowsPerProcess * (myrank + 1);
@@ -338,15 +339,14 @@ public class ImageOperationsCall {
                         endingX = newImageWidth;
                     }
 
-                    if (myrank == 0) {
-                        long startTime = System.nanoTime();
-                    }
-
-                    MpiFilter mpiFilter = new MpiFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);
+                    MpiFilter mpiFilter = new MpiFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, startingX, endingX);
                     int[] filterImagePortion = mpiFilter.filter();
 
-                    int[] allFilterImageValues = new int[newImageWidth* newImageHeight];
-                    MPI.Gather(filterImagePortion, pixelsPerProcess, MPI.INTEGER, allFilterImageValues, pixelsPerProcess, MPI.INTEGER, 0, MPI.COMM_WORLD); // TODO correct syntax?
+                    int[] allFilterImageValues = new int[newImageWidth * newImageHeight];
+                    // MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, pixelsPerProcess, MPI.INT, 0, MPI.COMM_WORLD); // TODO correct syntax?
+                    
+                    // MPI.COMM_WORLD.Gather(recvbuf,0,unitSize,MPI.INT,sendbuf,0,unitSize,MPI.INT,root); // online example
+                    MPI.COMM_WORLD.Gather(allFilterImageValues, 0, pixelsPerProcess, MPI.INT, filterImagePortion, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
 
                     if (myrank == 0) {
                         workingImage = mpiFilter.fillFilterImage(allFilterImageValues);

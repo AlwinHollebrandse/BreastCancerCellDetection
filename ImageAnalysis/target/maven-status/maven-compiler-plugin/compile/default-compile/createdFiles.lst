@@ -1,6 +1,5 @@
 com/alwin/ThresholdSegmentation$FuncInterface.class
 com/alwin/KMeansSegmentation$FuncInterface.class
-com/alwin/MpiFilter$FuncInterface.class
 com/alwin/SingleColorScale.class
 com/alwin/EdgeDetection$FuncInterface.class
 com/alwin/Metrics.class

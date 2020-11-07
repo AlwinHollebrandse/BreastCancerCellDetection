@@ -10,6 +10,11 @@ public class Main {
     //Takes in 2 command line args: the file containing all of the images, and the file containing the instructions
     public static void main(String args[]) {
 
+        if (args.length != 2) {
+            System.out.println("Did not provided the correct argts. <image folder> <instructions.txt>");
+            System.exit(0);
+        }
+
         String imageFilesLocation = args[0];
         String instructions = args[1];
 

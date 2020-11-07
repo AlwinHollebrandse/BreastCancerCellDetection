@@ -58,7 +58,7 @@ public class SerialFilter {
 
         BufferedImage filterImage = new BufferedImage(newImageWidth, newImageHeight, originalImage.getType());
 
-        for (int x = 0; x < filterImage.getWidth(); x ++) { // TODO does this work? nothing really compiles
+        for (int x = 0; x < filterImage.getWidth(); x ++) {
             for (int y = 0; y < filterImage.getHeight(); y ++) {
                 ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 

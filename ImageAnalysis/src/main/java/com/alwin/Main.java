@@ -1,5 +1,10 @@
 package com.alwin;
 
+// for getting java mpi to work: https://www.open-mpi.org/faq/?category=java
+// https://github.com/victorskl/mpj-maven
+// http://mpj-express.org/docs/guides/linuxguide.pdf
+import mpi.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,14 +14,23 @@ public class Main {
 
     //Takes in 2 command line args: the file containing all of the images, and the file containing the instructions
     public static void main(String args[]) {
+        // if (args.length != 2) {
+        //     System.out.println("Did not provided the correct argts. <image folder> <instructions.txt>");
+        //     System.exit(0);
+        // }
 
-        if (args.length != 2) {
-            System.out.println("Did not provided the correct argts. <image folder> <instructions.txt>");
-            System.exit(0);
+        MPI.Init(args);
+        int myrank = MPI.COMM_WORLD.Rank();
+        int numberOfProcessors = MPI.COMM_WORLD.Size();
+        if (myrank == 0) {
+            System.out.println("REACHED RANK 0!!!!");
         }
 
-        String imageFilesLocation = args[0];
-        String instructions = args[1];
+        // String imageFilesLocation = args[0];
+        // String instructions = args[1];
+
+        String imageFilesLocation = "./images";
+        String instructions = "instructions.txt";
 
         Utility utility = new Utility();
         utility.createResultsIfNeeded();
@@ -233,10 +247,10 @@ public class Main {
                 linearFilterWidth, linearFilterHeight, linearFilterWeights, medianFilterWidth, medianFilterHeight,
                 medianFilterWeights, erosionFilterWidth, erosionFilterHeight, erosionFilterColors, dilationFilterWidth,
                 dilationFilterHeight, dilationFilterColors, timeDict, meanSquaredError, averageHistogram,
-                csvDatasetArrayList, datasetArrayList, instructionList
+                csvDatasetArrayList, datasetArrayList, instructionList, myrank, numberOfProcessors
         );
 
-
+        // if (myrank == 0) { // TODO if i add a rank splitting here for going thorugh the image, id need to join before the metrics
         ProgressBar progressBar = new ProgressBar("Processing Images", files.length);
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
@@ -297,8 +311,12 @@ public class Main {
             ex.printStackTrace();
         }
 
-        Metrics metrics = new Metrics();
-        metrics.printMetrics(timeDict, averageHistogram, (files.length), color, meanSquaredError, realStartTime);
+        if (myrank == 0) { // TODO if i add a rank splitting here for going thorugh the image, id need to join before the metrics
+            Metrics metrics = new Metrics();
+            metrics.printMetrics(timeDict, averageHistogram, (files.length), color, meanSquaredError, realStartTime);
+        }
+
+        MPI.Finalize();
     }
 
 

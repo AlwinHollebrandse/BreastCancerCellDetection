@@ -1,9 +1,5 @@
 package com.alwin;
 
-// for getting java mpi to work: https://www.open-mpi.org/faq/?category=java
-
-import mpi.*;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -19,59 +15,35 @@ public class MpiFilter {
     private int filterHeight;
     private int[] weights;
     private double scalar;
-    private int[][] tempPrePorportionalNormImageValues;
-    private
 
-    @FunctionalInterface
-    interface FuncInterface extends OverHeadInterface.FuncInterface {
-        // An abstract function
-        void function(BufferedImage newImage, Semaphore semaphore, int x, int y);
-    }
+    private int newImageWidth;
+    private int newImageHeight;
+    private int startingX;
+    private int endingX;
 
-    public Filter.FuncInterface fobj = (BufferedImage newImage, Semaphore semaphore, int x, int y) -> {
-        ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
-
-        int newPixelValue = -1;
-        if ("linear".equalsIgnoreCase(filterType)) {
-            newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);
-            tempPrePorportionalNormImageValues[x][y] = newPixelValue;
-        }
-
-        else if("median".equalsIgnoreCase(filterType)) {
-            newPixelValue = calcMedian(neighborRGBValueArray, weights);
-        }
-
-        newImage.setRGB(x, y, newPixelValue); // if newPixelValue== -1, there is an error // TODO throw an error?
-    };
-
-    public Filter.FuncInterface getFuncInterface () {
-        return fobj;
-    }
-    
-
-
-    public MpiFilter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights) {
-        this.originalImage = originalImage;
+    public MpiFilter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int startingX, int endingX) {
+        // TODO can be removed if param check is moved
         this.filterType = filterType;
         this.filterWidth = filterWidth;
         this.filterHeight = filterHeight;
         this.weights = weights;
+
+        this.originalImage = originalImage;
+        this.newImageWidth = newImageWidth;
+        this.newImageHeight = newImageHeight;
+        this.startingX = startingX;
+        this.endingX = endingX;
     }
 
 
     // NOTE currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
-    public BufferedImage filter () throws NullPointerException {
+    public int[] filter () throws NullPointerException {
         // TODO move all mpi to main? Can do serial, vs lambda, vs mpi. then mpi for going thorugh image folder for both cases
         // how would the image folder mpi stuff work with mpi here? - thinking you cant do both at once...
-        MPI.Init(args); // TODO pass args from main here or init and finalize in mian...but hten all rest is rank 0...
-        int myrank = MPI.COMM_WORLD.Rank();
-        int numberOfProcessors = MPI.COMM_WORLD.Size();
-        if (myrank == 0) {
-            System.out.println("REACHED RANK 0!!!!");
-        }
-
+        
+        // TODO move param checking to image operations call?
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
@@ -93,21 +65,43 @@ public class MpiFilter {
         if ((filterHeight & 1) == 0 || (filterWidth & 1) == 0) {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
-        int newImageWidth = originalImage.getWidth() - ((filterWidth/2) * 2);
-        int newImageHeight = originalImage.getHeight() - ((filterHeight/2) * 2);
 
-        tempPrePorportionalNormImageValues = new int[newImageWidth][newImageHeight];
+        int[] filterImagePortion = new int[(endingX - startingX) * newImageHeight];
 
-//        originalImage = new BufferedImage(4, 4, originalImage.getType());
+        // TODO need new index vars for filling filterImagePortion as xy relate to og image?
+        int filterImagePortionIndex = 0;
+        for (int x = startingX; x < endingX; x ++) { // TODO does this work? nothing really compiles
+            for (int y = 0; y < newImageHeight; y ++) {
+                ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
+                int newPixelValue = -1;
+                if ("linear".equalsIgnoreCase(filterType)) {
+                    newPixelValue = calcAvgRGB(neighborRGBValueArray, weights, scalar);
+                }
+
+                else if("median".equalsIgnoreCase(filterType)) {
+                    newPixelValue = calcMedian(neighborRGBValueArray, weights);
+                }
+                filterImagePortion[filterImagePortionIndex] = newPixelValue; // if newPixelValue== -1, there is an error // TODO throw an error?
+                filterImagePortionIndex++;
+            }
+        }
+
+        return filterImagePortion;
+    }
+
+    public BufferedImage fillFilterImage(int[] allFilterImageValues) throws NullPointerException {
         BufferedImage filterImage = new BufferedImage(newImageWidth, newImageHeight, originalImage.getType());
-
-        ParallelMatrix parallelMatrix = new ParallelMatrix();
-        parallelMatrix.doInParallel(filterImage, getFuncInterface());
-
-        MPI.Finalize();
+        int filterImagePortionIndex = 0;
+        for (int x = 0; x < filterImage.getWidth(); x ++) {
+            for (int y = 0; y < filterImage.getHeight(); y ++) {
+                filterImage.setRGB(x, y, allFilterImageValues[filterImagePortionIndex]);
+                filterImagePortionIndex++;
+            }
+        }
         return filterImage;
     }
+
 
     private int[] setDefaultWeights() {
         int filterSize = filterHeight * filterWidth;

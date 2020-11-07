@@ -1,5 +1,7 @@
 package com.alwin;
 
+import mpi.*;
+
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 
@@ -40,9 +42,22 @@ public class ImageOperationsCall {
     private ArrayList<String> csvDatasetArrayList;
     private ArrayList<CellObject> datasetArrayList;
     private ArrayList<String> instructionList;
+    private int myrank;
+    private int numberOfProcessors;
 
     // TODO change params to a single "operationcallParam" custom type for cleaner code
-    public ImageOperationsCall(Utility utility, boolean deletePreviousImages, boolean usePreviousImages, String color, int quantizationScale, double saltAndPepperNoiseRandomThreshold, double saltAndPepperNoiseMean, double saltAndPepperNoiseSigma, double gaussianNoiseRandomThreshold, double gaussianNoiseMean, double gaussianNoiseSigma, int linearFilterWidth, int linearFilterHeight, int[] linearFilterWeights, int medianFilterWidth, int medianFilterHeight, int[] medianFilterWeights, int erosionFilterWidth, int erosionFilterHeight, int[] erosionFilterColors, int dilationFilterWidth, int dilationFilterHeight, int[] dilationFilterColors, Map<String, Integer> timeDict, int meanSquaredError, int[] averageHistogram, ArrayList<String> csvDatasetArrayList, ArrayList<CellObject> datasetArrayList, ArrayList<String> instructionList) {
+    public ImageOperationsCall(Utility utility, boolean deletePreviousImages,
+            boolean usePreviousImages, String color, int quantizationScale,
+            double saltAndPepperNoiseRandomThreshold, double saltAndPepperNoiseMean,
+            double saltAndPepperNoiseSigma, double gaussianNoiseRandomThreshold,
+            double gaussianNoiseMean, double gaussianNoiseSigma, int linearFilterWidth,
+            int linearFilterHeight, int[] linearFilterWeights, int medianFilterWidth,
+            int medianFilterHeight, int[] medianFilterWeights, int erosionFilterWidth,
+            int erosionFilterHeight, int[] erosionFilterColors, int dilationFilterWidth,
+            int dilationFilterHeight, int[] dilationFilterColors,
+            Map<String, Integer> timeDict, int meanSquaredError, int[] averageHistogram,
+            ArrayList<String> csvDatasetArrayList, ArrayList<CellObject> datasetArrayList,
+            ArrayList<String> instructionList, int myrank, int numberOfProcessors) {
         this.utility = utility;
         this.deletePreviousImages = deletePreviousImages;
         this.usePreviousImages = usePreviousImages;
@@ -72,6 +87,8 @@ public class ImageOperationsCall {
         this.csvDatasetArrayList = csvDatasetArrayList;
         this.datasetArrayList = datasetArrayList;
         this.instructionList = instructionList;
+        this.myrank = myrank;
+        this.numberOfProcessors = numberOfProcessors;
     }
     
     public void imageOperationsCall(File file) {
@@ -79,7 +96,7 @@ public class ImageOperationsCall {
         if (file.isFile()) { //this line weeds out other directories/folders
 //                utility.print("\n\n" + file);
             try {
-
+//if (rank == 0) {
                 // Make directory for the current cell image file.
                 int startOfPictureName = file.toString().lastIndexOf("/");
                 if (startOfPictureName == -1) {
@@ -278,8 +295,8 @@ public class ImageOperationsCall {
                         System.exit(1);
                     }
                     long startTime = System.nanoTime();
-                    SerialFilter filter = new SerialFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
-                    workingImage = filter.filter();
+                    SerialFilter serialFilter = new SerialFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
+                    workingImage = serialFilter.filter();
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("serialMedianFilterTime", (int)(timeDict.get("serialMedianFilterTime") + time));
                     output_file = new File(resultFileName);
@@ -298,24 +315,50 @@ public class ImageOperationsCall {
                     }
                 }
 
+                // }
+
                 // TODO make this the only one that doesnt have a rank check?
+                // all ranks call this
                 resultFileName = directoryPath + "mpiMedian.jpg";
                 if (!usePreviousImages && instructionList.contains("MpiMedianFilter")) {
                     if (medianFilterWidth == -1 || medianFilterHeight == -1) {
                         utility.print("mpi median filter parameters were set incorrectly");
                         System.exit(1);
                     }
-                    long startTime = System.nanoTime();
-                    MpiFilter filter = new MpiFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);//new int[]{1, 2, 1, 2, 3, 2, 1, 2, 1}, (1/15.0));
-                    workingImage = filter.filter();
-                    long time = (System.nanoTime() - startTime) / 1000000;
-                    timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
-                    output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
-//                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
-                } else if (usePreviousImages && instructionList.contains("MpiMedianFilter")) {
+                    
+                    int newImageWidth = workingImage.getWidth() - ((medianFilterWidth/2) * 2);
+                    int newImageHeight = workingImage.getHeight() - ((medianFilterHeight/2) * 2);
+                    // mpi can only send 1d array...
+                    // each rank computes its starting and ending `x` (for double for loop)
+                    int rowsPerProcess = Math.ceil(newImageWidth / numberOfProcessors);
+                    int pixelsPerProcess = rowsPerProcess * newImageHeight;
+                    int startingX = rowsPerProcess * myrank; // TODO test correctness
+                    int endingX = rowsPerProcess * (myrank + 1);
+                    if (endingX > newImageWidth) {
+                        endingX = newImageWidth;
+                    }
+
+                    if (myrank == 0) {
+                        long startTime = System.nanoTime();
+                    }
+
+                    MpiFilter mpiFilter = new MpiFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights);
+                    int[] filterImagePortion = mpiFilter.filter();
+
+                    int[] allFilterImageValues = new int[newImageWidth* newImageHeight];
+                    MPI.Gather(filterImagePortion, pixelsPerProcess, MPI.INTEGER, allFilterImageValues, pixelsPerProcess, MPI.INTEGER, 0, MPI.COMM_WORLD); // TODO correct syntax?
+
+                    if (myrank == 0) {
+                        workingImage = mpiFilter.fillFilterImage(allFilterImageValues);
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
+                        output_file = new File(resultFileName);
+                        ImageIO.write(workingImage, "jpg", output_file);
+    //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
+                    }
+                } else if (usePreviousImages && instructionList.contains("MpiMedianFilter") && myrank == 0) {
                     workingImage = ImageIO.read( new File(resultFileName));
-                } else if (deletePreviousImages){
+                } else if (deletePreviousImages && myrank == 0){
                     // if the file was not needed, delete the file from the relevant result folder if it existed
                     File imageResult = new File(resultFileName);
                     // delete the image result folder if it already existed. This way, no remnants from old runs remain

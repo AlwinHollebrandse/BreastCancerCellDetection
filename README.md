@@ -54,6 +54,10 @@ LinearFilter 3 3 [ 0 0 0 0 0 0 0 0 0 ]
 
 MedianFilter 3 3 null 1
 
+SerialMedianFilter 3 3 null
+
+MPIMedianFilter 3 3 null
+
 Histogram
 
 HistogramEqualization
@@ -106,10 +110,14 @@ This section is found under NoiseAdder.java. It accepts the following parameters
 ## LinearFilter
 This section is found under Filter.java. This filter methods crops of borders of images that do not have a large enough border for an edge pixel. It accepts the following parameters: current image, filterType, filterWidth, filterHeight, and weights. After validating each param, this code provides this lambda: for the given pixel, check which type of filter is being applied. If it is “linear”, take the user’s filter mask size and compute the average of each pixel in that filter (where each pixel is first multiplied by the corresponding weight value). The center pixel of this filter is set to that average value. Note that each channel of the pixel is computed independently. The output of this method is saved as linear.jpg.
 
-
 ## MedianFilter
 This section is found under Filter.java. This filter methods crops of borders of images that do not have a large enough border for an edge pixel. It accepts the following parameters: current image, filterType, filterWidth, filterHeight, and weights. After validating each param, this code provides this lambda: for the given pixel, check which type of filter is being applied. If it is “median”, take the user’s filter mask size and adds each pixel to a list by the corresponding weight amount of times. The median of this list is then computed. That becomes the value of the filter’s center pixel. The output of this method is saved as median.jpg.
 
+## SerialMedianFilter
+Performs the median filter except in serial instead of the lambda.
+
+## MPIMedianFilter
+Performs the median filter except in MPJ instead of the lambda.
 
 ## Histogram
 This section is found under GraphHistogram.java. It accepts the following parameter: current image. In order to create a histogram, each pixel is looked at (not in parallel since the required semaphore would slow the process to slower than a sequential version) and the gray color value ((int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114)) is added to an int array of size 256 in the correct position. This histogram is then saved to histogram.png.

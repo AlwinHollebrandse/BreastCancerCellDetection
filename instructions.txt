@@ -1,7 +1,0 @@
-DeletePreviousImages true
-UsePreviousImage false
-SingleColor Gray
-Histogram
-HistogramThresholdingSegmentation
-FeatureExtraction
-MachineLearning 10 10

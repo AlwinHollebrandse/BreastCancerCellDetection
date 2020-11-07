@@ -1,0 +1,4 @@
+DeletePreviousImages true
+UsePreviousImage false
+SingleColor Gray
+MedianFilter 3 3 null

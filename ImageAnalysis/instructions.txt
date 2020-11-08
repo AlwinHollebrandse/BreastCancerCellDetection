@@ -1,6 +1,5 @@
 DeletePreviousImages true
 UsePreviousImage false
 SingleColor Gray
-MedianFilter 3 3 null
-SerialMedianFilter 3 3 null
+
 MPIMedianFilter 3 3 null

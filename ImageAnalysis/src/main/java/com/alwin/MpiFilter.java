@@ -17,10 +17,11 @@ public class MpiFilter {
 
     private int newImageWidth;
     private int newImageHeight;
+    private int pixelsPerProcess;
     private int startingX;
     private int endingX;
 
-    public MpiFilter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int startingX, int endingX) {
+    public MpiFilter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int pixelsPerProcess, int startingX, int endingX) {
         // TODO can be removed if param check is moved
         this.filterType = filterType;
         this.filterWidth = filterWidth;
@@ -30,6 +31,7 @@ public class MpiFilter {
         this.originalImage = originalImage;
         this.newImageWidth = newImageWidth;
         this.newImageHeight = newImageHeight;
+        this.pixelsPerProcess = pixelsPerProcess;
         this.startingX = startingX;
         this.endingX = endingX;
     }
@@ -62,7 +64,10 @@ public class MpiFilter {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
 
-        int[] filterImagePortion = new int[(endingX - startingX) * newImageHeight]; // TODO doubles or ints?
+        // TODO needs to be the same size for all processes? should be pixelsPerProcess size
+        // NOTE while the actual amount of pixels that will be used is (endingX - startingX) * newImageHeight,
+        // It was set the larger pixelsPerProcess so that GATHER could get a constant amount of pixels and not break
+        int[] filterImagePortion = new int[pixelsPerProcess]; // TODO doubles or ints?
 
         // TODO need new index vars for filling filterImagePortion as xy relate to og image?
         int filterImagePortionIndex = 0; // TODO does this prevent the loops from being para? - could do outer loop in para that fills the x-startingX index of 2d array-which then gets converted to 1d
@@ -78,9 +83,9 @@ public class MpiFilter {
                 else if("median".equalsIgnoreCase(filterType)) {
                     newPixelValue = calcMedian(neighborRGBValueArray, weights);
                 }
-                filterImagePortionIndex = (x - startingX) * (endingX - startingX) + y;
+                // filterImagePortionIndex = (x - startingX) * (endingX - startingX) + y;
                 filterImagePortion[filterImagePortionIndex] = newPixelValue; // if newPixelValue== -1, there is an error // TODO throw an error?
-                // filterImagePortionIndex++; // TODO backup if indexing calc is wrong
+                filterImagePortionIndex++; // TODO backup if indexing calc is wrong
             }
         }
 
@@ -92,6 +97,7 @@ public class MpiFilter {
         int filterImagePortionIndex = 0;
         for (int x = 0; x < filterImage.getWidth(); x ++) {
             for (int y = 0; y < filterImage.getHeight(); y ++) {
+                // filterImagePortionIndex = filterImage.getWidth() * x + y;
                 filterImage.setRGB(x, y, allFilterImageValues[filterImagePortionIndex]);
                 filterImagePortionIndex++;
             }

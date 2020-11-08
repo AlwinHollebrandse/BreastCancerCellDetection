@@ -10,6 +10,7 @@
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/Filter.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/MorphologicalFunctions.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/FeatureExtraction.java
+/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/MpiThreadedFilter.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/CellObject.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/ImageOperationsCall.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/LabelExtraction.java

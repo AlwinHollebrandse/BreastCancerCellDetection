@@ -339,14 +339,20 @@ public class ImageOperationsCall {
                         endingX = newImageWidth;
                     }
 
-                    MpiFilter mpiFilter = new MpiFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, startingX, endingX);
+                    MpiFilter mpiFilter = new MpiFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, pixelsPerProcess, startingX, endingX);
                     int[] filterImagePortion = mpiFilter.filter();
 
-                    int[] allFilterImageValues = new int[newImageWidth * newImageHeight];
+                    // NOTE the size is set to this value because pixelsPerProcess * numberOfProcessors > newImageWidth * newImageHeight
+                    // This was done so that GATHER could get a constant amount of pixels and not break
+   
+                    int[] allFilterImageValues = new int[pixelsPerProcess * numberOfProcessors];//newImageWidth * newImageHeight];
+
+                    System.out.println("rank: " + myrank + ", pixelsPerProcess: " + pixelsPerProcess + ", filterImagePortion size: " + filterImagePortion.length + ", allFilterImageValues size: " + allFilterImageValues.length);
                     // MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, pixelsPerProcess, MPI.INT, 0, MPI.COMM_WORLD); // TODO correct syntax? C++ had send to recive. Java is opposite
                     
                     // MPI.COMM_WORLD.Gather(recvbuf,0,unitSize,MPI.INT,sendbuf,0,unitSize,MPI.INT,root); // online example
-                    MPI.COMM_WORLD.Gather(allFilterImageValues, 0, pixelsPerProcess, MPI.INT, filterImagePortion, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
+                    // MPI.COMM_WORLD.Gather(allFilterImageValues, 0, pixelsPerProcess, MPI.INT, filterImagePortion, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
+                    MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
 
                     if (myrank == 0) {
                         workingImage = mpiFilter.fillFilterImage(allFilterImageValues);

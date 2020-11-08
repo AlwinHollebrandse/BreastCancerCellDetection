@@ -369,6 +369,8 @@ public class ImageOperationsCall {
                     }
                 }
 
+                // TODO add MpiThreadedFilter
+
 
                 // TODO add a "usePreviousImages" option for histogram
                 String graphTitle = "histogram";

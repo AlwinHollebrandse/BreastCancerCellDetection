@@ -26,8 +26,8 @@
             <groupId>mpj</groupId>
             <artifactId>mpj</artifactId>
             <version>0.44</version>
-            <scope>provided</scope>
-        </dependency>   
+            <scope>compile</scope>
+        </dependency>
 	</dependencies>	<build>
         <plugins>
             <plugin>

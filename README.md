@@ -8,6 +8,8 @@ A terminal with Maven installed is required to run this code. Provided that requ
 ### Sample Input:
 `java -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar ./images instructions.txt`.
 
+`~/MPJ-User/mpj-v0_44/bin/mpjrun.sh -np 2 -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar`
+
 ## Adding MPJ to the Project
 Inorder to add MPJ (Java's MPI) to the project, this [link](https://github.com/victorskl/mpj-maven) was used.
 

@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.Semaphore;
 
 public class MpiFilter {
 
@@ -39,10 +38,7 @@ public class MpiFilter {
     // NOTE currently this only works for RGB (which includes black and white values, as those have rgb values, provided they are there)
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
-    public int[] filter () throws NullPointerException {
-        // TODO move all mpi to main? Can do serial, vs lambda, vs mpi. then mpi for going thorugh image folder for both cases
-        // how would the image folder mpi stuff work with mpi here? - thinking you cant do both at once...
-        
+    public int[] filter () throws NullPointerException {        
         // TODO move param checking to image operations call?
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
@@ -66,10 +62,10 @@ public class MpiFilter {
             throw new NullPointerException("filter height and width must be odd numbers");
         }
 
-        int[] filterImagePortion = new int[(endingX - startingX) * newImageHeight];
+        int[] filterImagePortion = new int[(endingX - startingX) * newImageHeight]; // TODO doubles or ints?
 
         // TODO need new index vars for filling filterImagePortion as xy relate to og image?
-        int filterImagePortionIndex = 0;
+        int filterImagePortionIndex = 0; // TODO does this prevent the loops from being para? - could do outer loop in para that fills the x-startingX index of 2d array-which then gets converted to 1d
         for (int x = startingX; x < endingX; x ++) { // TODO does this work? nothing really compiles
             for (int y = 0; y < newImageHeight; y ++) {
                 ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
@@ -82,8 +78,9 @@ public class MpiFilter {
                 else if("median".equalsIgnoreCase(filterType)) {
                     newPixelValue = calcMedian(neighborRGBValueArray, weights);
                 }
+                filterImagePortionIndex = (x - startingX) * (endingX - startingX) + y;
                 filterImagePortion[filterImagePortionIndex] = newPixelValue; // if newPixelValue== -1, there is an error // TODO throw an error?
-                filterImagePortionIndex++;
+                // filterImagePortionIndex++; // TODO backup if indexing calc is wrong
             }
         }
 

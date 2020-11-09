@@ -96,7 +96,7 @@ public class ImageOperationsCall {
         if (file.isFile()) { //this line weeds out other directories/folders
 //                utility.print("\n\n" + file);
             try {
-//if (rank == 0) {
+//if (rank == 0) { // TODO
                 // Make directory for the current cell image file.
                 int startOfPictureName = file.toString().lastIndexOf("/");
                 if (startOfPictureName == -1) {
@@ -131,7 +131,6 @@ public class ImageOperationsCall {
 
 
                 ///////////////////////////////////////////// PERFORM REQUESTED IMAGE OPERATIONS ////////////////////////////////////////////////////////
-
                 resultFileName = directoryPath + color + ".jpg";
                 if (!usePreviousImages && instructionList.contains("SingleColor")) {
                     long startTime = System.nanoTime();
@@ -263,6 +262,7 @@ public class ImageOperationsCall {
 
                 resultFileName = directoryPath + "median.jpg";
                 if (!usePreviousImages && instructionList.contains("MedianFilter")) {
+                    System.out.println("HERE MEDIAN");
                     if (medianFilterWidth == -1 || medianFilterHeight == -1) {
                         utility.print("median filter parameters were set incorrectly");
                         System.exit(1);

@@ -113,29 +113,29 @@ public class Main {
             while (s.hasNextLine()) {
                 String currentLine = s.nextLine();
 
-                if (currentLine.toLowerCase().contains("deletepreviousimages")) {
+                if (lineContainsWord(currentLine, "deletepreviousimages")) {
                     String[] lineArray = currentLine.split(" ");
                     deletePreviousImages = Boolean.parseBoolean(lineArray[1]);
                 }
 
-                if (currentLine.toLowerCase().contains("usepreviousimage")) {
+                if (lineContainsWord(currentLine, "usepreviousimage")) {
                     String[] lineArray = currentLine.split(" ");
                     usePreviousImages = Boolean.parseBoolean(lineArray[1]);
                 }
 
-                if (currentLine.toLowerCase().contains("singlecolor")) {
+                if (lineContainsWord(currentLine, "singlecolor")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("SingleColor");
                     color = lineArray[1];
                 }
 
-                if (currentLine.toLowerCase().contains("quantization")) {
+                if (lineContainsWord(currentLine, "quantization")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("Quantization");
                     quantizationScale = Integer.parseInt(lineArray[1]);
                 }
 
-                if (currentLine.toLowerCase().contains("saltandpepper")) {
+                if (lineContainsWord(currentLine, "saltandpepper")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("SaltAndPepper");
                     saltAndPepperNoiseRandomThreshold = Double.parseDouble(lineArray[1]);
@@ -143,7 +143,7 @@ public class Main {
                     saltAndPepperNoiseSigma = Double.parseDouble(lineArray[3]);
                 }
 
-                if (currentLine.toLowerCase().contains("gaussian")) {
+                if (lineContainsWord(currentLine, "gaussian")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("Gaussian");
                     gaussianNoiseRandomThreshold = Double.parseDouble(lineArray[1]);
@@ -151,7 +151,7 @@ public class Main {
                     gaussianNoiseSigma = Double.parseDouble(lineArray[3]);
                 }
 
-                if (currentLine.toLowerCase().contains("linearfilter")) {
+                if (lineContainsWord(currentLine, "linearfilter")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("LinearFilter");
                     linearFilterWidth = Integer.parseInt(lineArray[1]);
@@ -159,7 +159,7 @@ public class Main {
                     linearFilterWeights = parseArray(lineArray);
                 }
 
-                if (currentLine.toLowerCase().contains("medianfilter")) {
+                if (lineContainsWord(currentLine, "medianfilter")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("MedianFilter");
                     medianFilterWidth = Integer.parseInt(lineArray[1]);
@@ -167,7 +167,7 @@ public class Main {
                     medianFilterWeights = parseArray(lineArray);
                 }
 
-                if (currentLine.toLowerCase().contains("serialmedianfilter")) {
+                if (lineContainsWord(currentLine, "serialmedianfilter")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("SerialMedianFilter");
                     medianFilterWidth = Integer.parseInt(lineArray[1]);
@@ -175,7 +175,7 @@ public class Main {
                     medianFilterWeights = parseArray(lineArray);
                 }
 
-                if (currentLine.toLowerCase().contains("mpimedianfilter")) {
+                if (lineContainsWord(currentLine, "mpimedianfilter")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("MpiMedianFilter");
                     medianFilterWidth = Integer.parseInt(lineArray[1]);
@@ -183,7 +183,7 @@ public class Main {
                     medianFilterWeights = parseArray(lineArray);
                 }
 
-                if (currentLine.toLowerCase().contains("mpithreadedmedianfilter")) {
+                if (lineContainsWord(currentLine, "mpithreadedmedianfilter")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("MpiThreadedMedianFilter");
                     medianFilterWidth = Integer.parseInt(lineArray[1]);
@@ -191,27 +191,27 @@ public class Main {
                     medianFilterWeights = parseArray(lineArray);
                 }
 
-                if (currentLine.toLowerCase().contains("histogram")) {
+                if (lineContainsWord(currentLine, "histogram")) {
                     instructionList.add("Histogram");
                 }
 
-                if (currentLine.toLowerCase().contains("histogramequalization")) {
+                if (lineContainsWord(currentLine, "histogramequalization")) {
                     instructionList.add("HistogramEqualization");
                 }
 
-                if (currentLine.toLowerCase().contains("edgedetection")) {
+                if (lineContainsWord(currentLine, "edgedetection")) {
                     instructionList.add("EdgeDetection");
                 }
 
-                if (currentLine.toLowerCase().contains("histogramthresholdingsegmentation")) {
+                if (lineContainsWord(currentLine, "histogramthresholdingsegmentation")) {
                     instructionList.add("HistogramThresholdingSegmentation");
                 }
 
-                if (currentLine.toLowerCase().contains("kmeanssegmentation")) {
+                if (lineContainsWord(currentLine, "kmeanssegmentation")) {
                     instructionList.add("KMeansSegmentation");
                 }
 
-                if (currentLine.toLowerCase().contains("erosion")) {
+                if (lineContainsWord(currentLine, "erosion")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("Erosion");
                     erosionFilterWidth = Integer.parseInt(lineArray[1]);
@@ -219,7 +219,7 @@ public class Main {
                     erosionFilterColors = parseArray(lineArray);
                 }
 
-                if (currentLine.toLowerCase().contains("dilation")) {
+                if (lineContainsWord(currentLine, "dilation")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("Dilation");
                     dilationFilterWidth = Integer.parseInt(lineArray[1]);
@@ -227,11 +227,11 @@ public class Main {
                     dilationFilterColors = parseArray(lineArray);
                 }
 
-                if (currentLine.toLowerCase().contains("featureextraction")) {
+                if (lineContainsWord(currentLine, "featureextraction")) {
                     instructionList.add("FeatureExtraction");
                 }
 
-                if (currentLine.toLowerCase().contains("machinelearning")) {
+                if (lineContainsWord(currentLine, "machinelearning")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("MachineLearning");
                     k = Integer.parseInt(lineArray[1]);
@@ -328,6 +328,16 @@ public class Main {
         }
 
         MPI.Finalize();
+    }
+
+    private static boolean lineContainsWord(String currentline, String word) {
+        String[] lineArray = currentline.split(" ");
+        for (String wordInLine : lineArray) {
+            if (word.equalsIgnoreCase(wordInLine)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

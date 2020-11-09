@@ -18,19 +18,20 @@ public class Main {
         //     System.out.println("Did not provided the correct argts. <image folder> <instructions.txt>");
         //     System.exit(0);
         // }
+        String imageFilesLocation;
+        String instructions;
 
         MPI.Init(args);
         int myrank = MPI.COMM_WORLD.Rank();
         int numberOfProcessors = MPI.COMM_WORLD.Size();
         if (myrank == 0) {
-            System.out.println("REACHED RANK 0!!!!");
+            System.out.println("REACHED RANK 0!!!!"); // TODO delete
+            // imageFilesLocation = args[0]; // TODO see if args can come back
+            // instructions = args[1];
+
+            imageFilesLocation = "./images";
+            instructions = "instructions.txt";
         }
-
-        // String imageFilesLocation = args[0];
-        // String instructions = args[1];
-
-        String imageFilesLocation = "./images";
-        String instructions = "instructions.txt";
 
         Utility utility = new Utility();
         utility.createResultsIfNeeded();
@@ -251,7 +252,7 @@ public class Main {
         );
 
         // if (myrank == 0) { // TODO if i add a rank splitting here for going thorugh the image, id need to join before the metrics
-        ProgressBar progressBar = new ProgressBar("Processing Images", files.length);
+        ProgressBar progressBar = new ProgressBar("Processing Images", files.length); // TODO cana  single rank have this? at it would be a guesstimate?
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
 

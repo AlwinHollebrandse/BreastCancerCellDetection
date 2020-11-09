@@ -42,7 +42,7 @@ public class Metrics {
             utility.print("Average serial median filter processing time (ms): " + timeDict.get("serialMedianFilterTime") / numberOfFiles);
         }
         if (timeDict.get("mpiMedianFilterTime") > 0) {
-            utility.print("\nMedian filter processing time for the entire batch (ms): " + timeDict.get("mpiMedianFilterTime"));
+            utility.print("\nMpiMedian filter processing time for the entire batch (ms): " + timeDict.get("mpiMedianFilterTime"));
             utility.print("Average mpi median filter processing time (ms): " + timeDict.get("mpiMedianFilterTime") / numberOfFiles);
         }
         if (timeDict.get("histogramTime") > 0) {

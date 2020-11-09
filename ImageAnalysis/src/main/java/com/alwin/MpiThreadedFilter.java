@@ -17,11 +17,12 @@
 
 //     private int newImageWidth;
 //     private int newImageHeight;
+//     private int pixelsPerProcess;
 //     private int startingX;
 //     private int endingX;
 
 
-//     public MpiThreadedFilter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int startingX, int endingX) {
+//     public MpiThreadedFilter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int pixelsPerProcess, int startingX, int endingX) {
 //         this.originalImage = originalImage;
 //         this.filterType = filterType;
 //         this.filterWidth = filterWidth;
@@ -30,6 +31,7 @@
 
 //         this.newImageWidth = newImageWidth;
 //         this.newImageHeight = newImageHeight;
+//         this.pixelsPerProcess = pixelsPerProcess;
 //         this.startingX = startingX;
 //         this.endingX = endingX;
 //     }
@@ -62,8 +64,9 @@
 //             throw new NullPointerException("filter height and width must be odd numbers");
 //         }
 
-//         int[] filterImagePortion = new int[(endingX - startingX) * newImageHeight]; // TODO doubles or ints?
-
+//         // NOTE while the actual amount of pixels that will be used is (endingX - startingX) * newImageHeight,
+//         // It was set the larger pixelsPerProcess so that GATHER could get a constant amount of pixels and not break
+//         int[] filterImagePortion = new int[pixelsPerProcess];
 //         final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
 
 //         MPIImageThread[] threadArray = new MPIImageThread[MAX_THREADS];
@@ -74,7 +77,7 @@
 //         }
 
 //         try {
-//             //wait for all threads
+//             // wait for all threads
 //             for (int i = 0; i < MAX_THREADS; i++) {
 //                 threadArray[i].join();
 //             }
@@ -85,6 +88,19 @@
 //         }
 
 //         return filterImagePortion;
+//     }
+
+//     public BufferedImage fillFilterImage(int[] allFilterImageValues) throws NullPointerException {
+//         BufferedImage filterImage = new BufferedImage(newImageWidth, newImageHeight, originalImage.getType());
+//         int filterImagePortionIndex = 0;
+//         for (int x = 0; x < filterImage.getWidth(); x ++) {
+//             for (int y = 0; y < filterImage.getHeight(); y ++) {
+//                 // filterImagePortionIndex = filterImage.getWidth() * x + y;
+//                 filterImage.setRGB(x, y, allFilterImageValues[filterImagePortionIndex]);
+//                 filterImagePortionIndex++;
+//             }
+//         }
+//         return filterImage;
 //     }
 
 //     private int[] setDefaultWeights() {

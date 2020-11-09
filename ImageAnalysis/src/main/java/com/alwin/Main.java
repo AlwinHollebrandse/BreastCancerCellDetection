@@ -18,26 +18,27 @@ public class Main {
         //     System.out.println("Did not provided the correct argts. <image folder> <instructions.txt>");
         //     System.exit(0);
         // }
-        String imageFilesLocation;
-        String instructions;
 
         MPI.Init(args);
         int myrank = MPI.COMM_WORLD.Rank();
         int numberOfProcessors = MPI.COMM_WORLD.Size();
         if (myrank == 0) {
             System.out.println("REACHED RANK 0!!!!"); // TODO delete
-            // imageFilesLocation = args[0]; // TODO see if args can come back
-            // instructions = args[1];
-
-            imageFilesLocation = "./images";
-            instructions = "instructions.txt";
         }
 
-        Utility utility = new Utility();
-        utility.createResultsIfNeeded();
-        utility.print("imageFilesLocation: " + imageFilesLocation);
-        utility.print("instructions: " + instructions);
+        // imageFilesLocation = args[0]; // TODO see if args can come back
+        // instructions = args[1];
 
+        String imageFilesLocation = "./images";
+        String instructions = "instructions.txt";
+
+        Utility utility = new Utility();
+        if (myrank == 0) {
+            utility.createResultsIfNeeded();
+            utility.print("imageFilesLocation: " + imageFilesLocation);
+            utility.print("instructions: " + instructions);
+        }
+        
         // ***************************** Instruction Parsing Below *********************************
         // operation params
         boolean deletePreviousImages = true;
@@ -74,6 +75,7 @@ public class Main {
         timeDict.put("medianFilterTime", 0);
         timeDict.put("serialMedianFilterTime", 0);
         timeDict.put("mpiMedianFilterTime", 0);
+        timeDict.put("mpiThreadedMedianFilterTime", 0);
         timeDict.put("histogramTime", 0);
         timeDict.put("equalizationTime", 0);
         timeDict.put("edgeDetectionTime", 0);
@@ -176,6 +178,14 @@ public class Main {
                 if (currentLine.toLowerCase().contains("mpimedianfilter")) {
                     String[] lineArray = currentLine.split(" ");
                     instructionList.add("MpiMedianFilter");
+                    medianFilterWidth = Integer.parseInt(lineArray[1]);
+                    medianFilterHeight = Integer.parseInt(lineArray[2]);
+                    medianFilterWeights = parseArray(lineArray);
+                }
+
+                if (currentLine.toLowerCase().contains("mpithreadedmedianfilter")) {
+                    String[] lineArray = currentLine.split(" ");
+                    instructionList.add("MpiThreadedMedianFilter");
                     medianFilterWidth = Integer.parseInt(lineArray[1]);
                     medianFilterHeight = Integer.parseInt(lineArray[2]);
                     medianFilterWeights = parseArray(lineArray);

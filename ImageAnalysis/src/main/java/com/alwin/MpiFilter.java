@@ -67,7 +67,7 @@ public class MpiFilter {
         // TODO needs to be the same size for all processes? should be pixelsPerProcess size
         // NOTE while the actual amount of pixels that will be used is (endingX - startingX) * newImageHeight,
         // It was set the larger pixelsPerProcess so that GATHER could get a constant amount of pixels and not break
-        int[] filterImagePortion = new int[pixelsPerProcess]; // TODO doubles or ints?
+        int[] filterImagePortion = new int[pixelsPerProcess];
 
         // TODO need new index vars for filling filterImagePortion as xy relate to og image?
         int filterImagePortionIndex = 0; // TODO does this prevent the loops from being para? - could do outer loop in para that fills the x-startingX index of 2d array-which then gets converted to 1d

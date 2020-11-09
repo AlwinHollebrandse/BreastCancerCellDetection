@@ -45,6 +45,10 @@ public class Metrics {
             utility.print("\nMpiMedian filter processing time for the entire batch (ms): " + timeDict.get("mpiMedianFilterTime"));
             utility.print("Average mpi median filter processing time (ms): " + timeDict.get("mpiMedianFilterTime") / numberOfFiles);
         }
+        if (timeDict.get("mpiThreadedMedianFilterTime") > 0) {
+            utility.print("\nMpiThreadedMedian filter processing time for the entire batch (ms): " + timeDict.get("mpiThreadedMedianFilterTime"));
+            utility.print("Average mpi threaded median filter processing time (ms): " + timeDict.get("mpiThreadedMedianFilterTime") / numberOfFiles);
+        }
         if (timeDict.get("histogramTime") > 0) {
             utility.print("\nHistogram creation processing time for the entire batch (ms): " + timeDict.get("histogramTime"));
             utility.print("Average histogram creation processing time (ms): " + timeDict.get("histogramTime") / numberOfFiles);
@@ -81,8 +85,8 @@ public class Metrics {
             utility.print("\nMachine Learning processing time for the entire batch (ms): " + timeDict.get("machineLearningTime"));
         }
         utility.print("\nTotal RunTime for all operations (without image exporting) (s): " + ((timeDict.get("singleColorTime") + timeDict.get("quantizationTime") + timeDict.get("saltAndPepperTime") +
-                timeDict.get("gaussianTime") + timeDict.get("linearFilterTime") + timeDict.get("medianFilterTime") + timeDict.get("serialMedianFilterTime") + timeDict.get("mpiMedianFilterTime") + 
-                timeDict.get("histogramTime") + timeDict.get("equalizationTime") + timeDict.get("edgeDetectionTime") + timeDict.get("histogramThresholdingSegmentationTime") + 
+                timeDict.get("gaussianTime") + timeDict.get("linearFilterTime") + timeDict.get("medianFilterTime") + timeDict.get("serialMedianFilterTime") + timeDict.get("mpiMedianFilterTime") +
+                timeDict.get("mpiThreadedMedianFilterTime") + timeDict.get("histogramTime") + timeDict.get("equalizationTime") + timeDict.get("edgeDetectionTime") + timeDict.get("histogramThresholdingSegmentationTime") + 
                 timeDict.get("kMeansSegmentationTime") + timeDict.get("erosionTime") + timeDict.get("dilationTime") + timeDict.get("featureExtractionTime") + timeDict.get("machineLearningTime")) / 1000));
         utility.print("Real run time (s): " + (System.nanoTime() - realStartTime) / 1000000000);
     }

@@ -22,7 +22,6 @@ com/alwin/ClassificationThread.class
 com/alwin/ThresholdSegmentation$FuncInterface.class
 com/alwin/Metrics.class
 com/alwin/MorphologicalFunctions.class
-com/alwin/Main.class
 com/alwin/Filter.class
 com/alwin/GraphHistogram.class
 com/alwin/Filter$FuncInterface.class

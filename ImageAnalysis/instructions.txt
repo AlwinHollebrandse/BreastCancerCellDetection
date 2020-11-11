@@ -1,5 +1,4 @@
 DeletePreviousImages true
 UsePreviousImage false
 SingleColor Gray
-
 MPIMedianFilter 3 3 null

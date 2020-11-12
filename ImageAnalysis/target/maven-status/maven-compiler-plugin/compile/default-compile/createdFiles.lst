@@ -20,6 +20,7 @@ com/alwin/OverHeadInterface.class
 com/alwin/Utility.class
 com/alwin/ClassificationThread.class
 com/alwin/ThresholdSegmentation$FuncInterface.class
+com/alwin/Mpi_Threaded_Filter_potato_pie_5.class
 com/alwin/Metrics.class
 com/alwin/MorphologicalFunctions.class
 com/alwin/Filter.class
@@ -30,7 +31,6 @@ com/alwin/Quantization.class
 com/alwin/NoiseAdder.class
 com/alwin/NoiseAdder$FuncInterface.class
 com/alwin/MpiFilter.class
-com/alwin/Mpi_Threaded_Filter_potato_pie_4.class
 com/alwin/ThresholdSegmentation.class
 com/alwin/Quantization$FuncInterface.class
 com/alwin/LabelExtraction.class

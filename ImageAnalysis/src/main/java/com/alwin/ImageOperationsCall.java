@@ -96,7 +96,7 @@ public class ImageOperationsCall {
         if (file.isFile()) { //this line weeds out other directories/folders
 //                utility.print("\n\n" + file);
             try {
-//if (rank == 0) { // TODO
+//if (rank == 0) {
                 // Make directory for the current cell image file.
                 int startOfPictureName = file.toString().lastIndexOf("/");
                 if (startOfPictureName == -1) {
@@ -141,7 +141,9 @@ public class ImageOperationsCall {
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("singleColorTime", (int)(timeDict.get("singleColorTime") + time));
                     output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
 //                        utility.print("Converting to GrayScale" + " Execution time in milliseconds : " + time);
                 } else if (usePreviousImages) {
                     workingImage = ImageIO.read( new File(resultFileName));
@@ -169,7 +171,9 @@ public class ImageOperationsCall {
                     output_file = new File(resultFileName);
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("quantizationTime", (int)(timeDict.get("quantizationTime") + time));
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
                     meanSquaredError += quantization.getMeanSquaredError(workingImage);
 //                        utility.print("Quantization" + " Execution time in milliseconds : " + time);
                 } else if (usePreviousImages && instructionList.contains("Quantization")) {
@@ -194,7 +198,9 @@ public class ImageOperationsCall {
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("saltAndPepperTime", (int)(timeDict.get("saltAndPepperTime") + time));
                     output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
 //                        utility.print("Adding Salt and Pepper Noise" + " Execution time in milliseconds : " + time);
                 } else if (usePreviousImages && instructionList.contains("SaltAndPepper")) {
                     workingImage = ImageIO.read( new File(resultFileName));
@@ -218,7 +224,9 @@ public class ImageOperationsCall {
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("gaussianTime", (int)(timeDict.get("gaussianTime") + time));
                     output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
 //                        utility.print("Adding Gaussian Noise" + " Execution time in milliseconds : " + time);
                 } else if (usePreviousImages && instructionList.contains("Gaussian")) {
                     workingImage = ImageIO.read( new File(resultFileName));
@@ -246,7 +254,9 @@ public class ImageOperationsCall {
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("linearFilterTime", (int)(timeDict.get("linearFilterTime") + time));
                     output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
 //                        utility.print("Linear Filter" + " Execution time in milliseconds : " + time);
                 } else if (usePreviousImages && instructionList.contains("LinearFilter")) {
                     workingImage = ImageIO.read( new File(resultFileName));
@@ -275,7 +285,9 @@ public class ImageOperationsCall {
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("medianFilterTime", (int)(timeDict.get("medianFilterTime") + time));
                     output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
 //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
                 } else if (usePreviousImages && instructionList.contains("MedianFilter")) {
                     workingImage = ImageIO.read( new File(resultFileName));
@@ -302,7 +314,9 @@ public class ImageOperationsCall {
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("serialMedianFilterTime", (int)(timeDict.get("serialMedianFilterTime") + time));
                     output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
 //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
                 } else if (usePreviousImages && instructionList.contains("SerialMedianFilter")) {
                     workingImage = ImageIO.read( new File(resultFileName));
@@ -351,15 +365,12 @@ public class ImageOperationsCall {
                     workingImage = mpiFilter.fillFilterImage(allFilterImageValues);
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
-                        
+                    output_file = new File(resultFileName);
+
                     if (myrank == 0) {
-                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
     //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
                     }
-                    System.out.println("rank: " + myrank + " at barrier");
-                    MPI.COMM_WORLD.Barrier();
-                    System.out.println("rank: " + myrank + " past barrier");
 
                 } else if (usePreviousImages && instructionList.contains("MpiMedianFilter") && myrank == 0) {
                     workingImage = ImageIO.read( new File(resultFileName));
@@ -395,7 +406,7 @@ public class ImageOperationsCall {
                     }
 
 
-                    Mpi_Threaded_Filter_potato_pie_4 mpiThreadedFilter = new Mpi_Threaded_Filter_potato_pie_4(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, pixelsPerProcess, startingX, endingX);
+                    Mpi_Threaded_Filter_potato_pie_5 mpiThreadedFilter = new Mpi_Threaded_Filter_potato_pie_5(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, pixelsPerProcess, startingX, endingX);
                     int[] filterImagePortion = mpiThreadedFilter.filter();
 
                     // NOTE the size is set to this value because pixelsPerProcess * numberOfProcessors > newImageWidth * newImageHeight
@@ -407,9 +418,9 @@ public class ImageOperationsCall {
                     workingImage = mpiThreadedFilter.fillFilterImage(allFilterImageValues);
                     long time = (System.nanoTime() - startTime) / 1000000;
                     timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
-                        
+                    output_file = new File(resultFileName);
+
                     if (myrank == 0) {
-                        output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
     //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
                     }
@@ -470,7 +481,9 @@ public class ImageOperationsCall {
                     GraphHistogram graphHistogram = new GraphHistogram(color);
                     int[] equalizedHistogram = graphHistogram.createHistogram(workingImage);
                     output_file = new File(resultFileName);
-                    ImageIO.write(workingImage, "jpg", output_file);
+                    if (myrank == 0) {
+                        ImageIO.write(workingImage, "jpg", output_file);
+                    }
 //                        utility.print("histogram equalization" + " Execution time in milliseconds : " + time);
 
                     // utility.print the equalized histogram to a file

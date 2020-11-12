@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Mpi_Threaded_Filter_potato_pie_4 {
+public class Mpi_Threaded_Filter_potato_pie_5 {
 
     private BufferedImage originalImage;
     private String filterType; // TODO add enums
@@ -21,7 +21,7 @@ public class Mpi_Threaded_Filter_potato_pie_4 {
     private int endingX;
 
 
-    public Mpi_Threaded_Filter_potato_pie_4(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int pixelsPerProcess, int startingX, int endingX) {
+    public Mpi_Threaded_Filter_potato_pie_5(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int pixelsPerProcess, int startingX, int endingX) {
         this.originalImage = originalImage;
         this.filterType = filterType;
         this.filterWidth = filterWidth;

@@ -2,7 +2,7 @@
 Alwin Hollebrandse
 
 ## Running:
-A terminal with Maven installed is required to run this code. Provided that requirement is met, run `mvn package` in the terminal within the correct maven directory (ImageAnalysis). If the buid was successful, then run the following command to run the project:
+A terminal with Maven installed is required to run this code. Provided that requirement is met, run `mvn clean package` in the terminal within the correct maven directory (ImageAnalysis). If the buid was successful, then run the following command to run the project:
 `~/MPJ-User/mpj-v0_44/bin/mpjrun.sh -np 2 -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar`
 See below for more information about the two internal parameters.
 

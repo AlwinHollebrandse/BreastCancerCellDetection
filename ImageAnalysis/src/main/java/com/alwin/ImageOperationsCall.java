@@ -96,7 +96,6 @@ public class ImageOperationsCall {
         if (file.isFile()) { //this line weeds out other directories/folders
 //                utility.print("\n\n" + file);
             try {
-//if (rank == 0) {
                 // Make directory for the current cell image file.
                 int startOfPictureName = file.toString().lastIndexOf("/");
                 if (startOfPictureName == -1) {
@@ -274,7 +273,6 @@ public class ImageOperationsCall {
 
                 resultFileName = directoryPath + "median.jpg";
                 if (!usePreviousImages && instructionList.contains("MedianFilter")) {
-                    System.out.println("HERE MEDIAN");
                     if (medianFilterWidth == -1 || medianFilterHeight == -1) {
                         utility.print("median filter parameters were set incorrectly");
                         System.exit(1);
@@ -330,8 +328,6 @@ public class ImageOperationsCall {
                         }
                     }
                 }
-
-                // }
 
                 // all ranks call this
                 resultFileName = directoryPath + "mpiMedian.jpg";
@@ -417,7 +413,7 @@ public class ImageOperationsCall {
 
                     workingImage = mpiThreadedFilter.fillFilterImage(allFilterImageValues);
                     long time = (System.nanoTime() - startTime) / 1000000;
-                    timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
+                    timeDict.put("mpiThreadedMedianFilterTime", (int)(timeDict.get("mpiThreadedMedianFilterTime") + time));
                     output_file = new File(resultFileName);
 
                     if (myrank == 0) {

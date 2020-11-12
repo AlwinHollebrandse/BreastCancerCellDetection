@@ -251,7 +251,9 @@ public class Main {
         // loop through all images and do each specified operation
         for (int i = 0; i < files.length; i++){
             imageOperationsCall.imageOperationsCall(files[i]);
-            progressBar.next();
+            if (myrank == 0) {
+                progressBar.next();
+            }
         }
 
         createCSV(csvDatasetArrayList, deletePreviousImages);

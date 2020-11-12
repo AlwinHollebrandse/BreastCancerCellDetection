@@ -123,6 +123,8 @@ public class ImageOperationsCall {
 
                 // add the original image to the relevant result folder
                 final BufferedImage originalImage = ImageIO.read(file);
+                // System.out.println("originalImage.getWidth(): " + originalImage.getWidth() + " originalImage.getHeight(): " + originalImage.getHeight());
+
                 workingImage = originalImage;
                 edgeMap = originalImage;
                 segmentationImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), originalImage.getType());
@@ -375,62 +377,63 @@ public class ImageOperationsCall {
                     }
                 }
 
-    //             // TODO add MpiThreadedFilter
-    //             resultFileName = directoryPath + "mpiThreadedMedian.jpg";
-    //             if (!usePreviousImages && instructionList.contains("MpiThreadedMedianFilter")) {
-    //                 if (medianFilterWidth == -1 || medianFilterHeight == -1) {
-    //                     utility.print("mpi threaded median filter parameters were set incorrectly");
-    //                     System.exit(1);
-    //                 }
-    //                 long startTime = System.nanoTime();
+                resultFileName = directoryPath + "mpiThreadedMedian.jpg";
+                if (!usePreviousImages && instructionList.contains("MpiThreadedMedianFilter")) {
+                    if (medianFilterWidth == -1 || medianFilterHeight == -1) {
+                        utility.print("mpi threaded median filter parameters were set incorrectly");
+                        System.exit(1);
+                    }
+                    long startTime = System.nanoTime();
                     
-    //                 int newImageWidth = workingImage.getWidth() - ((medianFilterWidth/2) * 2);
-    //                 int newImageHeight = workingImage.getHeight() - ((medianFilterHeight/2) * 2);
+                    int newImageWidth = workingImage.getWidth() - ((medianFilterWidth/2) * 2);
+                    int newImageHeight = workingImage.getHeight() - ((medianFilterHeight/2) * 2);
 
-    //                 // each rank computes its starting and ending `x` (for double for loop)
-    //                 int rowsPerProcess = (int)Math.ceil((double)newImageWidth / numberOfProcessors);
-    //                 int pixelsPerProcess = rowsPerProcess * newImageHeight;
-    //                 int startingX = rowsPerProcess * myrank; // TODO test correctness
-    //                 int endingX = rowsPerProcess * (myrank + 1);
-    //                 if (endingX > newImageWidth) {
-    //                     endingX = newImageWidth;
-    //                 }
+                    // each rank computes its starting and ending `x` (for double for loop)
+                    int rowsPerProcess = (int)Math.ceil((double)newImageWidth / numberOfProcessors);
+                    int pixelsPerProcess = rowsPerProcess * newImageHeight;
+                    int startingX = rowsPerProcess * myrank; // TODO test correctness
+                    int endingX = rowsPerProcess * (myrank + 1);
+                    if (endingX > newImageWidth) {
+                        endingX = newImageWidth;
+                    }
 
-    //                 MpiThreadedFilter mpiThreadedFilter = new MpiThreadedFilter(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, pixelsPerProcess, startingX, endingX);
-    //                 int[] filterImagePortion = mpiThreadedFilter.filter();
+                    System.out.println("workingImage.getWidth(): " + workingImage.getWidth() + " workingImage.getHeight(): " + workingImage.getHeight());
 
-    //                 // NOTE the size is set to this value because pixelsPerProcess * numberOfProcessors > newImageWidth * newImageHeight
-    //                 // This was done so that GATHER could get a constant amount of pixels and not break
+                    Mpi_Threaded_Filter_potato_pie mpiThreadedFilter = new Mpi_Threaded_Filter_potato_pie(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, pixelsPerProcess, startingX, endingX);
+                    int[] filterImagePortion = mpiThreadedFilter.filter();
+
+                    // NOTE the size is set to this value because pixelsPerProcess * numberOfProcessors > newImageWidth * newImageHeight
+                    // This was done so that GATHER could get a constant amount of pixels and not break
    
-    //                 int[] allFilterImageValues = new int[pixelsPerProcess * numberOfProcessors];//newImageWidth * newImageHeight];
+                    int[] allFilterImageValues = new int[pixelsPerProcess * numberOfProcessors];//newImageWidth * newImageHeight];
 
-    //                 System.out.println("threaded rank: " + myrank + ", pixelsPerProcess: " + pixelsPerProcess + ", filterImagePortion size: " + filterImagePortion.length + ", allFilterImageValues size: " + allFilterImageValues.length);
-    //                 // MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, pixelsPerProcess, MPI.INT, 0, MPI.COMM_WORLD); // TODO correct syntax? C++ had send to recive. Java is opposite
+                    System.out.println("threaded rank: " + myrank + ", pixelsPerProcess: " + pixelsPerProcess + ", filterImagePortion size: " + filterImagePortion.length + ", allFilterImageValues size: " + allFilterImageValues.length);
+                    // MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, pixelsPerProcess, MPI.INT, 0, MPI.COMM_WORLD); // TODO correct syntax? C++ had send to recive. Java is opposite
                     
-    //                 // MPI.COMM_WORLD.Gather(recvbuf,0,unitSize,MPI.INT,sendbuf,0,unitSize,MPI.INT,root); // online example
-    //                 // MPI.COMM_WORLD.Gather(allFilterImageValues, 0, pixelsPerProcess, MPI.INT, filterImagePortion, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
-    //                 MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
+                    // MPI.COMM_WORLD.Gather(recvbuf,0,unitSize,MPI.INT,sendbuf,0,unitSize,MPI.INT,root); // online example
+                    // MPI.COMM_WORLD.Gather(allFilterImageValues, 0, pixelsPerProcess, MPI.INT, filterImagePortion, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
+                    MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
 
-    //                 if (myrank == 0) {
-    //                     workingImage = mpiThreadedFilter.fillFilterImage(allFilterImageValues);
-    //                     long time = (System.nanoTime() - startTime) / 1000000;
-    //                     timeDict.put("mpiThreadedMedianFilterTime", (int)(timeDict.get("mpiThreadedMedianFilterTime") + time));
-    //                     output_file = new File(resultFileName);
-    //                     ImageIO.write(workingImage, "jpg", output_file);
-    // //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
-    //                 }
-    //             } else if (usePreviousImages && instructionList.contains("MpiThreadedMedianFilter") && myrank == 0) {
-    //                 workingImage = ImageIO.read( new File(resultFileName));
-    //             } else if (deletePreviousImages && myrank == 0){
-    //                 // if the file was not needed, delete the file from the relevant result folder if it existed
-    //                 File imageResult = new File(resultFileName);
-    //                 // delete the image result folder if it already existed. This way, no remnants from old runs remain
-    //                 if (imageResult.exists()) {
-    //                     if (!utility.deleteDir(imageResult)) {
-    //                         utility.print("\nCould not delete old MpiThreadedMedianFilter of: " + file.toString());
-    //                     }
-    //                 }
-    //             }
+                    if (myrank == 0) {
+                        workingImage = mpiThreadedFilter.fillFilterImage(allFilterImageValues);
+                        long time = (System.nanoTime() - startTime) / 1000000;
+                        timeDict.put("mpiThreadedMedianFilterTime", (int)(timeDict.get("mpiThreadedMedianFilterTime") + time));
+                        output_file = new File(resultFileName);
+                        ImageIO.write(workingImage, "jpg", output_file);
+    //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
+                    }
+                } else if (usePreviousImages && instructionList.contains("MpiThreadedMedianFilter") && myrank == 0) {
+                    workingImage = ImageIO.read( new File(resultFileName));
+                } else if (deletePreviousImages && myrank == 0){
+                    // if the file was not needed, delete the file from the relevant result folder if it existed
+                    File imageResult = new File(resultFileName);
+                    // delete the image result folder if it already existed. This way, no remnants from old runs remain
+                    if (imageResult.exists()) {
+                        if (!utility.deleteDir(imageResult)) {
+                            utility.print("\nCould not delete old MpiThreadedMedianFilter of: " + file.toString());
+                        }
+                    }
+                }
 
 
                 // TODO add a "usePreviousImages" option for histogram

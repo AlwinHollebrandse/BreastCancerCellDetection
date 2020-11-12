@@ -1,4 +1,5 @@
 com/alwin/KMeansSegmentation$FuncInterface.class
+com/alwin/Mpi_Threaded_Filter_potato_pie.class
 com/alwin/SingleColorScale.class
 com/alwin/EdgeDetection$FuncInterface.class
 com/alwin/SerialFilter.class
@@ -7,7 +8,6 @@ com/alwin/FeatureExtraction.class
 com/alwin/HistogramFunctions.class
 com/alwin/KMeansSegmentation.class
 com/alwin/SingleColorScale$FuncInterface.class
-com/alwin/Mpi_Threaded_Filter.class
 com/alwin/OverHeadInterface$FuncInterface.class
 com/alwin/ParallelMatrix.class
 com/alwin/MorphologicalFunctions$FuncInterface.class

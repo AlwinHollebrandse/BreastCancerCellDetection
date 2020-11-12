@@ -22,7 +22,6 @@ public class MpiFilter {
     private int endingX;
 
     public MpiFilter(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int pixelsPerProcess, int startingX, int endingX) {
-        // TODO can be removed if param check is moved
         this.filterType = filterType;
         this.filterWidth = filterWidth;
         this.filterHeight = filterHeight;
@@ -41,7 +40,6 @@ public class MpiFilter {
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
     public int[] filter () throws NullPointerException {        
-        // TODO move param checking to image operations call?
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
@@ -69,9 +67,8 @@ public class MpiFilter {
         // It was set the larger pixelsPerProcess so that GATHER could get a constant amount of pixels and not break
         int[] filterImagePortion = new int[pixelsPerProcess];
 
-        // TODO need new index vars for filling filterImagePortion as xy relate to og image?
-        int filterImagePortionIndex = 0; // TODO does this prevent the loops from being para? - could do outer loop in para that fills the x-startingX index of 2d array-which then gets converted to 1d
-        for (int x = startingX; x < endingX; x ++) { // TODO does this work? nothing really compiles
+        int filterImagePortionIndex = 0;
+        for (int x = startingX; x < endingX; x ++) {
             for (int y = 0; y < newImageHeight; y ++) {
                 ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
@@ -83,9 +80,8 @@ public class MpiFilter {
                 else if("median".equalsIgnoreCase(filterType)) {
                     newPixelValue = calcMedian(neighborRGBValueArray, weights);
                 }
-                // filterImagePortionIndex = (x - startingX) * (endingX - startingX) + y;
+                filterImagePortionIndex = newImageHeight * (x - startingX) + y;
                 filterImagePortion[filterImagePortionIndex] = newPixelValue; // if newPixelValue== -1, there is an error // TODO throw an error?
-                filterImagePortionIndex++; // TODO backup if indexing calc is wrong
             }
         }
 

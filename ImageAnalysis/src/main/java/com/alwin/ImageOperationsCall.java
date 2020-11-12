@@ -319,7 +319,6 @@ public class ImageOperationsCall {
 
                 // }
 
-                // TODO make this the only one that doesnt have a rank check?
                 // all ranks call this
                 resultFileName = directoryPath + "mpiMedian.jpg";
                 if (!usePreviousImages && instructionList.contains("MpiMedianFilter")) {
@@ -346,24 +345,22 @@ public class ImageOperationsCall {
 
                     // NOTE the size is set to this value because pixelsPerProcess * numberOfProcessors > newImageWidth * newImageHeight
                     // This was done so that GATHER could get a constant amount of pixels and not break
-   
-                    int[] allFilterImageValues = new int[pixelsPerProcess * numberOfProcessors];//newImageWidth * newImageHeight];
+                    int[] allFilterImageValues = new int[pixelsPerProcess * numberOfProcessors];
+                    MPI.COMM_WORLD.Allgather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, 0, pixelsPerProcess, MPI.INT);
 
-                    System.out.println("rank: " + myrank + ", pixelsPerProcess: " + pixelsPerProcess + ", filterImagePortion size: " + filterImagePortion.length + ", allFilterImageValues size: " + allFilterImageValues.length);
-                    // MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, pixelsPerProcess, MPI.INT, 0, MPI.COMM_WORLD); // TODO correct syntax? C++ had send to recive. Java is opposite
-                    
-                    // MPI.COMM_WORLD.Gather(recvbuf,0,unitSize,MPI.INT,sendbuf,0,unitSize,MPI.INT,root); // online example
-                    // MPI.COMM_WORLD.Gather(allFilterImageValues, 0, pixelsPerProcess, MPI.INT, filterImagePortion, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
-                    MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
-
+                    workingImage = mpiFilter.fillFilterImage(allFilterImageValues);
+                    long time = (System.nanoTime() - startTime) / 1000000;
+                    timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
+                        
                     if (myrank == 0) {
-                        workingImage = mpiFilter.fillFilterImage(allFilterImageValues);
-                        long time = (System.nanoTime() - startTime) / 1000000;
-                        timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
     //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);
                     }
+                    System.out.println("rank: " + myrank + " at barrier");
+                    MPI.COMM_WORLD.Barrier();
+                    System.out.println("rank: " + myrank + " past barrier");
+
                 } else if (usePreviousImages && instructionList.contains("MpiMedianFilter") && myrank == 0) {
                     workingImage = ImageIO.read( new File(resultFileName));
                 } else if (deletePreviousImages && myrank == 0){
@@ -391,33 +388,27 @@ public class ImageOperationsCall {
                     // each rank computes its starting and ending `x` (for double for loop)
                     int rowsPerProcess = (int)Math.ceil((double)newImageWidth / numberOfProcessors);
                     int pixelsPerProcess = rowsPerProcess * newImageHeight;
-                    int startingX = rowsPerProcess * myrank; // TODO test correctness
+                    int startingX = rowsPerProcess * myrank;
                     int endingX = rowsPerProcess * (myrank + 1);
                     if (endingX > newImageWidth) {
                         endingX = newImageWidth;
                     }
 
-                    System.out.println("workingImage.getWidth(): " + workingImage.getWidth() + " workingImage.getHeight(): " + workingImage.getHeight());
 
-                    Mpi_Threaded_Filter_potato_pie mpiThreadedFilter = new Mpi_Threaded_Filter_potato_pie(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, pixelsPerProcess, startingX, endingX);
+                    Mpi_Threaded_Filter_potato_pie_4 mpiThreadedFilter = new Mpi_Threaded_Filter_potato_pie_4(workingImage, "median", medianFilterWidth, medianFilterHeight, medianFilterWeights, newImageWidth, newImageHeight, pixelsPerProcess, startingX, endingX);
                     int[] filterImagePortion = mpiThreadedFilter.filter();
 
                     // NOTE the size is set to this value because pixelsPerProcess * numberOfProcessors > newImageWidth * newImageHeight
                     // This was done so that GATHER could get a constant amount of pixels and not break
    
-                    int[] allFilterImageValues = new int[pixelsPerProcess * numberOfProcessors];//newImageWidth * newImageHeight];
+                    int[] allFilterImageValues = new int[pixelsPerProcess * numberOfProcessors];
+                    MPI.COMM_WORLD.Allgather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, 0, pixelsPerProcess, MPI.INT);
 
-                    System.out.println("threaded rank: " + myrank + ", pixelsPerProcess: " + pixelsPerProcess + ", filterImagePortion size: " + filterImagePortion.length + ", allFilterImageValues size: " + allFilterImageValues.length);
-                    // MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, pixelsPerProcess, MPI.INT, 0, MPI.COMM_WORLD); // TODO correct syntax? C++ had send to recive. Java is opposite
-                    
-                    // MPI.COMM_WORLD.Gather(recvbuf,0,unitSize,MPI.INT,sendbuf,0,unitSize,MPI.INT,root); // online example
-                    // MPI.COMM_WORLD.Gather(allFilterImageValues, 0, pixelsPerProcess, MPI.INT, filterImagePortion, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
-                    MPI.COMM_WORLD.Gather(filterImagePortion, 0, pixelsPerProcess, MPI.INT, allFilterImageValues, 0, pixelsPerProcess, MPI.INT, 0); // TODO correct syntax?
-
+                    workingImage = mpiThreadedFilter.fillFilterImage(allFilterImageValues);
+                    long time = (System.nanoTime() - startTime) / 1000000;
+                    timeDict.put("mpiMedianFilterTime", (int)(timeDict.get("mpiMedianFilterTime") + time));
+                        
                     if (myrank == 0) {
-                        workingImage = mpiThreadedFilter.fillFilterImage(allFilterImageValues);
-                        long time = (System.nanoTime() - startTime) / 1000000;
-                        timeDict.put("mpiThreadedMedianFilterTime", (int)(timeDict.get("mpiThreadedMedianFilterTime") + time));
                         output_file = new File(resultFileName);
                         ImageIO.write(workingImage, "jpg", output_file);
     //                        utility.print("Median Filter" + " Execution time in milliseconds : " + time);

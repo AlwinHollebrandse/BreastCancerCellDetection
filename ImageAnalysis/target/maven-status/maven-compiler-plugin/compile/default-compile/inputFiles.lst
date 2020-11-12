@@ -3,9 +3,9 @@
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/KNN.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/NoiseAdder.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/ProgressBar.java
+/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/Mpi_Threaded_Filter_potato_pie_3.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/Quantization.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/EdgeDetection.java
-/home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/Mpi_Threaded_Filter_potato_pie.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/KMeansSegmentation.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/HistogramFunctions.java
 /home/alwinhollebrandse/Documents/HighPerformanceDistributedSystems/ImageAnalysis/ImageAnalysis/src/main/java/com/alwin/Filter.java

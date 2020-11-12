@@ -1,15 +1,14 @@
-package com.alwin; // TODO uncommenting this breaks it????
+package com.alwin;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Mpi_Threaded_Filter_potato_pie {
+public class Mpi_Threaded_Filter_potato_pie_4 {
 
-    // private Utility utility = new Utility();
     private BufferedImage originalImage;
-    private String filterType;  // TODO add enums
+    private String filterType; // TODO add enums
     private int filterWidth;
     private int filterHeight;
     private int[] weights;
@@ -22,7 +21,7 @@ public class Mpi_Threaded_Filter_potato_pie {
     private int endingX;
 
 
-    public Mpi_Threaded_Filter_potato_pie(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int pixelsPerProcess, int startingX, int endingX) {
+    public Mpi_Threaded_Filter_potato_pie_4(BufferedImage originalImage, String filterType, int filterWidth, int filterHeight, int[] weights, int newImageWidth, int newImageHeight, int pixelsPerProcess, int startingX, int endingX) {
         this.originalImage = originalImage;
         this.filterType = filterType;
         this.filterWidth = filterWidth;
@@ -41,7 +40,6 @@ public class Mpi_Threaded_Filter_potato_pie {
     // NOTE crops the image border that does not fit in the filter convolution
     // NOTE assumes after accounting for weights, that the pixel color is still normalized TODO normalize after
     public int[] filter () throws NullPointerException {
-        // TODO move param checking to image operations call?
         // Parameter checking
         // If there was no weights array specified, then use weights of 1.
         if (weights == null) {
@@ -95,13 +93,8 @@ public class Mpi_Threaded_Filter_potato_pie {
         int filterImagePortionIndex = 0;
         for (int x = 0; x < filterImage.getWidth(); x ++) {
             for (int y = 0; y < filterImage.getHeight(); y ++) {
-                // originalImage.getWidth(): 177 originalImage.getHeight(): 284
-                // workingImage.getWidth(): 177 workingImage.getHeight(): 284
-                filterImagePortionIndex = filterImage.getHeight() * x + y; // TODO bug, theres repeats like 30102 at x: 171 y: 177 and x: 172 y: 2
-                System.out.println (" filterImagePortionIndex: " + filterImagePortionIndex + " width: " + filterImage.getWidth() + " height: " + filterImage.getHeight() + " x: " + x + " y: " + y);
-
+                filterImagePortionIndex = filterImage.getHeight() * x + y;
                 filterImage.setRGB(x, y, allFilterImageValues[filterImagePortionIndex]);
-                // filterImagePortionIndex++;
             }
         }
         return filterImage;
@@ -128,9 +121,8 @@ public class Mpi_Threaded_Filter_potato_pie {
 
 
 class MPIImageThread extends Thread {
-
     //for thread objects
-    private int[] filterImagePortion; // TODO ints or doubles?
+    private int[] filterImagePortion;
     private int MAX_THREADS;
     private int threadNumber;
 
@@ -146,9 +138,6 @@ class MPIImageThread extends Thread {
     private int newImageHeight;
     private int startingX;
     private int endingX;
-
-    // // for code lambdas
-    // private OverHeadInterface.FuncInterface code;
 
     // store parameter for later user
     public MPIImageThread(int[] filterImagePortion, int MAX_THREADS, int threadNumber, 
@@ -179,9 +168,8 @@ class MPIImageThread extends Thread {
             // Displaying the thread that is running
 //            System.out.println ("Thread " + Thread.currentThread().getId() + " is running"  + ", MAX_THREADS: " + MAX_THREADS + ", startingXCoordinate: " + startingXCoordinate + ", startingYCoordinate: " + startingYCoordinate);//", xJumpSize: " + xJumpSize + ", yJumpSize: " + yJumpSize);
 
-            // TODO need new index vars for filling filterImagePortion as xy relate to og image?
-            int filterImagePortionIndex = 0; // TODO does this prevent the loops from being para? - could do outer loop in para that fills the x-startingX index of 2d array-which then gets converted to 1d
-            for (int x = startingX; x < endingX; x ++) { // TODO does this work? nothing really compiles
+            int filterImagePortionIndex = 0;
+            for (int x = startingX; x < endingX; x ++) {
                 for (int y = threadNumber; y < newImageHeight; y += MAX_THREADS) {
                     ArrayList<Integer> neighborRGBValueArray = utility.getNeighborValues(originalImage, (x + filterWidth/2), (y + filterHeight/2), filterHeight, filterWidth);
 
@@ -193,11 +181,8 @@ class MPIImageThread extends Thread {
                     else if("median".equalsIgnoreCase(filterType)) {
                         newPixelValue = calcMedian(neighborRGBValueArray, weights);
                     }
-                    // filterImagePortionIndex = filterImage.getWidth() * x + y;
-                    filterImagePortionIndex = newImageHeight * (x - startingX)  + y; //(x - startingX) * (endingX - startingX) + y;
+                    filterImagePortionIndex = newImageHeight * (x - startingX)  + y;
                     filterImagePortion[filterImagePortionIndex] = newPixelValue; // if newPixelValue== -1, there is an error // TODO throw an error?
-                    // System.out.println ("Thread " + Thread.currentThread().getId() + " filterImagePortionIndex: "  + filterImagePortionIndex);
-                    // filterImagePortionIndex++; // TODO backup if indexing calc is wrong
                 }
             }
         }

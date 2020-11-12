@@ -1,8 +1,5 @@
 package com.alwin;
 
-// for getting java mpi to work: https://www.open-mpi.org/faq/?category=java
-// https://github.com/victorskl/mpj-maven
-// http://mpj-express.org/docs/guides/linuxguide.pdf
 import mpi.*;
 
 import java.io.File;

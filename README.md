@@ -3,21 +3,20 @@ Alwin Hollebrandse
 
 ## Running:
 A terminal with Maven installed is required to run this code. Provided that requirement is met, run `mvn package` in the terminal within the correct maven directory (ImageAnalysis). If the buid was successful, then run the following command to run the project:
-`java -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar <image folder> <instructions.txt>`. See below for more information about these parameters.
- 
-### Sample Input:
-`java -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar ./images instructions.txt`.
-
 `~/MPJ-User/mpj-v0_44/bin/mpjrun.sh -np 2 -jar target/ImageAnalysis-1.0-jar-with-dependencies.jar`
+See below for more information about the two internal parameters.
 
 ## Adding MPJ to the Project
-Inorder to add MPJ (Java's MPI) to the project, this [link](https://github.com/victorskl/mpj-maven) was used.
+Inorder to add MPJ (Java's MPI) to the project, this [link](https://github.com/victorskl/mpj-maven) was used. Along with the official docs found [here](http://mpj-express.org/docs/guides/linuxguide.pdf).
 
-## Image File location Arg:
-This is the first argument of the program. It should contain a path to where all of the images are located. In thoery, any images that Java’s Buffered Image supports would be supported by my code. An example image can found in the results section under “original”.
+## Internal Arguements:
+Because I was not sure how get MPJ command line to take a jar and command line arguements, I hardcoded the following 2 parameters. A user will need to make a `images` folder outside of `src`. There will also need to be an `instructions` file at the same file level.
 
-## Instruction File arg:
-This is the second command line argument for the program. It should be a txt file. It is used to build the operation arraylist (discussed under Implentation/General). Accepted Strings that will cause the actions of interest are (ignoring case): DeletePreviousImages, UsePreviousImage, SingleColor, Quantization, SaltAndPepper, Gaussian, LinearFilter, MedianFilter, Histogram, HistogramEqualization, EdgeDetection, HistogramThresholdingSegmentation, KMeansSegmentation, Erosion, Dilation, FeatureExtraction, and MachineLearning. These can be found in the all_Instructions.txt file with their respective parameters. Note that SingleColor is not a required operation, but without it, all other operations default to a “gray” color operation use.  Note that each of the params must be separated by spaces, and array params are denoted by having each element be separated by a space and the characters: [ and ].
+# Image File location Arg:
+This is the first internal argument of the program. It should contain a path to where all of the images are located. In thoery, any images that Java’s Buffered Image supports would be supported by my code. An example image can found in the results section under “original”.
+
+# Instruction File arg:
+This is the second internal argument for the program. It should be a txt file. It is used to build the operation arraylist (discussed under Implentation/General). Accepted Strings that will cause the actions of interest are (ignoring case): DeletePreviousImages, UsePreviousImage, SingleColor, Quantization, SaltAndPepper, Gaussian, LinearFilter, MedianFilter, Histogram, HistogramEqualization, EdgeDetection, HistogramThresholdingSegmentation, KMeansSegmentation, Erosion, Dilation, FeatureExtraction, and MachineLearning. These can be found in the all_Instructions.txt file with their respective parameters. Note that SingleColor is not a required operation, but without it, all other operations default to a “gray” color operation use.  Note that each of the params must be separated by spaces, and array params are denoted by having each element be separated by a space and the characters: [ and ].
 DeletePreviousImages takes in 1 param: a Boolean
 UsePreviousImage takes in 1 param: a Boolean
 SingleColor takes in 1 param in the file: the color to convert to. Current options are: Gray, Red, Green, and Blue
@@ -26,6 +25,9 @@ SaltAndPepper takes in 3 param in the file; random threshold, mean, and sigma. E
 Gaussian takes in 3 param in the file; random threshold, mean, and sigma. Ex: 0.05 0 00 0 5
 LinearFilter takes in 4 param in the file; filter width, filter height, and the weights (in the afore mentioned array form). Ex: 0.05 0 03 3 [ 0 0 0 0 0 0 0 0 0 ]
 MedianFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form)(can also be null) EX: 3 3 null
+SerialMedianFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form)(can also be null) EX: 3 3 null
+MPIMedianFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form)(can also be null) EX: 3 3 null
+MPIThreadedMedianFilter takes in 4 param in the file; filter width, filter height, the weights (in the afore mentioned array form)(can also be null) EX: 3 3 null
 Histogram takes no params.
 HistogramEqualization takes no params.
 EdgeDetection takes no params.
@@ -120,6 +122,9 @@ Performs the median filter except in serial instead of the lambda.
 
 ## MPIMedianFilter
 Performs the median filter except in MPJ instead of the lambda.
+
+## MPIThreadedMedianFilter
+Performs the median filter except in MPJ that includes threading within each created process.
 
 ## Histogram
 This section is found under GraphHistogram.java. It accepts the following parameter: current image. In order to create a histogram, each pixel is looked at (not in parallel since the required semaphore would slow the process to slower than a sequential version) and the gray color value ((int) (c.getRed() * 0.299) + (int) (c.getGreen() * 0.587) + (int) (c.getBlue() * 0.114)) is added to an int array of size 256 in the correct position. This histogram is then saved to histogram.png.

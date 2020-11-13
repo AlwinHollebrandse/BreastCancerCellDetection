@@ -344,7 +344,7 @@ public class ImageOperationsCall {
                     // each rank computes its starting and ending `x` (for double for loop)
                     int rowsPerProcess = (int)Math.ceil((double)newImageWidth / numberOfProcessors);
                     int pixelsPerProcess = rowsPerProcess * newImageHeight;
-                    int startingX = rowsPerProcess * myrank; // TODO test correctness
+                    int startingX = rowsPerProcess * myrank;
                     int endingX = rowsPerProcess * (myrank + 1);
                     if (endingX > newImageWidth) {
                         endingX = newImageWidth;
